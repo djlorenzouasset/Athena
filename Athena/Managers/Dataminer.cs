@@ -112,7 +112,7 @@ public class Dataminer
                 x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics")
             );
 
-            Log.Information("Loading new VfsEntries comparing preloaded files with {name}. This will take few seconds.", ioStoreName);
+            Log.Information("Loading new VfsEntries and comparing preloaded files with {name}. This will take few seconds.", ioStoreName);
             foreach (var value in cosmetics)
             {
                 if (value is not VfsEntry entry) continue;
@@ -127,7 +127,7 @@ public class Dataminer
     {
         var selected = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
-                .Title("What [62]Pak[/] want you generate?")
+                .Title("What [62]Pak[/] you want generate?")
                 .PageSize(10)
                 .AddChoices(
                     Endpoints.FNCentral.AesKey.DynamicKeys.Select(x => x.Name)
@@ -163,13 +163,13 @@ public class Dataminer
             try
             {
                 profile.OnCosmeticAdded(cosmetic.NameWithoutExtension);
-                Log.Information("Added VfsEntry \"{name}\"", cosmetic.Name);
+                Log.Information("Added \"{name}\"", cosmetic.Name);
                 loaded += 1;
             }
             catch
             {
                 #if DEBUG
-                Log.Error("Skipped VfsEntry \"{name}\"", cosmetic.Name);
+                Log.Error("Skipped \"{name}\"", cosmetic.Name);
                 #endif
             }
         }
