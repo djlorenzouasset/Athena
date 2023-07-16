@@ -1,10 +1,9 @@
 # Athena
 
+<img align="left" src="https://raw.githubusercontent.com/djlorenzouasset/Athena/main/.github/AthenaLogo.png?token=GHSAT0AAAAAAB7GKSBDC77UKH5VI6UAD64GZFUIXNQ" height=100> 
+
 Fortnite Profile-Athena creator for Private Servers (neonite, ecc..) that use Fortnite-Live (manifest)
-
-> ⚠️ If you encounter problems, I ask you to open an issue in the repository so I can fix it.
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/F1F6IB03D)
+<br>
 
 # Install the program
 
@@ -12,9 +11,7 @@ Fortnite Profile-Athena creator for Private Servers (neonite, ecc..) that use Fo
 
 * <a href='https://dotnet.microsoft.com/en-us/download/dotnet/6.0/runtime'>.NET 6.0 Runtime</a>
 
-### Build
-
-1. Download the source code or clone it with <a href='https://git-scm.com/download/win'>Git</a>.
+### Build via command line
 
 ```
 git clone https://github.com/djlorenzouasset/Athena --recursive
@@ -23,6 +20,11 @@ git clone https://github.com/djlorenzouasset/Athena --recursive
 2. Build the program
 ```
 cd Athena
-cd Athena
 dotnet build
 ```
+
+Or install latest release [here](https://github.com/djlorenzouasset/Athena/releases/latest) 
+
+### Support the project
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/F1F6IB03D)
