@@ -1,18 +1,20 @@
 # Athena
 
-<img align="left" src="https://raw.githubusercontent.com/djlorenzouasset/Athena/main/.github/AthenaLogo.png" height=100> 
+<img src="https://raw.githubusercontent.com/djlorenzouasset/Athena/main/.github/AthenaLogo.png" height="130" align="right"> 
 
-Fortnite Profile-Athena creator for Private Servers (neonite, ecc..) that use Fortnite-Live (manifest)
-<br>
+Fortnite Profile-Athena creator for Private Servers that use Fortnite-Live manifest.
 
-# Install the program
+> You can use this program with [Neonite](https://github.com/NeoniteDev/NeoniteV2) backend, saving the profile-athena.json in the profiles folder.
 
-### Requirements
+-----------------
+
+#### Requirements
 
 * <a href='https://dotnet.microsoft.com/en-us/download/dotnet/6.0/runtime'>.NET 6.0 Runtime</a>
 
-### Build via command line
+#### Build via command line
 
+1. Clone the source code
 ```
 git clone https://github.com/djlorenzouasset/Athena --recursive
 ```
@@ -25,6 +27,11 @@ dotnet build
 
 Or install latest release [here](https://github.com/djlorenzouasset/Athena/releases/latest) 
 
-### Support the project
-
+#### Support the project
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/F1F6IB03D)
+
+-----------------
+
+## Credits 
+AthenaProfile model and builder made by [@OutTheShade](https://github.com/OutTheShade)
+
