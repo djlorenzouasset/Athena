@@ -1,6 +1,6 @@
 # Athena
 
-<img align="left" src="https://raw.githubusercontent.com/djlorenzouasset/Athena/main/.github/AthenaLogo.png?token=GHSAT0AAAAAAB7GKSBDC77UKH5VI6UAD64GZFUIXNQ" height=100> 
+<img align="left" src="https://raw.githubusercontent.com/djlorenzouasset/Athena/main/.github/AthenaLogo.png" height=100> 
 
 Fortnite Profile-Athena creator for Private Servers (neonite, ecc..) that use Fortnite-Live (manifest)
 <br>
