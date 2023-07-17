@@ -19,3 +19,4 @@ Console.Clear(); // clear the console after input
 // app start
 await Athena.Managers.Athena.Initialize();
 Console.ReadKey(); // the program have to remain opened until the user decide to close it
+Log.Information(" --------------- Application Closed --------------- ");
