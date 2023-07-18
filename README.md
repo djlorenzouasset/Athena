@@ -22,10 +22,10 @@ git clone https://github.com/djlorenzouasset/Athena --recursive
 2. Build the program
 ```
 cd Athena
-dotnet build
+dotnet publish Athena.csproj -c Release --no-self-contained -o "../../../../Leaking/NeoniteV2/Athena" -p:PublishReadyToRun=false -p:PublishSingleFile=true -p:DebugType=None -p:GenerateDocumentationFile=false -p:DebugSymbols=false
 ```
 
-Or install latest release [here](https://github.com/djlorenzouasset/Athena/releases/latest) 
+Or install the latest release [here](https://github.com/djlorenzouasset/Athena/releases/latest) 
 
 #### Support the project
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/F1F6IB03D)
