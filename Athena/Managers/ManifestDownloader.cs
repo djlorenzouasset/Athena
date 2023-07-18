@@ -7,7 +7,7 @@ namespace Athena.Managers;
 
 public class ManifestDownloader
 {
-    public string _endpoint { get; init; }
+    public string Endpoint { get; init; }
     public Manifest? ManifestFile { get; private set; }
 
     // regex from FModel
@@ -16,14 +16,14 @@ public class ManifestDownloader
 
     public ManifestDownloader(string endpoint)
     {
-        _endpoint = endpoint;
+        Endpoint = endpoint;
     }
 
     public async Task DownloadManifest(ManifestInfo manifestInfo)
     {
         ManifestFile = new(await manifestInfo.DownloadManifestDataAsync(), new()
         {
-            ChunkBaseUri = new(_endpoint, UriKind.Absolute),
+            ChunkBaseUri = new(Endpoint, UriKind.Absolute),
             ChunkCacheDirectory = new(DirectoryManager.ChunksDir)
         });
     }
