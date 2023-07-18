@@ -18,5 +18,12 @@ Console.Clear(); // clear the console after input
 
 // app start
 await Athena.Managers.Athena.Initialize();
-Console.ReadKey(); // the program have to remain opened until the user decide to close it
+
+// The Application will remain open till the user presses the enter key
+Log.Information("Press the enter key to close the application");
+
+ConsoleKeyInfo keyInfo;
+do { keyInfo = Console.ReadKey(true); } 
+while (keyInfo.Key != ConsoleKey.Enter);
+
 Log.Information(" --------------- Application Closed --------------- ");
