@@ -6,25 +6,25 @@ public class ProfileCosmetic
 {
     public ProfileCosmetic(string cosmeticId, string backendType, bool isFavorite = false, bool isArchived = false)
     {
-        TemplateId = $"{backendType}:{cosmeticId}";
-        Attributes.Favourite = isFavorite;
-        Attributes.Archived = isArchived;
+        templateId = $"{backendType}:{cosmeticId}";
+        attributes.favorite = isFavorite;
+        attributes.archived = isArchived;
     }
 
-    public string TemplateId { get; set; }
-    public Attributes Attributes { get; set; } = new();
-    public int Quantity { get; set; } = 1;
+    public string templateId { get; set; }
+    public Attributes attributes { get; set; } = new();
+    public int quantity { get; set; } = 1;
 }
 
 public class Attributes
 {
-    public DateTime CreationTime { get; set; } = DateTime.Now;
-    public int MaxLevelBonus { get; set; } = 0;
-    public int Level { get; set; } = 1;
-    public bool ItemSeen { get; set; } = true;
-    public int RndSelCnt { get; set; } = 0;
-    public int Xp { get; set; } = 0;
-    public ProfileAthenaModel.Variant[] Variants { get; set; } = { };
-    public bool Favourite { get; set; } = false;
-    public bool Archived { get; set; } = false;
+    public DateTime creation_time { get; set; } = DateTime.Now;
+    public int max_level_bonus { get; set; } = 0;
+    public int level { get; set; } = 1;
+    public bool item_seen { get; set; } = true;
+    public int rnd_sel_cnt { get; set; } = 0;
+    public int xp { get; set; } = 0;
+    public ProfileAthenaModel.Variant[] variants { get; set; } = { };
+    public bool favorite { get; set; } = false;
+    public bool archived { get; set; } = false;
 }

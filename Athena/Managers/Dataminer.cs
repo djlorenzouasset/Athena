@@ -17,32 +17,32 @@ namespace Athena.Managers;
 
 public class Dataminer
 {
-    public ManifestDownloader Manifest;
-    public StreamedFileProvider Provider;
+    public ManifestDownloader manifest;
+    public StreamedFileProvider provider;
 
-    public List<VfsEntry> All = new();
-    public List<VfsEntry> NewEntries = new();
+    public List<VfsEntry> all = new();
+    public List<VfsEntry> newEntries = new();
 
-    public string? BackupName;
-    public string? IoStoreName;
+    public string? backupName;
+    public string? ioStoreName;
 
     public Dataminer(string mappingFile)
     {
-        Provider = new("FortniteLive", true, new VersionContainer(EGame.GAME_UE5_3, ETexturePlatform.DesktopMobile));
-        Provider.MappingsContainer = new FileUsmapTypeMappingsProvider(mappingFile);
-        Manifest = new("https://epicgames-download1.akamaized.net/Builds/Fortnite/CloudDir/ChunksV4/");
+        provider = new("FortniteLive", true, new VersionContainer(EGame.GAME_UE5_3, ETexturePlatform.DesktopMobile));
+        provider.MappingsContainer = new FileUsmapTypeMappingsProvider(mappingFile);
+        manifest = new("http://epicgames-download1.akamaized.net/Builds/Fortnite/CloudDir/ChunksV4/");
     }
 
     public async Task LoadAllPaks(RestResponse manifestData)
     {
-        await Manifest.DownloadManifest(new(manifestData.Content));
+        await manifest.DownloadManifest(new(manifestData.Content));
 
-        foreach (var file in Manifest.ManifestFile.FileManifests)
+        foreach (var file in manifest.ManifestFile.FileManifests)
         {
             if (!ManifestDownloader.PaksFinder.IsMatch(file.Name) || file.Name.Contains("optional")) continue;
-            Manifest.LoadFileManifest(file, ref Provider);
+            manifest.LoadFileManifest(file, ref provider);
         }
-        Provider.Mount();
+        provider.Mount();
         LoadKey();
         Log.Information("Loaded {totalKeys} Dynamic Keys.", Endpoints.FNCentral.AesKey.DynamicKeys.Count);
         Log.Information("Loading VfsEntries.");
@@ -91,35 +91,35 @@ public class Dataminer
         {
             LoadAllKeys();
             LoadAllEntries();
-            GenerateFromVfsEntries(All, action);
+            GenerateFromVfsEntries(all, action);
         }
         else if (action == Action.AddNew)
         {
             // load backup file (fmodel backup)
             // and save all entries in the array
             await LoadBackup();
-            GenerateFromVfsEntries(NewEntries, action);
+            GenerateFromVfsEntries(newEntries, action);
         }
         else if (action == Action.AddArchive)
         {
             var dynamicPak = AskForPak();
             LoadDynamicKey(dynamicPak);
-            IoStoreName = dynamicPak.Name;
+            ioStoreName = dynamicPak.Name;
 
             // filter only cosmetics for make the program more fast
-            var cosmetics = Provider.Files.Values.Where(
+            var cosmetics = provider.Files.Values.Where(
                 x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/Items/Cosmetics") ||
                 x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics")
             );
 
-            Log.Information("Loading new VfsEntries and comparing preloaded files with {name}. This will take few seconds.", IoStoreName);
+            Log.Information("Loading new VfsEntries and comparing preloaded files with {name}. This will take few seconds.", ioStoreName);
             foreach (var value in cosmetics)
             {
                 if (value is not VfsEntry entry) continue;
-                else if (All.Contains(entry)) continue;
-                NewEntries.Add(entry);
+                else if (all.Contains(entry)) continue;
+                newEntries.Add(entry);
             }
-            GenerateFromVfsEntries(NewEntries, action);
+            GenerateFromVfsEntries(newEntries, action);
         }
     }
 
@@ -149,9 +149,9 @@ public class Dataminer
 
         if (cosmetics.Count() == 0)
         {
-            if (action == Action.AddNew) Log.Error("No new cosmetics found using {backup}.", BackupName);
+            if (action == Action.AddNew) Log.Error("No new cosmetics found using {backup}.", backupName);
             else if (action == Action.AddEverything) Log.Error("No cosmetics found.");
-            else if (action == Action.AddArchive) Log.Error("No cosmetics found in {ioStoreName}.", IoStoreName);
+            else if (action == Action.AddArchive) Log.Error("No cosmetics found in {ioStoreName}.", ioStoreName);
 
             Console.ReadKey();
             Environment.Exit(0);
@@ -182,12 +182,12 @@ public class Dataminer
 
     private void LoadAllEntries()
     {
-        foreach (var value in Provider.Files.Values)
+        foreach (var value in provider.Files.Values)
         {
             if (value is not VfsEntry entry) continue;
-            All.Add(entry);
+            all.Add(entry);
         }
-        Log.Information("Loaded {tot} VfsEntries.", All.Count);
+        Log.Information("Loaded {tot} VfsEntries.", all.Count);
     }
 
     private void LoadAllKeys()
@@ -200,13 +200,13 @@ public class Dataminer
 
     private void LoadDynamicKey(DynamicKey dynamicKey)
     {
-        Provider.SubmitKey(new FGuid(dynamicKey.Guid), new FAesKey(dynamicKey.Key));
+        provider.SubmitKey(new FGuid(dynamicKey.Guid), new FAesKey(dynamicKey.Key));
     }
 
     private void LoadKey()
     {
         var aes = Endpoints.FNCentral.AesKey;
-        Provider.SubmitKey(new FGuid(), new FAesKey(aes.MainKey));
+        provider.SubmitKey(new FGuid(), new FAesKey(aes.MainKey));
     }
 
     // backup loading from FModel
@@ -225,8 +225,8 @@ public class Dataminer
             Log.Information("Backup pulled form local file {name}", bk?.FileName);
         }
 
-        BackupName = bk?.FileName;
-        Log.Information("Comparing preloaded files and new files with backup file {name}", BackupName);
+        backupName = bk?.FileName;
+        Log.Information("Comparing preloaded files and new files with backup file {name}", backupName);
 
         await using FileStream fileStream = new FileStream(Path.Combine(DirectoryManager.BackupsDir, bk.FileName), FileMode.Open);
         await using MemoryStream memoryStream = new MemoryStream();
@@ -254,12 +254,12 @@ public class Dataminer
             archive.Position += 4;
         }
 
-        foreach (var (key, value) in Provider.Files)
+        foreach (var (key, value) in provider.Files)
         {
             if (value is not VfsEntry entry || path.ContainsKey(key) || entry.Path.EndsWith(".uexp") || entry.Path.EndsWith(".ubulk") || entry.Path.EndsWith(".uptnl")) 
                 continue;
-            NewEntries.Add(entry);
+            newEntries.Add(entry);
         }
-        Log.Information("Loaded {tot} new VfsEntries", NewEntries.Count);
+        Log.Information("Loaded {tot} new VfsEntries", newEntries.Count);
     }
 }

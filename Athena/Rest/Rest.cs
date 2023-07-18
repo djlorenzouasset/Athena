@@ -4,10 +4,10 @@ namespace Athena.Rest;
 
 public abstract class RestBase
 {
-    protected readonly RestClient Client;
+    protected readonly RestClient _client;
 
     protected RestBase(RestClient client)
     {
-        Client = client;
+        _client = client;
     }
 }
