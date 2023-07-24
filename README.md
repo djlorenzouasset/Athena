@@ -2,9 +2,9 @@
 
 <img src=".github/AthenaLogo.png" height="130" align="right"> 
 
-Fortnite Profile-Athena creator for Private Servers that use Fortnite-Live manifest.
+Fortnite Profile-Athena & Catalog creator for Private Servers that use Fortnite-Live manifest.
 
-> You can use this program with [Neonite](https://github.com/NeoniteDev/NeoniteV2) backend, saving the profile-athena.json in the profiles folder.
+> You can use this program with [Neonite](https://github.com/NeoniteDev/NeoniteV2) backend, saving the profile-athena.json in the profiles folder and shop.json in the root folder.
 
 -----------------
 
