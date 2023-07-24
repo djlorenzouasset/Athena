@@ -6,6 +6,7 @@ using CUE4Parse.UE4.VirtualFileSystem;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Readers;
+using CUE4Parse.FileProvider.Objects;
 using K4os.Compression.LZ4.Streams;
 using GenericReader;
 using Spectre.Console;
@@ -19,16 +20,18 @@ public class Dataminer
 {
     public ManifestDownloader manifest;
     public StreamedFileProvider provider;
-
     public List<VfsEntry> all = new();
     public List<VfsEntry> newEntries = new();
-
+    // utils
     public string? backupName;
     public string? ioStoreName;
+    // console options
+    public string[] athenaOptions = new[] { "All Cosmetics", "New Cosmetics", "Pak Cosmetics" };
+    public string[] shopOptions = new[] { "New Cosmetics", "Pak Cosmetics" };
 
     public Dataminer(string mappingFile)
     {
-        provider = new("FortniteLive", true, new VersionContainer(EGame.GAME_UE5_3, ETexturePlatform.DesktopMobile));
+        provider = new("FortniteLive", true, new VersionContainer(EGame.GAME_UE5_LATEST));
         provider.MappingsContainer = new FileUsmapTypeMappingsProvider(mappingFile);
         manifest = new("http://epicgames-download1.akamaized.net/Builds/Fortnite/CloudDir/ChunksV4/");
     }
@@ -49,22 +52,45 @@ public class Dataminer
         LoadAllEntries();
     }
 
-    public async Task AskAction()
+    public async Task AskGeneration()
     {
         // clear the console from all the logs
         Console.Clear();
 
         var selected = AnsiConsole.Prompt(
         new SelectionPrompt<string>()
-            .Title("What type of [62]Profile Athena[/] want you generate?")
+            .Title("What do you want generate?")
             .PageSize(10)
             .AddChoices(new[]
             {
-                "All Cosmetics",
-                "New Cosmetics",
-                "Pak Cosmetics"
-            }
-            )
+                "Profile-Athena",
+                "ItemShop Catalog"
+            })
+        );
+
+        ToDo toDo = ToDo.AthenaProfile;
+        switch (selected)
+        {
+            case "Profile-Athena":
+                break;
+            case "ItemShop Catalog":
+                toDo = ToDo.ShopGenerator;
+                break;
+        }
+
+        await AskAction(toDo);
+    }
+
+    private async Task AskAction(ToDo toDo)
+    {
+        string type = toDo == ToDo.AthenaProfile ? "Profile Athena" : "ItemShop Catalog";
+        string[] opts = toDo == ToDo.ShopGenerator ? shopOptions : athenaOptions;
+
+        var selected = AnsiConsole.Prompt(
+        new SelectionPrompt<string>()
+            .Title($"What type of [62]{type}[/] do want you generate?")
+            .PageSize(10)
+            .AddChoices(opts)
         );
 
         Action action = Action.AddEverything;
@@ -76,29 +102,28 @@ public class Dataminer
             case "New Cosmetics":
                 action = Action.AddNew;
                 break;
-            case "Pak Cosmetics": 
+            case "Pak Cosmetics":
                 action = Action.AddArchive;
                 break;
         }
 
-        await BrenLovesMe(action);
+        await WeLoveCats(toDo, action);
     }
 
-    // bren_v2 cameo (twitter.com/Bren_v2)
-    private async Task BrenLovesMe(Action action)
+    private async Task WeLoveCats(ToDo toDo, Action action)
     {
         if (action == Action.AddEverything)
         {
             LoadAllKeys();
             LoadAllEntries();
-            GenerateFromVfsEntries(all, action);
+            GenerateModelFromEntries(all, action);
         }
         else if (action == Action.AddNew)
         {
             // load backup file (fmodel backup)
             // and save all entries in the array
             await LoadBackup();
-            GenerateFromVfsEntries(newEntries, action);
+            GenerateModelFromEntries(newEntries, action, toDo);
         }
         else if (action == Action.AddArchive)
         {
@@ -106,110 +131,138 @@ public class Dataminer
             LoadDynamicKey(dynamicPak);
             ioStoreName = dynamicPak.Name;
 
-            // filter only cosmetics for make the program more fast
-            var cosmetics = provider.Files.Values.Where(
-                x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/Items/Cosmetics") ||
-                x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics")
-            );
-
+            // I should improve this step since is very slow :(
             Log.Information("Loading new VfsEntries and comparing preloaded files with {name}. This will take few seconds.", ioStoreName);
-            foreach (var value in cosmetics)
-            {
-                if (value is not VfsEntry entry) continue;
-                else if (all.Contains(entry)) continue;
-                newEntries.Add(entry);
-            }
-            GenerateFromVfsEntries(newEntries, action);
+            LoadEntriesFromArchive(toDo == ToDo.ShopGenerator);
+            GenerateModelFromEntries(newEntries, action, toDo);
         }
     }
 
     private DynamicKey AskForPak()
     {
         var selected = AnsiConsole.Prompt(
-            new SelectionPrompt<string>()
-                .Title("What [62]Pak[/] you want generate?")
-                .PageSize(10)
-                .AddChoices(
-                    Endpoints.FNCentral.AesKey.DynamicKeys.Select(x => x.Name)
-                )
+        new SelectionPrompt<string>()
+            .Title("What [62]Pak[/] do you want generate?")
+            .PageSize(10)
+            .AddChoices(
+                Endpoints.FNCentral.AesKey.DynamicKeys.Select(x => x.Name)
+            )
         );
 
         return Endpoints.FNCentral.AesKey.DynamicKeys.Where(x => x.Name == selected).First();
     }
 
-    private void GenerateFromVfsEntries(List<VfsEntry> entries, Action action)
+    private void GenerateModelFromEntries(List<VfsEntry> entries, Action action, ToDo toDo = ToDo.AthenaProfile)
     {
         int loaded = 0;
+        string type = toDo == ToDo.AthenaProfile ? "cosmetics" : "shopAssets";
 
-        // load all cosmetics in an Array
-        var cosmetics = entries.Where(
-            x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/Items/Cosmetics") || 
-            x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics")
-        );
-
-        if (cosmetics.Count() == 0)
+        if (type == "cosmetics")
         {
-            if (action == Action.AddNew) Log.Error("No new cosmetics found using {backup}.", backupName);
+            entries = entries.Where(
+                x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/Items/Cosmetics") ||
+                x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics")
+            ).ToList();
+        }
+        else
+        {
+            entries = entries.Where(
+                x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Catalog/NewDisplayAssets/") &&
+                x.NameWithoutExtension.StartsWith("DAv2")
+            ).ToList();
+        }
+
+        // start everything
+        if (entries.Count() == 0)
+        {
+            if (action == Action.AddNew) Log.Error("No new {type} found using {backup}.", type, backupName);
             else if (action == Action.AddEverything) Log.Error("No cosmetics found.");
-            else if (action == Action.AddArchive) Log.Error("No cosmetics found in {ioStoreName}.", ioStoreName);
+            else if (action == Action.AddArchive) Log.Error("No {type} found in {ioStoreName}.", type, ioStoreName);
 
             Console.ReadKey();
             Environment.Exit(0);
         }
 
-        ProfileBuilder profile = new ProfileBuilder(cosmetics.Count());
-        foreach (var cosmetic in cosmetics)
+        if (toDo == ToDo.ShopGenerator)
         {
-            try
-            {
-                profile.OnCosmeticAdded(cosmetic.NameWithoutExtension);
-                Log.Information("Added \"{name}\"", cosmetic.Name);
-                loaded += 1;
-            }
-            catch
-            {
-                #if DEBUG
-                Log.Error("Skipped \"{name}\"", cosmetic.Name);
-                #endif
-            }
-        }
+            ShopBuilder shop = new();
 
-        // save the profile
-        Log.Information("Building profile-athena with {tot} cosmetics.", loaded);
-        File.WriteAllText(Path.Join(DirectoryManager.Profiles, "profile_athena.json"), profile.Build());
-        Log.Information("Saved profile athena for {name} in profiles folder.", Config.config.athenaProfileId);
+            foreach (var entry in entries)
+            {
+                shop.AddCatalogEntry(entry.PathWithoutExtension);
+                Log.Information("Added ShopAsset {name}", entry.NameWithoutExtension);
+                loaded++;
+            }
+
+            Log.Information("Building Shop with {tot} shopAssets", loaded);
+            File.WriteAllText(Path.Join(DirectoryManager.Profiles, "shop.json"), shop.Build());
+            Log.Information("Saved shop for {name} in profiles folder", Config.config.athenaProfileId);
+        }
+        else
+        {
+            ProfileBuilder profile = new(entries.Count());
+
+            foreach (var entry in entries)
+            {
+                try
+                {
+                    profile.OnCosmeticAdded(entry.NameWithoutExtension);
+                    Log.Information("Added cosmetic \"{name}\".", entry.NameWithoutExtension);
+                    loaded++;
+                }
+                catch
+                {
+#if DEBUG
+                    Log.Error("Skipped entry {name}", entry.Name);
+#endif
+                }
+            }
+
+            // save the profile
+            Log.Information("Building profile-athena with {tot} cosmetics.", loaded);
+            File.WriteAllText(Path.Join(DirectoryManager.Profiles, "profile_athena.json"), profile.Build());
+            Log.Information("Saved profile athena for {name} in profiles folder.", Config.config.athenaProfileId);
+        }
     }
 
     private void LoadAllEntries()
     {
         foreach (var value in provider.Files.Values)
         {
-            if (value is not VfsEntry entry) continue;
+            if (value is not VfsEntry entry || entry.Path.EndsWith(".uexp") || entry.Path.EndsWith(".ubulk") || entry.Path.EndsWith(".uptnl")) continue;
             all.Add(entry);
         }
         Log.Information("Loaded {tot} VfsEntries.", all.Count);
     }
 
-    private void LoadAllKeys()
+    private void LoadEntriesFromArchive(bool dav2 = false)
     {
-        foreach (var key in Endpoints.FNCentral.AesKey.DynamicKeys)
+        List<GameFile> cat = new();
+
+        if (!dav2)
         {
-            LoadDynamicKey(key);
+            cat = provider.Files.Values.Where(
+                x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/Items/Cosmetics") ||
+                x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics")
+            ).ToList();
+        }
+        else
+        {
+            cat = provider.Files.Values.Where(
+                x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Catalog/NewDisplayAssets/") &&
+                x.NameWithoutExtension.StartsWith("DAv2")
+            ).ToList();
+        }
+
+        foreach (var value in cat)
+        {
+            if (value is not VfsEntry entry) continue;
+            else if (all.Contains(entry)) continue;
+            newEntries.Add(entry);
         }
     }
 
-    private void LoadDynamicKey(DynamicKey dynamicKey)
-    {
-        provider.SubmitKey(new FGuid(dynamicKey.Guid), new FAesKey(dynamicKey.Key));
-    }
-
-    private void LoadKey()
-    {
-        var aes = Endpoints.FNCentral.AesKey;
-        provider.SubmitKey(new FGuid(), new FAesKey(aes.MainKey));
-    }
-
-    // backup loading from FModel
+    // Backup loading from FModel
     private async Task LoadBackup()
     {
         var backupRequest = await Endpoints.GetBackupAsync();
@@ -256,10 +309,29 @@ public class Dataminer
 
         foreach (var (key, value) in provider.Files)
         {
-            if (value is not VfsEntry entry || path.ContainsKey(key) || entry.Path.EndsWith(".uexp") || entry.Path.EndsWith(".ubulk") || entry.Path.EndsWith(".uptnl")) 
+            if (value is not VfsEntry entry || path.ContainsKey(key) || entry.Path.EndsWith(".uexp") || entry.Path.EndsWith(".ubulk") || entry.Path.EndsWith(".uptnl"))
                 continue;
             newEntries.Add(entry);
         }
         Log.Information("Loaded {tot} new VfsEntries", newEntries.Count);
+    }
+
+    private void LoadAllKeys()
+    {
+        foreach (var key in Endpoints.FNCentral.AesKey.DynamicKeys)
+        {
+            LoadDynamicKey(key);
+        }
+    }
+
+    private void LoadDynamicKey(DynamicKey dynamicKey)
+    {
+        provider.SubmitKey(new FGuid(dynamicKey.Guid), new FAesKey(dynamicKey.Key));
+    }
+
+    private void LoadKey()
+    {
+        var aes = Endpoints.FNCentral.AesKey;
+        provider.SubmitKey(new FGuid(), new FAesKey(aes.MainKey));
     }
 }

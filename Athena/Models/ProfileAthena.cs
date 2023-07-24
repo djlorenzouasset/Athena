@@ -1,4 +1,7 @@
-﻿// Solitude ProfileAthena.cs file at https://github.com/OutTheShade/Solitude/blob/master/Solitude/Objects/Profile/ProfileAthena.cs
+﻿/* 
+    Solitude ProfileAthena.cs 
+    File at https://github.com/OutTheShade/Solitude/blob/master/Solitude/Objects/Profile/ProfileAthena.cs
+*/
 
 namespace Athena.Models;
 

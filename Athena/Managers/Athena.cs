@@ -73,6 +73,6 @@ public static class Athena
     {
         var dataminer = new Dataminer(mappingFile);
         await dataminer.LoadAllPaks(manifest);
-        await dataminer.AskAction();
+        await dataminer.AskGeneration();
     }
 }

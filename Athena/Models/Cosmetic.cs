@@ -1,4 +1,7 @@
-﻿// Solitude ProfileCosmetic.cs file at https://github.com/OutTheShade/Solitude/blob/master/Solitude/Objects/Profile/ProfileCosmetic.cs
+﻿/*
+    Solitude ProfileCosmetic.cs 
+    File at https://github.com/OutTheShade/Solitude/blob/master/Solitude/Objects/Profile/ProfileCosmetic.cs
+*/
 
 namespace Athena.Models;
 

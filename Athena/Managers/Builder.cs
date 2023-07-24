@@ -1,4 +1,7 @@
-﻿// Solitude ProfileBuilder.cs file at https://github.com/OutTheShade/Solitude/blob/master/Solitude/Objects/Profile/ProfileBuilder.cs
+﻿/* 
+    Solitude ProfileBuilder.cs 
+    File at https://github.com/OutTheShade/Solitude/blob/master/Solitude/Objects/Profile/ProfileBuilder.cs
+*/
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
