@@ -23,7 +23,6 @@ public class ShopBuilder
         var shopJson = JObject.FromObject(_shopModel);
 
         if (shopJson is null) return string.Empty;
-
         return shopJson.ToString(Formatting.Indented);
     }
 
@@ -37,8 +36,8 @@ public class ShopBuilder
         {
            List<MetaInfo> metaBundle = new() {
                 new() { key = "NewDisplayAssetPath", value = shopItem + "." + backendType },
-                new() { key = "SectionId", value = "Featured"},
-                new() { key = "TileSize", value = "DoubleWide"},
+                new() { key = "SectionId", value = "Featured" },
+                new() { key = "TileSize", value = "DoubleWide" },
                 new() { key = "AnalyticOfferGroupId", value = "3" }
             };
 
@@ -62,7 +61,7 @@ public class ShopBuilder
             ret.meta.NewDisplayAssetPath = shopItem + "." + backendType;
             ret.displayAssetPath = Dav2ToDA(backendType);
             ret.metaInfo = metaCosmetic;
-            ret.requirements.Add(new() { requiredId = $"{GetItemType(assetName)}:{assetName}" } );
+            ret.requirements.Add(new() { requiredId = $"{GetItemType(assetName)}:{assetName}" });
             ret.itemGrants.Add(new() { templateId = $"{GetItemType(assetName)}:{assetName}" });
             _catalogEntries.Add(ret);
         }
