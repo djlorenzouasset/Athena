@@ -32,6 +32,7 @@ Or install the latest release [here](https://github.com/djlorenzouasset/Athena/r
 
 -----------------
 
-## Credits 
-AthenaProfile model and builder made by [@OutTheShade](https://github.com/OutTheShade)
+## Credits
+- A very big thank to [@andredotuasset](https://twitter.com/andredotuasset) & [@DrCacahuette](https://twitter.com/DrCacahuette) for helping me making the Shop Model.
+- AthenaProfile model and builder made by [@OutTheShade](https://github.com/OutTheShade).
 
