@@ -69,7 +69,7 @@ public class Price
 {
     public string currencyType = "MtxCurrency";
     public string currencySubType = string.Empty;
-    public int regularPrice = 100;
+    public int regularPrice = 100; // you can change here the in-game price
     public int dynamicRegularPrice = 100;
     public int finalPrice = 100;
     public DateTime saleExpiration = new DateTime(9999, 12, 31, 23, 59, 59);
@@ -78,7 +78,7 @@ public class Price
 
 public class DynamicBundleInfo
 {
-    public int discountedBasePrice = 100;
+    public int discountedBasePrice = 100; // here you can change the bundle price
     public int regularBasePrice = 0;
     public int floorPrice = 100;
     public string currencyType = "MtxCurrency";
@@ -87,7 +87,7 @@ public class DynamicBundleInfo
     public List<object> bundleItems = new();
 }
 
-public class BundleMeta
+public class BundleMeta // dont touch nothing here
 {
     public string NewDisplayAssetPath { get; set; }
     public string SectionId = "Featured";
@@ -95,7 +95,7 @@ public class BundleMeta
     public string AnalyticOfferGroupId = "3";
 }
 
-public class Meta
+public class Meta // dont touch nothing here
 {
     public string NewDisplayAssetPath { get; set; }
     public string SectionId = "Daily";
@@ -113,15 +113,20 @@ public class BundleRequirement
     public int regularPrice = 0;
     public int discountedPrice = 0;
     public int alreadyOwnedPriceReduction = 0;
-    public Item item = new() { templateId = "AthenaCharacter:CID_349_Athena_Commando_M_Banana", quantity = 1 };
+    public Item item = new() { templateId = "AthenaCharacter:CID_349_Athena_Commando_M_Banana", quantity = 10 }; // yes, 10 peelys
 }
 
-public class Requirement
+public class Requirement // dont touch nothing here
 {
     public string requirementType = "DenyOnItemOwnership";
     public string requiredId { get; set; }
     public int minQuantity = 1;
 }
+
+
+///////////////////////////
+/// DONT TOUCH NOTHING ///
+/////////////////////////
 
 public class GiftInfo
 {

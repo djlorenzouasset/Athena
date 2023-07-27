@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Athena.Models;
+﻿namespace Athena.Models;
 
 public class AesKey
 {
-    public string Version { get; set; }
-
     public string MainKey { get; set; }
 
     public List<DynamicKey> DynamicKeys { get; set; }
