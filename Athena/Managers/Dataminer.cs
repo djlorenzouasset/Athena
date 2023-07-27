@@ -1,6 +1,5 @@
 ﻿using CUE4Parse.FileProvider;
 using CUE4Parse.MappingsProvider;
-using CUE4Parse.UE4.Assets.Exports.Texture;
 using CUE4Parse.UE4.Versions;
 using CUE4Parse.UE4.VirtualFileSystem;
 using CUE4Parse.Encryption.Aes;
@@ -56,6 +55,8 @@ public class Dataminer
     {
         // clear the console from all the logs
         Console.Clear();
+
+        AnsiConsole.Write(new Markup("[63]Athena[/]: Made by [99]@djlorenzouasset[/] with the help of [99]@andredotuasset[/]\n\n"));
 
         var selected = AnsiConsole.Prompt(
         new SelectionPrompt<string>()
