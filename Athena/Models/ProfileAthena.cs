@@ -73,7 +73,7 @@ public class ProfileAthenaModel
     public class Pickaxe
     {
         public List<string> items { get; set; } = new();
-        public ActiveVariant[] activeVariants { get; set; } = { };
+        public List<ActiveVariant> activeVariants { get; set; } = new();
     }
 
     public class Dance
@@ -89,49 +89,49 @@ public class ProfileAthenaModel
     public class Character
     {
         public List<string> items { get; set; } = new();
-        public ActiveVariant[] activeVariants { get; set; } = { };
+        public List<ActiveVariant> activeVariants { get; set; } = new();
     }
 
     public class ActiveVariant
     {
-        public Variant[] variants { get; set; }
+        public List<Variant> variants { get; set; }
     }
 
     public class Variant
     {
         public string channel { get; set; }
         public string active { get; set; }
-        public object[] owned { get; set; }
+        public List<string> owned { get; set; }
     }
 
     public class Backpack
     {
         public List<string> items { get; set; } = new();
-        public ActiveVariant[] activeVariants { get; set; } = { };
+        public List<ActiveVariant> activeVariants { get; set; } = new();
     }
 
     public class ItemWrap
     {
         public List<string> items { get; set; } = new();
-        public ActiveVariant[] activeVariants { get; set; } = { };
+        public List<ActiveVariant> activeVariants { get; set; } = new();
     }
 
     public class LoadingScreen
     {
         public List<string> items { get; set; } = new();
-        public ActiveVariant[] activeVariants { get; set; } = { };
+        public List<ActiveVariant> activeVariants { get; set; } = new();
     }
 
     public class MusicPack
     {
         public List<string> items { get; set; } = new();
-        public ActiveVariant[] activeVariants { get; set; } = { };
+        public List<ActiveVariant> activeVariants { get; set; } = new();
     }
 
     public class SkydiveContrail
     {
         public List<string> items { get; set; } = new();
-        public ActiveVariant[] activeVariants { get; set; } = { };
+        public List<ActiveVariant> activeVariants { get; set; } = new();
     }
 
     public class Stats
@@ -142,7 +142,7 @@ public class ProfileAthenaModel
     public class StatAttributes
     {
         public int season_match_boost { get; set; } = 999;
-        public string[] loadouts { get; set; } = { "sandbox_loadout" };
+        public List<string> loadouts { get; set; } = new();
         public int rested_xp_overflow { get; set; } = 0;
         public bool mfa_reward_claimed { get; set; } = true;
         public Quest_Manager quest_manager { get; set; } = new();
@@ -150,11 +150,11 @@ public class ProfileAthenaModel
         public int season_num { get; set; } = 15;
         public int season_update { get; set; } = 1;
         public int book_xp { get; set; } = 1;
-        public object[] permissions { get; set; } = { };
+        public List<object> permissions { get; set; } = new();
         public bool book_purchased { get; set; } = true;
         public int lifetime_wins { get; set; } = 999;
         public string party_assist_quest { get; set; } = string.Empty;
-        public object[] purchased_battle_pass_tier_offers { get; set; } = { };
+        public List<object> purchased_battle_pass_tier_offers { get; set; } = new();
         public float rested_xp_exchange { get; set; } = 0.333f;
         public int level { get; set; } = 999;
         public long xp_overflow { get; set; } = 999999999999;
@@ -168,7 +168,7 @@ public class ProfileAthenaModel
         public int xp { get; set; } = 10;
         public int season_friend_match_boost { get; set; } = 1;
         public int active_loadout_index { get; set; } = 1;
-        public Past_Seasons[] past_seasons { get; set; } = { };
+        public List<Past_Seasons> past_seasons { get; set; } = new();
     }
 
     public class Quest_Manager
