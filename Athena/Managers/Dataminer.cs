@@ -3,9 +3,13 @@ using CUE4Parse.MappingsProvider;
 using CUE4Parse.UE4.Versions;
 using CUE4Parse.UE4.VirtualFileSystem;
 using CUE4Parse.Encryption.Aes;
+using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.FileProvider.Objects;
+using CUE4Parse.UE4.Assets.Exports;
+using CUE4Parse.UE4.Assets.Objects;
+using CUE4Parse.UE4.Objects.Core.i18N;
 using K4os.Compression.LZ4.Streams;
 using GenericReader;
 using Spectre.Console;
@@ -207,14 +211,51 @@ public class Dataminer
             {
                 try
                 {
-                    profile.OnCosmeticAdded(entry.NameWithoutExtension);
-                    Log.Information("Added cosmetic \"{name}\".", entry.NameWithoutExtension);
+                    // thanks to Half for the variants
+                    Dictionary<string, List<string>> variants = new();
+
+                    var exports = provider.LoadAllObjects(entry.PathWithoutExtension);
+                    var cosmeticStyles = exports.First().GetOrDefault("ItemVariants", Array.Empty<UObject>());
+
+                    foreach (var style in cosmeticStyles)
+                    {
+                        List<string> ownedParts = new();
+                        
+                        string channel = style.GetOrDefault("VariantChannelName", new FText("[PH] VariantName")).Text;
+                        var optionsName = style.ExportType switch
+                        {
+                            "FortCosmeticCharacterPartVariant" => "PartOptions",
+                            "FortCosmeticMaterialVariant" => "MaterialOptions",
+                            "FortCosmeticParticleVariant" => "ParticleOptions",
+                            "FortCosmeticMeshVariant" => "MeshOptions",
+                            _ => null
+                        };
+
+                        if (optionsName is null) continue;
+
+                        var options = style.Get<FStructFallback[]>(optionsName);
+                        if (options.Length == 0) continue;
+
+                        foreach (var stageTag in options)
+                        {
+                            var CustomizationVariantTag = stageTag.Get<FStructFallback>("CustomizationVariantTag");
+                            if (CustomizationVariantTag is null) continue;
+
+                            string tag = CustomizationVariantTag.GetOrDefault("TagName", new FName("[PH] StyleName")).Text;
+                            if (tag is null) continue;
+                            ownedParts.Add(tag.Split(".").Last());
+                        }
+                        variants.Add(channel, ownedParts);
+                    }
+
+                    profile.OnCosmeticAdded(entry.NameWithoutExtension, variants);
+                    Log.Information("Added cosmetic \"{name}\" with {totVariants} channel variants.", entry.NameWithoutExtension, variants.Count);
                     loaded++;
                 }
                 catch
-                {
+                { 
 #if DEBUG
-                    Log.Error("Skipped entry {name}", entry.Name);
+                    Log.Error("Skipped entry {name}.", entry.Name);
 #endif
                 }
             }

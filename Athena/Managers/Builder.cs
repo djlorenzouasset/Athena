@@ -42,7 +42,7 @@ public class ProfileBuilder
         return profileJson.ToString(Formatting.Indented);
     }
 
-    public ProfileCosmetic OnCosmeticAdded(string id)
+    public ProfileCosmetic OnCosmeticAdded(string id, Dictionary<string, List<string>> variants)
     {
         ProfileCosmetic ret;
         var prefix = id.Remove(id.IndexOf('_')).ToLower();
@@ -51,16 +51,16 @@ public class ProfileBuilder
         {
             case "cid":
             case "character":
-                ret = new ProfileCosmetic(id, "AthenaCharacter");
+                ret = new ProfileCosmetic(id, "AthenaCharacter", variants: variants);
                 _profile.items.sandbox_loadout.AddCharacter(ret.templateId);
                 break;
             case "bid":
             case "backpack":
-                ret = new ProfileCosmetic(id, "AthenaBackpack");
+                ret = new ProfileCosmetic(id, "AthenaBackpack", variants: variants);
                 _profile.items.sandbox_loadout.AddBackpack(ret.templateId);
                 break;
             case "pickaxe":
-                ret = new ProfileCosmetic(id, "AthenaPickaxe");
+                ret = new ProfileCosmetic(id, "AthenaPickaxe", variants: variants);
                 _profile.items.sandbox_loadout.AddPickaxe(ret.templateId);
                 break;
             case "eid":
@@ -68,7 +68,7 @@ public class ProfileBuilder
                 _profile.items.sandbox_loadout.AddDance(ret.templateId);
                 break;
             case "glider":
-                ret = new ProfileCosmetic(id, "AthenaGlider");
+                ret = new ProfileCosmetic(id, "AthenaGlider", variants: variants);
                 _profile.items.sandbox_loadout.AddGlider(ret.templateId);
                 break;
             case "wrap":
@@ -94,7 +94,7 @@ public class ProfileBuilder
                 _profile.items.sandbox_loadout.AddContrail(ret.templateId);
                 break;
             case "petcarrier":
-                ret = new ProfileCosmetic(id, "AthenaBackpack");
+                ret = new ProfileCosmetic(id, "AthenaBackpack", variants: variants);
                 _profile.items.sandbox_loadout.AddBackpack(ret.templateId);
                 break;
             case "spray":
