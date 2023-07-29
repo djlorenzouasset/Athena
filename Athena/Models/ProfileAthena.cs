@@ -142,7 +142,7 @@ public class ProfileAthenaModel
     public class StatAttributes
     {
         public int season_match_boost { get; set; } = 999;
-        public List<string> loadouts { get; set; } = new();
+        public List<string> loadouts { get; set; } = new() { "sandbox_loadout" };
         public int rested_xp_overflow { get; set; } = 0;
         public bool mfa_reward_claimed { get; set; } = true;
         public Quest_Manager quest_manager { get; set; } = new();
