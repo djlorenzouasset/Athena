@@ -10,5 +10,6 @@ public enum Action
 {
     AddEverything,
     AddNew,
+    AddNewWithArchives,
     AddArchive
 }

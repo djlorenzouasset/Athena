@@ -29,8 +29,8 @@ public class Dataminer
     public string? backupName;
     public string? ioStoreName;
     // console options
-    public string[] athenaOptions = new[] { "All Cosmetics", "New Cosmetics", "Pak Cosmetics" };
-    public string[] shopOptions = new[] { "New Cosmetics", "Pak Cosmetics" };
+    public string[] athenaOptions = new[] { "All Cosmetics", "New Cosmetics", "New Cosmetics (With Paks)", "Pak Cosmetics" };
+    public string[] shopOptions = new[] { "New Cosmetics", "New Cosmetics (With Paks)", "Pak Cosmetics" };
 
     public Dataminer(string mappingFile)
     {
@@ -107,6 +107,9 @@ public class Dataminer
             case "New Cosmetics":
                 action = Action.AddNew;
                 break;
+            case "New Cosmetics (With Paks)":
+                action = Action.AddNewWithArchives;
+                break;
             case "Pak Cosmetics":
                 action = Action.AddArchive;
                 break;
@@ -127,6 +130,14 @@ public class Dataminer
         {
             // load backup file (fmodel backup)
             // and save all entries in the array
+            await LoadBackup();
+            GenerateModelFromEntries(newEntries, action, toDo);
+        }
+        else if (action == Action.AddNewWithArchives)
+        {
+            // this will generate new cosmetic
+            // with all available paks
+            LoadAllKeys();
             await LoadBackup();
             GenerateModelFromEntries(newEntries, action, toDo);
         }
