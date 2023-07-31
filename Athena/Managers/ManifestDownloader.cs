@@ -36,14 +36,14 @@ public class ManifestDownloader
 
         if (file.Name.EndsWith(".utoc"))
         {
-            _provider.Initialize(
+            _provider.RegisterVfs(
                 file.Name, new Stream[] { file.GetStream() }, it => new FStreamArchive(it, ManifestFile.FileManifests.First(x => x.Name.Equals(it)).GetStream(), versions)
             );
         }
         else
         {
             var stream = file.GetStream();
-            _provider.Initialize(file.Name, new[] { stream });
+            _provider.RegisterVfs(file.Name, new[] { stream });
         }
 
         Log.Information("Loaded VirtualFile {pakName}", file.Name);
