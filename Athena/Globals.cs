@@ -1,9 +1,10 @@
 ﻿global using Serilog;
 
-namespace Athena;
-
 public static class Globals
 {
+    public const string VERSION = "1.3.0";
+    public const string APPID = "1142239120471634042";
+
     // endpoints
     public const string MAPPINGS = "https://fortnitecentral.genxgames.gg/api/v1/mappings";
     public const string AESKEYS = "https://fortnitecentral.genxgames.gg/api/v1/aes";

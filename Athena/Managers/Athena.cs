@@ -8,7 +8,7 @@ public static class Athena
 {
     public static async Task Initialize()
     {
-        Console.Title = "Athena";
+        Console.Title = "Athena: Starting";
 
         Log.Logger = new LoggerConfiguration()
             .WriteTo.File(Path.Combine(DirectoryManager.Logs, $"Athena-Log-{DateTime.Now:dd-MM-yyyy}.txt"),
@@ -17,7 +17,9 @@ public static class Athena
             .CreateLogger();
 
         DirectoryManager.CreateFolders();
-
+        DiscordRichPresence.Initialize();
+        DiscordRichPresence.Update("Loading Assets");
+        
         // endpoints requests
         var mappings = await Endpoints.FNCentral.GetMappingsAsync();
         var aesKeys = await Endpoints.FNCentral.GetAesKeysAsync();
