@@ -1,5 +1,4 @@
 ﻿using RestSharp;
-using Athena;
 using Athena.Models;
 using Athena.Rest;
 
