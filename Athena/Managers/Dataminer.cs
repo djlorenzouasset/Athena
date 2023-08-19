@@ -1,4 +1,5 @@
-﻿using CUE4Parse.FileProvider;
+﻿using System.Text.RegularExpressions;
+using CUE4Parse.FileProvider;
 using CUE4Parse.MappingsProvider;
 using CUE4Parse.UE4.Versions;
 using CUE4Parse.UE4.VirtualFileSystem;
@@ -25,12 +26,15 @@ public class Dataminer
     public StreamedFileProvider provider;
     public List<VfsEntry> all = new();
     public List<VfsEntry> newEntries = new();
+
     // utils
     public string? backupName;
     public string? ioStoreName;
+    private Regex pakNameRegex = new(@"^pakchunk(\d*)-WindowsClient.utoc");
+
     // console options
-    public string[] athenaOptions = new[] { "All Cosmetics", "New Cosmetics", "New Cosmetics (With Paks)", "Pak Cosmetics" };
-    public string[] shopOptions = new[] { "New Cosmetics", "New Cosmetics (With Paks)", "Pak Cosmetics" };
+    public string[] athenaOptions = new[] { "All Cosmetics", "New Cosmetics", "New Cosmetics (With Paks)", "Pak Cosmetics", "Paks Bulk" };
+    public string[] shopOptions = new[] { "New Cosmetics", "New Cosmetics (With Paks)", "Pak Cosmetics", "Paks Bulk" };
 
     public Dataminer(string mappingFile)
     {
@@ -57,10 +61,12 @@ public class Dataminer
 
     public async Task AskGeneration()
     {
-        // clear the console from all the logs
+        // clear the console from all the logs and set the app name
         Console.Clear();
+        Console.Title = "Athena";
+        DiscordRichPresence.Update($"In Menu - {provider.Files.Count:### ### ###} Loaded Assets.");
 
-        AnsiConsole.Write(new Markup("[63]Athena[/]: Made by [99]@djlorenzouasset[/] with the help of [99]@andredotuasset[/]\n\n"));
+        AnsiConsole.Write(new Markup("[63]Athena[/]: Made by [99]@djlorenzouasset[/] & [99]@andredotuasset[/]\n\n"));
 
         var selected = AnsiConsole.Prompt(
         new SelectionPrompt<string>()
@@ -113,6 +119,9 @@ public class Dataminer
             case "Pak Cosmetics":
                 action = Action.AddArchive;
                 break;
+            case "Paks Bulk":
+                action = Action.BulkArchive;
+                break;
         }
 
         await WeLoveCats(toDo, action);
@@ -120,6 +129,9 @@ public class Dataminer
 
     private async Task WeLoveCats(ToDo toDo, Action action)
     {
+        string type = toDo == ToDo.AthenaProfile ? "Profile Athena" : "ItemShop Catalog";
+        DiscordRichPresence.Update($"Generating: {type}");
+
         if (action == Action.AddEverything)
         {
             LoadAllKeys();
@@ -152,6 +164,29 @@ public class Dataminer
             LoadEntriesFromArchive(toDo == ToDo.ShopGenerator);
             GenerateModelFromEntries(newEntries, action, toDo);
         }
+        else if (action == Action.BulkArchive)
+        {
+            var dynamicKeys = await BulkPaks();
+            if (dynamicKeys.Count() == 0)
+            {
+                Log.Error("No paks found for the input you inserted. Press the enter key for return to the menu.");
+
+                ConsoleKeyInfo keyInfo;
+                do { keyInfo = Console.ReadKey(true); }
+                while (keyInfo.Key != ConsoleKey.Enter);
+                await AskGeneration();
+            }
+            else
+            {
+                foreach (var key in dynamicKeys)
+                {
+                    LoadDynamicKey(key);
+                }
+                Log.Information("Loading new VfsEntries and comparing preloaded files with selected paks. This will take few seconds.");
+                LoadEntriesFromArchive(toDo == ToDo.ShopGenerator);
+                GenerateModelFromEntries(newEntries, action, toDo);
+            }
+        }
     }
 
     private DynamicKey AskForPak()
@@ -166,6 +201,13 @@ public class Dataminer
         );
 
         return Endpoints.FNCentral.AesKey.DynamicKeys.Where(x => x.Name == selected).First();
+    }
+
+    private async Task<IEnumerable<DynamicKey>> BulkPaks()
+    {
+        var paks = AnsiConsole.Ask<string>("Insert the [62]names/numbers[/] of the [62]Paks[/] that you want generate separated by [62];[/] (ex: 1000; 1001):");
+        var numbers = paks.Split(";").Select(x => x.Trim());
+        return Endpoints.FNCentral.AesKey.DynamicKeys.Where(x => numbers.Contains(pakNameRegex.Match(x.Name).Groups[1].ToString()));
     }
 
     private void GenerateModelFromEntries(List<VfsEntry> entries, Action action, ToDo toDo = ToDo.AthenaProfile)
@@ -194,6 +236,7 @@ public class Dataminer
             if (action == Action.AddNew) Log.Error("No new {type} found using {backup}.", type, backupName);
             else if (action == Action.AddEverything) Log.Error("No cosmetics found.");
             else if (action == Action.AddArchive) Log.Error("No {type} found in {ioStoreName}.", type, ioStoreName);
+            else if (action == Action.BulkArchive) Log.Error("No {type} found in {ioStoreName}", type, ioStoreName);
 
             Console.ReadKey();
             Environment.Exit(0);
