@@ -1,16 +1,16 @@
-﻿using System.Text.RegularExpressions;
-using CUE4Parse.FileProvider;
-using CUE4Parse.MappingsProvider;
-using CUE4Parse.UE4.Versions;
+﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
 using CUE4Parse.UE4.VirtualFileSystem;
-using CUE4Parse.Encryption.Aes;
-using CUE4Parse.UE4.Objects.UObject;
+using CUE4Parse.UE4.Objects.Core.i18N;
 using CUE4Parse.UE4.Objects.Core.Misc;
-using CUE4Parse.UE4.Readers;
-using CUE4Parse.FileProvider.Objects;
+using CUE4Parse.UE4.Objects.UObject;
 using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Objects;
-using CUE4Parse.UE4.Objects.Core.i18N;
+using CUE4Parse.MappingsProvider;
+using CUE4Parse.Encryption.Aes;
+using CUE4Parse.FileProvider;
+using CUE4Parse.UE4.Versions;
+using CUE4Parse.UE4.Readers;
 using K4os.Compression.LZ4.Streams;
 using GenericReader;
 using Spectre.Console;
@@ -28,13 +28,13 @@ public class Dataminer
     public List<VfsEntry> newEntries = new();
 
     // utils
-    public string? backupName;
-    public string? ioStoreName;
-    private Regex pakNameRegex = new(@"^pakchunk(\d*)-WindowsClient.utoc");
+    private string? backupName;
+    private List<string> ioStoreNamesFilter = new();
+    private readonly Regex pakNameRegex = new(@"^pakchunk(\d*)-WindowsClient.utoc");
 
     // console options
-    public string[] athenaOptions = new[] { "All Cosmetics", "New Cosmetics", "New Cosmetics (With Paks)", "Pak Cosmetics", "Paks Bulk" };
-    public string[] shopOptions = new[] { "New Cosmetics", "New Cosmetics (With Paks)", "Pak Cosmetics", "Paks Bulk" };
+    private readonly string[] athenaOptions = new[] { "All Cosmetics", "New Cosmetics", "New Cosmetics (With Paks)", "Pak Cosmetics", "Paks Bulk" };
+    private readonly string[] shopOptions = new[] { "New Cosmetics", "New Cosmetics (With Paks)", "Pak Cosmetics", "Paks Bulk" };
 
     public Dataminer(string mappingFile)
     {
@@ -131,6 +131,9 @@ public class Dataminer
     {
         string type = toDo == ToDo.AthenaProfile ? "Profile Athena" : "ItemShop Catalog";
         DiscordRichPresence.Update($"Generating: {type}");
+        // timer
+        var timer = new Stopwatch();
+        timer.Start();
 
         if (action == Action.AddEverything)
         {
@@ -157,11 +160,11 @@ public class Dataminer
         {
             var dynamicPak = AskForPak();
             LoadDynamicKey(dynamicPak);
-            ioStoreName = dynamicPak.Name;
+            ioStoreNamesFilter.Add(dynamicPak.Name);
 
             // I should improve this step since is very slow :(
-            Log.Information("Loading new VfsEntries and comparing preloaded files with {name}. This will take few seconds.", ioStoreName);
-            LoadEntriesFromArchive(toDo == ToDo.ShopGenerator);
+            Log.Information("Loading new VfsEntries and comparing preloaded files with {name}. This will take few seconds.", ioStoreNamesFilter[0]);
+            LoadEntriesFromArchive();
             GenerateModelFromEntries(newEntries, action, toDo);
         }
         else if (action == Action.BulkArchive)
@@ -181,12 +184,15 @@ public class Dataminer
                 foreach (var key in dynamicKeys)
                 {
                     LoadDynamicKey(key);
+                    ioStoreNamesFilter.Add(key.Name);
                 }
                 Log.Information("Loading new VfsEntries and comparing preloaded files with selected paks. This will take few seconds.");
-                LoadEntriesFromArchive(toDo == ToDo.ShopGenerator);
+                LoadEntriesFromArchive();
                 GenerateModelFromEntries(newEntries, action, toDo);
             }
         }
+        timer.Stop();
+        Log.Information("All tasks finished in {tot}ms", Math.Round(timer.Elapsed.TotalSeconds, 2));
     }
 
     private DynamicKey AskForPak()
@@ -235,8 +241,8 @@ public class Dataminer
         {
             if (action == Action.AddNew) Log.Error("No new {type} found using {backup}.", type, backupName);
             else if (action == Action.AddEverything) Log.Error("No cosmetics found.");
-            else if (action == Action.AddArchive) Log.Error("No {type} found in {ioStoreName}.", type, ioStoreName);
-            else if (action == Action.BulkArchive) Log.Error("No {type} found in {ioStoreName}", type, ioStoreName);
+            else if (action == Action.AddArchive) Log.Error("No {type} found in {ioStoreNames}.", type, string.Join(", ", ioStoreNamesFilter));
+            else if (action == Action.BulkArchive) Log.Error("No {type} found in {ioStoreNames}", type, string.Join(", ", ioStoreNamesFilter));
 
             Console.ReadKey();
             Environment.Exit(0);
@@ -331,30 +337,17 @@ public class Dataminer
         Log.Information("Loaded {tot} VfsEntries.", all.Count);
     }
 
-    private void LoadEntriesFromArchive(bool dav2 = false)
+    private void LoadEntriesFromArchive()
     {
-        List<GameFile> cat = new();
-
-        if (!dav2)
+        foreach (var asset in provider.Files.Values)
         {
-            cat = provider.Files.Values.Where(
-                x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/Items/Cosmetics") ||
-                x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics")
-            ).ToList();
-        }
-        else
-        {
-            cat = provider.Files.Values.Where(
-                x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Catalog/NewDisplayAssets/") &&
-                x.NameWithoutExtension.StartsWith("DAv2")
-            ).ToList();
-        }
-
-        foreach (var value in cat)
-        {
-            if (value is not VfsEntry entry) continue;
-            else if (all.Contains(entry)) continue;
-            newEntries.Add(entry);
+            if (asset is not VfsEntry entry || entry.Path.EndsWith(".uexp") || entry.Path.EndsWith(".ubulk") || entry.Path.EndsWith(".uptnl"))
+                continue;
+            
+            if (ioStoreNamesFilter.Contains(entry.Vfs.Name))
+            {
+                newEntries.Add(entry);
+            }
         }
     }
 
