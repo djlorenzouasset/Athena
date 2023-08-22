@@ -29,16 +29,6 @@ public class ProfileAthenaModel
         public string templateId { get; set; } = "CosmeticLocker:cosmeticlocker_athena";
         public Attributes attributes { get; set; } = new();
         public int quantity { get; set; } = 1;
-
-        public void AddCharacter(string id) => attributes.locker_slots_data.slots.Character.items.Add(id);
-        public void AddBackpack(string id) => attributes.locker_slots_data.slots.Backpack.items.Add(id);
-        public void AddDance(string id) => attributes.locker_slots_data.slots.Dance.items.Add(id);
-        public void AddGlider(string id) => attributes.locker_slots_data.slots.Glider.items.Add(id);
-        public void AddItemWrap(string id) => attributes.locker_slots_data.slots.ItemWrap.items.Add(id);
-        public void AddLoadingScreen(string id) => attributes.locker_slots_data.slots.LoadingScreen.items.Add(id);
-        public void AddMusicPack(string id) => attributes.locker_slots_data.slots.MusicPack.items.Add(id);
-        public void AddPickaxe(string id) => attributes.locker_slots_data.slots.Pickaxe.items.Add(id);
-        public void AddContrail(string id) => attributes.locker_slots_data.slots.SkyDiveContrail.items.Add(id);
     }
 
     public class Attributes
@@ -72,23 +62,23 @@ public class ProfileAthenaModel
 
     public class Pickaxe
     {
-        public List<string> items { get; set; } = new();
+        public List<string> items { get; set; } = new() { null };
         public List<ActiveVariant> activeVariants { get; set; } = new();
     }
 
     public class Dance
     {
-        public List<string> items { get; set; } = new();
+        public List<string> items { get; set; } = new() { null };
     }
 
     public class Glider
     {
-        public List<string> items { get; set; } = new();
+        public List<string> items { get; set; } = new() { null };
     }
 
     public class Character
     {
-        public List<string> items { get; set; } = new();
+        public List<string> items { get; set; } = new() { null };
         public List<ActiveVariant> activeVariants { get; set; } = new();
     }
 
@@ -106,31 +96,31 @@ public class ProfileAthenaModel
 
     public class Backpack
     {
-        public List<string> items { get; set; } = new();
+        public List<string> items { get; set; } = new() { null };
         public List<ActiveVariant> activeVariants { get; set; } = new();
     }
 
     public class ItemWrap
     {
-        public List<string> items { get; set; } = new();
+        public List<string> items { get; set; } = new() { null };
         public List<ActiveVariant> activeVariants { get; set; } = new();
     }
 
     public class LoadingScreen
     {
-        public List<string> items { get; set; } = new();
+        public List<string> items { get; set; } = new() { null };
         public List<ActiveVariant> activeVariants { get; set; } = new();
     }
 
     public class MusicPack
     {
-        public List<string> items { get; set; } = new();
+        public List<string> items { get; set; } = new() { null };
         public List<ActiveVariant> activeVariants { get; set; } = new();
     }
 
     public class SkydiveContrail
     {
-        public List<string> items { get; set; } = new();
+        public List<string> items { get; set; } = new() { null };
         public List<ActiveVariant> activeVariants { get; set; } = new();
     }
 
