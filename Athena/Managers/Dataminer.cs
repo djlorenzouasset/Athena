@@ -260,8 +260,8 @@ public class Dataminer
             }
 
             Log.Information("Building Shop with {tot} shopAssets", loaded);
-            File.WriteAllText(Path.Join(DirectoryManager.Profiles, "shop.json"), shop.Build());
-            Log.Information("Saved shop for {name} in profiles folder", Config.config.athenaProfileId);
+            File.WriteAllText(Path.Join(Config.config.shopDirectory, "shop.json"), shop.Build());
+            Log.Information("Saved shop for {name}.", Config.config.athenaProfileId);
         }
         else
         {
@@ -322,8 +322,8 @@ public class Dataminer
 
             // save the profile
             Log.Information("Building profile-athena with {tot} cosmetics.", loaded);
-            File.WriteAllText(Path.Join(DirectoryManager.Profiles, "profile_athena.json"), profile.Build());
-            Log.Information("Saved profile athena for {name} in profiles folder.", Config.config.athenaProfileId);
+            File.WriteAllText(Path.Join(Config.config.profileDirectory, "profile_athena.json"), profile.Build());
+            Log.Information("Saved profile athena for {name}.", Config.config.athenaProfileId);
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using RestSharp;
 using Serilog.Sinks.SystemConsole.Themes;
 using Athena.Rest;
+using Athena.Models;
 
 namespace Athena.Managers;
 
@@ -17,6 +18,11 @@ public static class Athena
             .CreateLogger();
 
         DirectoryManager.CreateFolders();
+
+        // create settings file or load the saved one
+        Config.LoadSettings();
+        Console.Clear(); // clear the console after input
+
         DiscordRichPresence.Initialize();
         DiscordRichPresence.Update("Loading Assets");
         
