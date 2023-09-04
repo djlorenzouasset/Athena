@@ -45,7 +45,5 @@ public class ManifestDownloader
             var stream = file.GetStream();
             _provider.RegisterVfs(file.Name, new[] { stream });
         }
-
-        Log.Information("Loaded VirtualFile {pakName}", file.Name);
     }
 }
