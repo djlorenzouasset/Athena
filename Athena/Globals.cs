@@ -2,7 +2,7 @@
 
 public static class Globals
 {
-    public const string VERSION = "1.3.3";
+    public const string VERSION = "1.3.4";
     public const string APPID = "1142239120471634042";
 
     // endpoints
