@@ -1,16 +1,15 @@
-﻿using RestSharp;
-using Athena.Models;
+﻿using System.Net;
+using RestSharp;
 using Athena.Rest;
+using Athena.Models;
 
 public class EpicGamesEnpoints : RestBase
 {
-    public static AuthResponse? AuthResponse;
-
-    public EpicGamesEnpoints(RestClient client) : base(client)
+    public EpicGamesEnpoints(RestClient client) : base(client) 
     {
     }
 
-    public async Task<AuthResponse?> GetAuthAsync()
+    public async Task<AuthResponse?> CreateAuthAsync()
     {
         var request = new RestRequest(Globals.AUTH, Method.Post);
         request.AddHeader("Authorization", Globals.BASIC);
@@ -19,14 +18,22 @@ public class EpicGamesEnpoints : RestBase
         Log.Information("[{Method}] {StatusDescription} ({StatusCode}): {URI}", request.Method, response.StatusDescription, (int)response.StatusCode, request.Resource);
 
         if (response is null || !response.IsSuccessful || string.IsNullOrEmpty(response.Content)) return null;
-        AuthResponse = response.Data;
         return response.Data;
+    }
+
+    public async Task<bool> IsAuthValid()
+    {
+        var request = new RestRequest(Globals.VERIFY, Method.Get);
+        request.AddHeader("Authorization", "Bearer " + Config.config.accessToken);
+        var response = await _client.ExecuteAsync(request).ConfigureAwait(false);
+        Log.Information("[{Method}] {StatusDescription} ({StatusCode}): {URI}", request.Method, response.StatusDescription, (int)response.StatusCode, request.Resource);
+        return response.StatusCode == HttpStatusCode.OK;
     }
 
     public async Task<RestResponse?> GetManifestAsync()
     {
         var request = new RestRequest(Globals.MANIFEST, Method.Get);
-        request.AddHeader("Authorization", "Bearer " + AuthResponse?.access_token);
+        request.AddHeader("Authorization", "Bearer " + Config.config.accessToken);
         var response = await _client.ExecuteAsync(request).ConfigureAwait(false);
         Log.Information("[{Method}] {StatusDescription} ({StatusCode}): {URI}", request.Method, response.StatusDescription, (int)response.StatusCode, request.Resource);
 

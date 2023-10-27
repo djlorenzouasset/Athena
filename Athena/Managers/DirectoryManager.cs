@@ -1,18 +1,13 @@
-﻿using Athena.Models;
-
-namespace Athena.Managers;
+﻿namespace Athena.Managers;
 
 public static class DirectoryManager
 {
-    // general
-    public static string Logs = Path.Combine(Environment.CurrentDirectory, "Logs");
     public static string Settings = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Athena");
-
-    // All folder 
+    public static string Logs = Path.Combine(Environment.CurrentDirectory, ".logs");
     public static string ChunksDir = Path.Combine(Environment.CurrentDirectory, ".data");
-    public static string MappingsDir = Path.Combine(Environment.CurrentDirectory, ".mappings");
-    public static string BackupsDir = Path.Combine(Environment.CurrentDirectory, ".backups");
-    public static string Profiles = Path.Combine(Environment.CurrentDirectory, "profiles"); // optional folder
+    public static string Profiles = Path.Combine(Environment.CurrentDirectory, ".profiles"); // not really needed
+    public static string MappingsDir = Path.Combine(ChunksDir, ".mappings");
+    public static string BackupsDir = Path.Combine(ChunksDir, ".backups");
 
     public static void CreateFolders()
     {
@@ -33,7 +28,6 @@ public static class DirectoryManager
     {
         DirectoryInfo mappingsDir = new(MappingsDir);
         var recent = mappingsDir.GetFiles("*.usmap").OrderByDescending(f => f.LastWriteTime).First();
-
         if (recent is not null)
         {
             mappingsPath = recent.FullName;

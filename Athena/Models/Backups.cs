@@ -1,4 +1,6 @@
-﻿namespace Athena.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Athena.Models;
 
 public class Backup
 {

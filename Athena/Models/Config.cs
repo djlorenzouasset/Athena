@@ -8,9 +8,10 @@ public class Config
 {
     public static Config config;
 
-    public string athenaProfileId { get; set; }
-    public string profileDirectory { get; set; }
-    public string shopDirectory { get; set; }
+    public string athenaProfileId { get; set; } = "[PH] LoadOut_01";
+    public string accessToken { get; set; } = string.Empty; // for who download the program, to avoid errors
+    public string profileDirectory { get; set; } = DirectoryManager.Profiles;
+    public string shopDirectory { get; set; } = DirectoryManager.Profiles;
 
     public static void LoadSettings()
     {
@@ -18,10 +19,10 @@ public class Config
 
         if (!File.Exists(Path.Combine(DirectoryManager.Settings, "settings.json")))
         {
-            // ask the name for the profile athena (locker loadout name & other things)
+            // name for the loadout
             config.athenaProfileId = AnsiConsole.Ask<string>("Insert the [62]name[/] to use for the [62]Profile-Athena[/]:");
 
-            // ask the path where the profile will be saved (default is profiles folder)
+            // ask the path where the profile will be saved
             profileSaveQuestion:
             string profileSavePath = AnsiConsole.Ask<string>("Insert the [62]path[/] to use for save the [62]Profile-Athena[/] (type [62]d[/] for use the default one):");
             if (profileSavePath == "d")
@@ -32,16 +33,13 @@ public class Config
             {
                 if (!Directory.Exists(profileSavePath))
                 {
-                    Log.Error("The directory you inserted not exists.");
+                    Log.Error("The directory you inserted does not exists.");
                     goto profileSaveQuestion;
                 }
-                else
-                {
-                    config.profileDirectory = profileSavePath;
-                }
+                config.profileDirectory = profileSavePath;
             }
 
-            // ask the path where the shop will be saved (default is profiles folder)
+            // ask the path where the shop will be saved
             shopSaveQuestion:
             string shopSavePath = AnsiConsole.Ask<string>("Insert the [62]path[/] to use for save the [62]catalog[/] (type [62]d[/] for use the default one):");
             if (shopSavePath == "d")
@@ -55,12 +53,9 @@ public class Config
                     Log.Error("The directory you inserted not exists.");
                     goto shopSaveQuestion;
                 }
-                else
-                {
-                    config.shopDirectory = shopSavePath;
-                }
+                config.shopDirectory = shopSavePath;
             }
-
+            // save settings
             Save();
         }
         else

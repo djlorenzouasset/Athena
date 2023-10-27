@@ -1,12 +1,11 @@
 ﻿using RestSharp;
-using Athena.Managers;
-using Athena.Models;
 using Athena.Rest;
+using Athena.Models;
+using Athena.Managers;
 
 public class FNCentralEndpoints : RestBase
 {
     public Mappings[]? Mappings;
-
     public AesKey? AesKey;
 
     public FNCentralEndpoints(RestClient client) : base(client)

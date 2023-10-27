@@ -1,6 +1,5 @@
 ﻿/* 
-    Solitude ProfileBuilder.cs 
-    File at https://github.com/OutTheShade/Solitude/blob/master/Solitude/Objects/Profile/ProfileBuilder.cs
+   OutTheShade - Solitude: ProfileBuilder.cs (modified)
 */
 
 using Newtonsoft.Json;
@@ -11,26 +10,22 @@ namespace Athena.Managers;
 
 public class ProfileBuilder
 {
+    private ProfileAthena _profile;
     private List<ProfileCosmetic> _cosmetics;
-    private ProfileAthenaModel _profile;
 
-    public ProfileBuilder(int reserve = 0)
-    {
-        _cosmetics = new(reserve);
+    public ProfileBuilder()
+    {        
         _profile = new();
+        _cosmetics = new();
     }
-
-    public override string ToString() => Build();
 
     public string Build()
     {
         var profileJson = JObject.FromObject(_profile);
-
         if (profileJson is null)
             return string.Empty;
 
         var items = profileJson["items"];
-
         if (items is null)
             return string.Empty;
 
@@ -42,7 +37,7 @@ public class ProfileBuilder
         return profileJson.ToString(Formatting.Indented);
     }
 
-    public ProfileCosmetic OnCosmeticAdded(string id, Dictionary<string, List<string>> variants)
+    public ProfileCosmetic AddCosmetic(string id, Dictionary<string, List<string>> variants)
     {
         ProfileCosmetic ret;
         var prefix = id.Remove(id.IndexOf('_')).ToLower();
@@ -51,20 +46,20 @@ public class ProfileBuilder
         {
             case "cid":
             case "character":
-                ret = new ProfileCosmetic(id, "AthenaCharacter", variants: variants);
+                ret = new ProfileCosmetic(id, "AthenaCharacter", variants);
                 break;
             case "bid":
             case "backpack":
-                ret = new ProfileCosmetic(id, "AthenaBackpack", variants: variants);
+                ret = new ProfileCosmetic(id, "AthenaBackpack", variants);
                 break;
             case "pickaxe":
-                ret = new ProfileCosmetic(id, "AthenaPickaxe", variants: variants);
+                ret = new ProfileCosmetic(id, "AthenaPickaxe", variants);
                 break;
             case "eid":
                 ret = new ProfileCosmetic(id, "AthenaDance");
                 break;
             case "glider":
-                ret = new ProfileCosmetic(id, "AthenaGlider", variants: variants);
+                ret = new ProfileCosmetic(id, "AthenaGlider", variants);
                 break;
             case "wrap":
                 ret = new ProfileCosmetic(id, "AthenaItemWrap");
@@ -84,7 +79,7 @@ public class ProfileBuilder
                 ret = new ProfileCosmetic(id, "AthenaSkyDiveContrail");
                 break;
             case "petcarrier":
-                ret = new ProfileCosmetic(id, "AthenaBackpack", variants: variants);
+                ret = new ProfileCosmetic(id, "AthenaBackpack", variants);
                 break;
             case "spray":
             case "spid":

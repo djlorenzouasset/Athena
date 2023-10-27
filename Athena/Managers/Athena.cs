@@ -2,58 +2,66 @@
 using Serilog.Sinks.SystemConsole.Themes;
 using Athena.Rest;
 using Athena.Models;
+using Athena.Services;
 
 namespace Athena.Managers;
 
 public static class Athena
 {
+    private static string mapping { get; set; } = string.Empty;
+    private static RestResponse manifest { get; set; } = new();
+
     public static async Task Initialize()
     {
         Console.Title = "Athena: Starting";
 
+        // configure logger for the application
         Log.Logger = new LoggerConfiguration()
-            .WriteTo.File(Path.Combine(DirectoryManager.Logs, $"Athena-Log-{DateTime.Now:dd-MM-yyyy}.txt"),
-                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+            .WriteTo.File(Path.Combine(DirectoryManager.Logs, $"Athena-Log-{DateTime.Now:dd-MM-yyyy}.txt"))
             .WriteTo.Console(theme: AnsiConsoleTheme.Literate)
             .CreateLogger();
 
-        DirectoryManager.CreateFolders();
-
-        // create settings file or load the saved one
-        Config.LoadSettings();
+        DirectoryManager.CreateFolders(); // this function creates the needed folders
+        Config.LoadSettings(); // create the settings file or load the saved one
         Console.Clear(); // clear the console after input
 
+        // discord rich presence 
         DiscordRichPresence.Initialize();
-        DiscordRichPresence.Update("Loading Assets");
-        
-        // endpoints requests
-        var mappings = await Endpoints.FNCentral.GetMappingsAsync();
+
+        await CheckAuth();
+        await TryGetAesKeys();
+        if (!await TryGetMappings()) return;
+        if (!await TryGetManifest()) return;
+        await InitializeDataminer();
+    }
+
+    private static async Task TryGetAesKeys()
+    {
         var aesKeys = await Endpoints.FNCentral.GetAesKeysAsync();
-
-        // use this variable for assing the mapping name
-        string mapping;
-
         if (aesKeys is null)
         {
             Log.Warning("AesKeys response was unsuccessful, the program may not work as expected.");
         }
+    }
 
-        if (mappings is null || !mappings.FirstOrDefault().IsValid || mappings.Length == 0)
+    private static async Task<bool> TryGetMappings()
+    {
+        var mappings = await Endpoints.FNCentral.GetMappingsAsync();
+        if (mappings is null || mappings.Length == 0)
         {
             if (!DirectoryManager.GetSavedMappings(out string mappingPath))
             {
                 Log.Error("Mappings response was invalid and no mappings are saved in .mappings directory.");
-                Console.ReadKey();
-                Environment.Exit(0);
+                return false;
             }
+
             mapping = Path.Combine(DirectoryManager.MappingsDir, mappingPath);
             Log.Information("Mappings loaded from {path}", mapping);
         }
         else
         {
-            var mappingFile = mappings.FirstOrDefault();
+            var mappingFile = mappings.First();
             mapping = Path.Combine(DirectoryManager.MappingsDir, mappingFile.Filename);
-
             if (!File.Exists(mapping))
             {
                 await Endpoints.FNCentral.DownloadMappingsAsync(mappingFile.Url, mappingFile.Filename);
@@ -61,26 +69,36 @@ public static class Athena
             }
         }
 
-        // get auth
-        await Endpoints.Epic.GetAuthAsync();
-
-        // get manifest
-        RestResponse? manifest = await Endpoints.Epic.GetManifestAsync();
-
-        if (manifest is null || string.IsNullOrEmpty(manifest.Content))
-        {
-            Log.Error("Invalid response from Fortnite Manifest.");
-            Console.ReadKey();
-            Environment.Exit(0);
-        }
-
-        await InitializeDataminer(mapping, manifest);
+        return true;
     }
 
-    private static async Task InitializeDataminer(string mappingFile, RestResponse manifest)
+    private static async Task<bool> TryGetManifest()
     {
-        var dataminer = new Dataminer(mappingFile);
-        await dataminer.LoadAllPaks(manifest);
-        await dataminer.AskGeneration();
+        RestResponse? _manifest = await Endpoints.Epic.GetManifestAsync();
+        if (_manifest is null || string.IsNullOrEmpty(_manifest.Content))
+        {
+            Log.Error("Invalid response from Fortnite Manifest.");
+            return false;
+        }
+
+        manifest = _manifest;
+        return true;
+    }
+
+    private static async Task CheckAuth()
+    {
+        if (!await Endpoints.Epic.IsAuthValid())
+        {
+            var auth = await Endpoints.Epic.CreateAuthAsync();
+            Config.config.accessToken = auth.access_token;
+            Config.Save();
+        }
+    }
+
+    private static async Task InitializeDataminer()
+    {
+        var dataminer = new Dataminer(mapping);
+        await dataminer.LoadAllPaksAsync(manifest);
+        await dataminer.ShowMenu();
     }
 }

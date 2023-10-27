@@ -1,15 +1,15 @@
 ﻿using DiscordRPC;
 
-namespace Athena.Managers;
+namespace Athena.Services;
 
 public static class DiscordRichPresence
 {
     private static DiscordRpcClient? Client;
-
     private static readonly RichPresence Default = new()
     {
         Timestamps = new() { Start = DateTime.UtcNow },
-        Assets = new() { LargeImageKey = "logo", LargeImageText = $"Athena {Globals.VERSION}" }
+        Assets = new() { LargeImageKey = "logo", LargeImageText = $"Athena {Globals.VERSION}" },
+        Buttons = new Button[] { new() { Label = "Download Athena", Url = Globals.DOWNLOAD } }
     };
 
     public static void Initialize()
@@ -17,7 +17,6 @@ public static class DiscordRichPresence
         Client = new DiscordRpcClient(Globals.APPID);
         Client.OnReady += (_, args) => Log.Information("Discord Rich Presence Started for {Username}", args.User.Username);
         Client.OnError += (_, args) => throw new Exception($"Error while starting Discord RPC: {args.Message}");
-
         Client.Initialize();
         Client.SetPresence(Default);
     }
