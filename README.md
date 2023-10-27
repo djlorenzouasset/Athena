@@ -1,9 +1,9 @@
 # Athena
 <img src=".github/AthenaLogo.png" height="130" align="right"> 
 
-Fortnite Profile-Athena & Catalog models creator for Private Servers, that use Fortnite-Live manifest.
+Fortnite Profile Athena & Catalog creator for Private Servers that use Fortnite-Live manifest.
 
-> You can use this program with [Neonite](https://github.com/NeoniteDev/NeoniteV2) backend, saving the profile-athena.json in the profiles folder and shop.json in the root folder.
+> You can use this program with [Neonite](https://github.com/HybridFNBR/Neonite) backend, saving the profile_athena.json in the profiles folder and shop.json in the responses folder. Make sure to save the `fortnitegame.json` (file situated in the .backend folder) in the responses folder.
 
 -----------------
 
@@ -32,5 +32,5 @@ Or install the latest release [here](https://github.com/djlorenzouasset/Athena/r
 -----------------
 
 ## Credits
-- A very big thank to [@andredotuasset](https://twitter.com/andredotuasset) & [@DrCacahuette](https://twitter.com/DrCacahuette) for helping in the development.
+- A very big thank to [@andredotuasset](https://twitter.com/andredotuasset) & [@unrealhybrid](https://twitter.com/unrealhybrid) for helping in the development.
 - Profile Athena model (modified) made by [@OutTheShade](https://github.com/OutTheShade).
