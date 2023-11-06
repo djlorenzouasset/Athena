@@ -19,16 +19,16 @@ namespace Athena.Managers;
 
 public class Dataminer
 {
+    private readonly FGuid zeroGuid = new FGuid(0, 0, 0, 0); // this is just for dont load dynamic keys
+    private readonly Regex pakNameRegex = new(@"^pakchunk(\d*)-WindowsClient.utoc"); // we use this just for the bulk function
+
     private StreamedFileProvider provider;
     private ManifestDownloader manifest;
     private List<VfsEntry> all = new();
     private List<VfsEntry> newEntries = new();
-    // these are just used for global logs and function arguments
     private List<string> ioStoreNames = new();
+    private List<string> itemsFilter = new();
     private string backupName = string.Empty;
-
-    private readonly FGuid zeroGuid = new FGuid(0, 0, 0, 0); // this is just for dont load dynamic keys
-    private readonly Regex pakNameRegex = new(@"^pakchunk(\d*)-WindowsClient.utoc"); // we use this just for the bulk function
 
     private readonly string[] athenaOptions = new[] { 
         "Profile Athena", 
@@ -36,12 +36,15 @@ public class Dataminer
     };
     private readonly string[] profileOptions = new[] { 
         "All Cosmetics", "New Cosmetics", 
-        "New Cosmetics (With Paks)", 
-        "Pak Cosmetics", "Paks Bulk", "Back"
+        "New Cosmetics (With Paks)",
+        "Custom Cosmetics (by Id)",
+        "Pak Cosmetics", "Paks Bulk", 
+        "Back"
     };
     private readonly string[] shopOptions = new[] { 
-        "New Cosmetics", "New Cosmetics (With Paks)", 
-        "Pak Cosmetics", "Paks Bulk", "Back"
+        "New Cosmetics", "New Cosmetics (With Paks)",
+        "Custom Cosmetics (by Id)", "Pak Cosmetics", 
+        "Paks Bulk", "Back"
     };
 
     public Dataminer(string mappingFile)
@@ -130,10 +133,9 @@ public class Dataminer
             case "Paks Bulk":
                 action = Actions.BulkArchive;
                 break;
-            /*
-            case "Add Selected": UPCOMING
+            case "Custom Cosmetics (by Id)":
+                action = Actions.AddOnlySelected;
                 break;
-            */
             case "Back":
                 // return to menu (hope it works fine)
                 await ReturnToMenu(includeRequest: false);
@@ -195,13 +197,25 @@ public class Dataminer
                     return;
             }
         }
-        /*
         else if (action == Actions.AddOnlySelected)
         {
-            UPCOMING: FUNCTION CODE HERE
-            return;
+            var assets = RequestSelectedItems();
+            if (assets.Count() == 0)
+            {
+                Log.Error("No items found for the input you inserted.");
+                await ReturnToMenu(true);
+                return;
+            }
+            else
+            {
+                itemsFilter.AddRange(assets);
+                LoadAllEntries(x => Endpoints.FNCentral.AesKey.DynamicKeys.Select(
+                    k => new FGuid(k.Guid)).Contains(x.EncryptionKeyGuid) || x.EncryptionKeyGuid == zeroGuid, isCustom: true);
+
+                if (!await GenerateSelectedModel(newEntries, model, action))
+                    return;
+            }
         }
-        */
 
         timer.Stop();
         Log.Information("All tasks finished in {tot}ms\n", Math.Round(timer.Elapsed.TotalSeconds, 2));
@@ -314,6 +328,12 @@ public class Dataminer
             x => numbers.Contains(pakNameRegex.Match(x.Name).Groups[1].ToString()));
     }
 
+    private IEnumerable<string> RequestSelectedItems()
+    {
+        var names = AnsiConsole.Ask<string>("Insert the [62]names[/] of the [62]items[/] you want generate separated by [62];[/]:");
+        return names.Split(";").Select(x => x.Trim());
+    }
+
     private async Task ReturnToMenu(bool fromError = false, bool includeRequest = true)
     {
         if (!includeRequest)
@@ -330,10 +350,11 @@ public class Dataminer
         // clear arrays for a new generation
         newEntries.Clear();
         ioStoreNames.Clear();
+        itemsFilter.Clear();
         await ShowMenu();
     }
 
-    private void LoadAllEntries(Func<IAesVfsReader, bool> readers, bool global = false)
+    private void LoadAllEntries(Func<IAesVfsReader, bool> readers, bool global = false, bool isCustom = false)
     {
         var timer = new Stopwatch();
         int total = 0;
@@ -347,6 +368,12 @@ public class Dataminer
                     entry.Path.EndsWith(".ubulk") || entry.Path.EndsWith(".uptnl")) continue;
 
                 if (global) all.Add(entry); // used for filter new files
+                else if (isCustom) // used for filter only selected assets
+                {
+                    if (!itemsFilter.Contains(entry.NameWithoutExtension))
+                        continue;
+                    newEntries.Add(entry);
+                }
                 else newEntries.Add(entry); // used for load archives
                 total++;
             }

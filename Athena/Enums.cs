@@ -12,6 +12,6 @@ public enum Actions : int
     AddArchive = 1, // only selected archive (ioStore)
     BulkArchive = 2, // add only selected archives (ioStores)
     AddEverything = 3, // add all cosmetics (athena profile only)
-    AddOnlySelected = 4, // upcoming shit
+    AddOnlySelected = 4, // add only some cosmetics (filtered by ids) - v1.5.0
     AddNewWithArchives = 5 // new files + archives (ioStores)
 }
