@@ -294,7 +294,7 @@ public class Dataminer
             Log.Information("Building Profile Athena with {tot} cosmetics.", added);
             try
             {
-                File.WriteAllText(Path.Join(Config.config.shopDirectory, "profile_athena.json"), profile.Build());
+                File.WriteAllText(Path.Join(Config.config.profileDirectory, "profile_athena.json"), profile.Build());
             }
             catch (Exception err) // sometimes the path wont accept characters like . or -
             {
