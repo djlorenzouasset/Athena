@@ -57,6 +57,8 @@ public class Dataminer
     public async Task LoadAllPaksAsync(RestResponse manifestData)
     {
         await manifest.DownloadManifest(new(manifestData.Content));
+        Log.Information("Downloading manifest for {build}.", manifest.ManifestFile.BuildVersion);
+
         foreach (var file in manifest.ManifestFile.FileManifests)
         {
             if (!ManifestDownloader.PaksFinder.IsMatch(file.Name) || file.Name.Contains("optional")) continue;
@@ -199,7 +201,7 @@ public class Dataminer
         }
         else if (action == Actions.AddOnlySelected)
         {
-            var assets = RequestSelectedItems();
+            var assets = RequestSelectedItems(model);
             if (assets.Count() == 0)
             {
                 Log.Error("No items found for the input you inserted.");
@@ -328,9 +330,10 @@ public class Dataminer
             x => numbers.Contains(pakNameRegex.Match(x.Name).Groups[1].ToString()));
     }
 
-    private IEnumerable<string> RequestSelectedItems()
+    private IEnumerable<string> RequestSelectedItems(Model model)
     {
-        var names = AnsiConsole.Ask<string>("Insert the [62]names[/] of the [62]items[/] you want generate separated by [62];[/]:");
+        string type = model == Model.ProfileAthena ? "cosmetics ids" : "DAv2s";
+        var names = AnsiConsole.Ask<string>($"Insert the [62]{type}[/] of the [62]items[/] you want generate separated by [62];[/]:");
         return names.Split(";").Select(x => x.Trim());
     }
 
