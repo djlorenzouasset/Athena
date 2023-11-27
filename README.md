@@ -21,7 +21,7 @@ git clone https://github.com/djlorenzouasset/Athena --recursive
 2. Build the program
 ```
 cd Athena
-dotnet publish Athena.csproj -c Release --no-self-contained -p:PublishReadyToRun=false -p:PublishSingleFile=true -p:DebugType=None -p:GenerateDocumentationFile=false -p:DebugSymbols=false
+dotnet publish Athena -c Release --no-self-contained -p:PublishReadyToRun=false -p:PublishSingleFile=true -p:DebugType=None -p:GenerateDocumentationFile=false -p:DebugSymbols=false
 ```
 
 Or install the latest release [here](https://github.com/djlorenzouasset/Athena/releases/latest) 
