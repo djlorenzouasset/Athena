@@ -80,7 +80,8 @@ public class Dataminer
         DiscordRichPresence.Update($"In Menu - {all.Count:###,###,###} Loaded Assets.");
         // credits (andre can be removed """"""""")
         AnsiConsole.Write(new Markup($"[63]Athena v{Globals.VERSION}[/]: Made with [124]<3[/] by [99]@djlorenzouasset[/] & [99]@andredotuasset[/] with the help of [99]@unrealhybrid[/]\n"));
-        AnsiConsole.Write(new Markup($"Join the [63]discord server[/]: [99]{Globals.DISCORD}[/]\n\n"));
+        AnsiConsole.Write(new Markup($"Join the [63]discord server[/]: [99]{Globals.DISCORD}[/]\n"));
+        AnsiConsole.Write(new Markup("[11]WARNING[/]: This version of the program is in BETA. Vehicles variants are not working for now.\n\n"));
 
         // main menu
         var selected = AnsiConsole.Prompt(
