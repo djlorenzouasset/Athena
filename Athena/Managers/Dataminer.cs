@@ -233,13 +233,14 @@ public class Dataminer
         Func<VfsEntry, bool> finder = model == Model.ProfileAthena
             // cosmetics for the profile
             ? x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/Items/Cosmetics") ||
-              x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics") 
+              x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics") ||
+              (x.PathWithoutExtension.Contains("SparksCosmetics") && (x.NameWithoutExtension.StartsWith("Sparks_") || x.NameWithoutExtension.StartsWith("SID_"))) ||
+              (x.PathWithoutExtension.Contains("VehicleCosmetics") && x.NameWithoutExtension.StartsWith("ID_"))
             // itemshop assets
             : x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Catalog/NewDisplayAssets/") &&
               x.NameWithoutExtension.StartsWith("DAv2");
 
         entries = entries.Where(finder); // uses the function here for filter assets
-
         if (entries.Count() == 0)
         {
             if (action == Actions.AddNew) Log.Error("No new {type} found using {backup}.", type, backupName);
@@ -279,8 +280,8 @@ public class Dataminer
             {
                 try
                 {
-                    var exports = provider.LoadAllObjects(entry.Path);
-                    var variants = Helper.GetAllVariants(exports.First());
+                    var exports = await provider.LoadObjectAsync(entry.PathWithoutExtension + '.' + entry.NameWithoutExtension);
+                    var variants = Helper.GetAllVariants(exports);
                     profile.AddCosmetic(entry.NameWithoutExtension, variants);
                     Log.Information("Added \"{name}\" with {totVariants} channels variants.", entry.NameWithoutExtension, variants.Count);
                     added++;
