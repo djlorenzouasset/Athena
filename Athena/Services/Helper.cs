@@ -36,6 +36,7 @@ public static class Helper
         }
     }
 
+    // VARIANTS ARE NOT WORKING FOR VEHICLES ATM
     public static Dictionary<string, List<string>> GetAllVariants(UObject obj) // get available variants for cosmetics 
     {
         // thanks to Half for allowing me use the function in this project <3
