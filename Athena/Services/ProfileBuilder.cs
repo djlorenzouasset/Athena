@@ -10,6 +10,7 @@ namespace Athena.Managers;
 
 public class ProfileBuilder
 {
+    private readonly int sparksLastIndex = 7;
     private ProfileAthena _profile;
     private List<ProfileCosmetic> _cosmetics;
 
@@ -40,7 +41,13 @@ public class ProfileBuilder
     public ProfileCosmetic AddCosmetic(string id, Dictionary<string, List<string>> variants)
     {
         ProfileCosmetic ret;
-        var prefix = id.Remove(id.IndexOf('_')).ToLower();
+
+        /*
+            NOTE: This fix is not definitive
+        */
+        var prefix = id.Contains("Sparks") 
+            ? id.Remove(id.IndexOf('_', sparksLastIndex)).ToLower() 
+            : id.Remove(id.IndexOf('_')).ToLower();
 
         switch (prefix)
         {
@@ -87,8 +94,39 @@ public class ProfileBuilder
             case "emoji":
                 ret = new ProfileCosmetic(id, "AthenaDance");
                 break;
+
+            /* Vehicles */
+            case "id":
+                var type = id.Split('_')[1];
+                ret = new ProfileCosmetic(id, $"VehicleCosmetics_{type}");
+                break;
+
+            /* Instruments */
+            case "sparks_mic":
+                ret = new ProfileCosmetic(id, "SparksMicrophone", variants);
+                break;
+            case "sparks_keytar":
+                ret = new ProfileCosmetic(id, "SparksKeyboard", variants);
+                break;
+            case "sparks_guitar":
+                ret = new ProfileCosmetic(id, "SparksGuitar", variants);
+                break;
+            case "sparks_drum":
+                ret = new ProfileCosmetic(id, "SparksDrums", variants);
+                break;
+            case "sparks_bass":
+                ret = new ProfileCosmetic(id, "SparksBass", variants);
+                break;
+            case "sparksaura":
+                ret = new ProfileCosmetic(id, "SparksAura", variants);
+                break;
+            case "sid":
+                ret = new ProfileCosmetic(id, "SparksSong", variants);
+                break;
+
+            // other 
             default:
-                ret = new ProfileCosmetic(id, "AthenaCharacter");
+                ret = new ProfileCosmetic(id, "AthenaCharacter", variants);
                 break;
         };
 
