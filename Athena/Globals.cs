@@ -2,7 +2,7 @@
 
 public static class Globals
 {
-    public const string VERSION = "1.5.1";
+    public const string VERSION = "1.5.2";
     public const string APPID = "1142239120471634042";
     public const string DISCORD = "https://discord.gg/w4KArJVvz3";
     public const string DOWNLOAD = "https://github.com/djlorenzouasset/Athena/releases/latest";
