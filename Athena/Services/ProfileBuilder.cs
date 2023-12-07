@@ -98,7 +98,7 @@ public class ProfileBuilder
             /* Vehicles */
             case "id":
                 var type = id.Split('_')[1];
-                ret = new ProfileCosmetic(id, $"VehicleCosmetics_{type}");
+                ret = new ProfileCosmetic(id, $"VehicleCosmetics_{type}", variants);
                 break;
 
             /* Instruments */
