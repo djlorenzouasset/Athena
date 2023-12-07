@@ -47,7 +47,9 @@ public static class Helper
         {
             List<string> ownedParts = new();
 
-            string channel = style.GetOrDefault("VariantChannelName", new FText(DEFAULT_VARIANT_NAME)).Text;
+            var variantChannelTag = style.GetOrDefault<FStructFallback>("VariantChannelTag");
+            var channel = variantChannelTag?.GetOrDefault("TagName", new FName(DEFAULT_STYLE_NAME)).Text.Split(".").Last();
+
             var optionsName = style.ExportType switch
             {
                 "FortCosmeticCharacterPartVariant" => "PartOptions",
