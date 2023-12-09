@@ -45,7 +45,7 @@ public class ProfileBuilder
         /*
             NOTE: This fix is not definitive
         */
-        var prefix = id.Contains("Sparks") 
+        var prefix = id.Contains("Sparks_") 
             ? id.Remove(id.IndexOf('_', sparksLastIndex)).ToLower() 
             : id.Remove(id.IndexOf('_')).ToLower();
 
@@ -63,7 +63,7 @@ public class ProfileBuilder
                 ret = new ProfileCosmetic(id, "AthenaPickaxe", variants);
                 break;
             case "eid":
-                ret = new ProfileCosmetic(id, "AthenaDance");
+                ret = new ProfileCosmetic(id, "AthenaDance", variants);
                 break;
             case "glider":
                 ret = new ProfileCosmetic(id, "AthenaGlider", variants);
@@ -79,11 +79,11 @@ public class ProfileBuilder
                 ret = new ProfileCosmetic(id, "AthenaLoadingScreen");
                 break;
             case "umbrella":
-                ret = new ProfileCosmetic(id, "AthenaGlider");
+                ret = new ProfileCosmetic(id, "AthenaGlider", variants);
                 break;
             case "contrail":
             case "trails":
-                ret = new ProfileCosmetic(id, "AthenaSkyDiveContrail");
+                ret = new ProfileCosmetic(id, "AthenaSkyDiveContrail", variants);
                 break;
             case "petcarrier":
                 ret = new ProfileCosmetic(id, "AthenaBackpack", variants);
