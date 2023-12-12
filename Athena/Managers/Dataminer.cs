@@ -235,8 +235,8 @@ public class Dataminer
             // cosmetics for the profile
             ? x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/Items/Cosmetics") ||
               x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics") ||
-              ((x.PathWithoutExtension.Contains("SparksCosmetics") || x.PathWithoutExtension.Contains("SparksSongTemplates")) && (x.NameWithoutExtension.StartsWith("Sparks_") || 
-              x.NameWithoutExtension.StartsWith("SID_") || x.NameWithoutExtension.StartsWith("SparksAura_"))) ||
+              ((x.PathWithoutExtension.Contains("SparksCosmetics") || x.PathWithoutExtension.Contains("SparksSongTemplates")) && 
+              (x.NameWithoutExtension.StartsWith("Sparks_") || x.NameWithoutExtension.StartsWith("SID_") || x.NameWithoutExtension.StartsWith("SparksAura_"))) ||
               (x.PathWithoutExtension.Contains("VehicleCosmetics") && x.NameWithoutExtension.StartsWith("ID_"))
             // itemshop assets
             : x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Catalog/NewDisplayAssets/") &&
@@ -264,16 +264,19 @@ public class Dataminer
             }
 
             Log.Information("Building Shop with {tot} shopAssets", added);
+            string savePath;
             try
             {
                 File.WriteAllText(Path.Join(Config.config.shopDirectory, "shop.json"), shop.Build());
+                savePath = Config.config.shopDirectory;
             }
             catch (Exception err) // sometimes the path wont accept characters like . or -
             {
                 Log.Warning("An error has occurred while saving the shop: {err}. Saving in default directory (.profiles).", err.Message);
                 File.WriteAllText(Path.Join(DirectoryManager.Profiles, "shop.json"), shop.Build());
+                savePath = DirectoryManager.Profiles;
             }
-            Log.Information("Saved shop for {name}.", Config.config.athenaProfileId);
+            Log.Information("Saved shop for {name} in {path}.", Config.config.athenaProfileId, Config.config.shopDirectory);
         }
         else
         {
@@ -297,16 +300,19 @@ public class Dataminer
             }
 
             Log.Information("Building Profile Athena with {tot} cosmetics.", added);
+            string savePath;
             try
             {
                 File.WriteAllText(Path.Join(Config.config.profileDirectory, "profile_athena.json"), profile.Build());
+                savePath = Config.config.profileDirectory;
             }
             catch (Exception err) // sometimes the path wont accept characters like . or -
             {
                 Log.Warning("An error has occurred while saving the profile: {err}. Saving in default directory (.profiles).", err.Message);
                 File.WriteAllText(Path.Join(DirectoryManager.Profiles, "profile_athena.json"), profile.Build());
+                savePath = DirectoryManager.Profiles;
             }
-            Log.Information("Saved Profile Athena for {name}.", Config.config.athenaProfileId);
+            Log.Information("Saved Profile Athena for {name} in {path}.", Config.config.athenaProfileId, savePath);
         }
 
         return true;
