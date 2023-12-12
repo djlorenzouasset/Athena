@@ -32,5 +32,5 @@ Or install the latest release [here](https://github.com/djlorenzouasset/Athena/r
 -----------------
 
 ## Credits
-- A very big thank to [@andredotuasset](https://twitter.com/andredotuasset) & [@unrealhybrid](https://twitter.com/unrealhybrid) for helping in the development.
+- A very big thank-you to [@andredotuasset](https://twitter.com/andredotuasset) & [@unrealhybrid](https://twitter.com/unrealhybrid) for helping in the development.
 - Profile Athena model (modified) made by [@OutTheShade](https://github.com/OutTheShade).
