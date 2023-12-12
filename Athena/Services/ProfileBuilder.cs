@@ -1,5 +1,5 @@
 ﻿/* 
-   OutTheShade - Solitude: ProfileBuilder.cs (modified)
+   OutTheShade - Solitude: ProfileBuilder.cs (modified by me for latest)
 */
 
 using Newtonsoft.Json;
@@ -41,10 +41,6 @@ public class ProfileBuilder
     public ProfileCosmetic AddCosmetic(string id, Dictionary<string, List<string>> variants)
     {
         ProfileCosmetic ret;
-
-        /*
-            NOTE: This fix is not definitive
-        */
         var prefix = id.Contains("Sparks_") 
             ? id.Remove(id.IndexOf('_', sparksLastIndex)).ToLower() 
             : id.Remove(id.IndexOf('_')).ToLower();
@@ -95,13 +91,15 @@ public class ProfileBuilder
                 ret = new ProfileCosmetic(id, "AthenaDance");
                 break;
 
-            /* Vehicles */
+            /* THE FIX BELLOW IS NOT DEFINITIVE */
+
+            // vehicles
             case "id":
                 var type = id.Split('_')[1];
                 ret = new ProfileCosmetic(id, $"VehicleCosmetics_{type}", variants);
                 break;
 
-            /* Instruments */
+            // instruments
             case "sparks_mic":
                 ret = new ProfileCosmetic(id, "SparksMicrophone", variants);
                 break;
@@ -124,9 +122,9 @@ public class ProfileBuilder
                 ret = new ProfileCosmetic(id, "SparksSong", variants);
                 break;
 
-            // other 
+            // other
             default:
-                ret = new ProfileCosmetic(id, "AthenaCharacter", variants);
+                ret = new ProfileCosmetic(id, "TBD", variants);
                 break;
         };
 
