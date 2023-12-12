@@ -78,8 +78,9 @@ public class Dataminer
         Console.Clear();
         Console.Title = $"Athena v{Globals.VERSION}";
         DiscordRichPresence.Update($"In Menu - {all.Count:###,###,###} Loaded Assets.");
-        // credits (andre can be removed """"""""")
+        // this menu is static, and will never be removed
         AnsiConsole.Write(new Markup($"[63]Athena v{Globals.VERSION}[/]: Made with [124]<3[/] by [99]@djlorenzouasset[/] & [99]@andredotuasset[/] with the help of [99]@unrealhybrid[/]\n"));
+        AnsiConsole.Write(new Markup($"[63]Need to change your profiles directory?[/] Go in the [99]%appdata%/Athena[/] folder and edit the [99]settings.json[/] file.\n"));
         AnsiConsole.Write(new Markup($"Join the [63]discord server[/]: [99]{Globals.DISCORD}[/]\n\n"));
 
         // main menu
