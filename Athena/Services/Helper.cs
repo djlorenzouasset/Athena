@@ -46,12 +46,18 @@ public static class Helper
         {
             List<string> ownedParts = new();
 
-            string channel = style.GetOrDefault("VariantChannelName", new FText(DEFAULT_VARIANT_NAME)).Text;
+            var channelTag = style.GetOrDefault<FStructFallback>("VariantChannelTag");
+            if (channelTag is null)
+                continue;
+
+            string channelName = channelTag.GetOrDefault("TagName", new FName(DEFAULT_VARIANT_NAME)).Text;
             var optionsName = style.ExportType switch
             {
                 "FortCosmeticCharacterPartVariant" => "PartOptions",
+                "FortCosmeticGameplayTagVariant" => "GenericTagOptions",
                 "FortCosmeticMaterialVariant" => "MaterialOptions",
                 "FortCosmeticParticleVariant" => "ParticleOptions",
+                "FortCosmeticPropertyVariant" => "GenericPropertyOptions", // TEST FOR WHEELS
                 "FortCosmeticMeshVariant" => "MeshOptions",
                 _ => null
             };
@@ -75,7 +81,8 @@ public static class Helper
 
                 ownedParts.Add(tag.Split(".").Last());
             }
-            variants.Add(channel, ownedParts);
+
+            variants.Add(channelName.Split('.').Last(), ownedParts);
         }
 
         return variants;

@@ -78,8 +78,9 @@ public class Dataminer
         Console.Clear();
         Console.Title = $"Athena v{Globals.VERSION}";
         DiscordRichPresence.Update($"In Menu - {all.Count:###,###,###} Loaded Assets.");
-        // credits (andre can be removed """"""""")
+        // this menu is static, and will never be removed
         AnsiConsole.Write(new Markup($"[63]Athena v{Globals.VERSION}[/]: Made with [124]<3[/] by [99]@djlorenzouasset[/] & [99]@andredotuasset[/] with the help of [99]@unrealhybrid[/]\n"));
+        AnsiConsole.Write(new Markup($"[63]Need to change your profiles directory?[/] Go in the [99]%appdata%/Athena[/] folder and edit the [99]settings.json[/] file.\n"));
         AnsiConsole.Write(new Markup($"Join the [63]discord server[/]: [99]{Globals.DISCORD}[/]\n\n"));
 
         // main menu
@@ -233,13 +234,15 @@ public class Dataminer
         Func<VfsEntry, bool> finder = model == Model.ProfileAthena
             // cosmetics for the profile
             ? x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/Items/Cosmetics") ||
-              x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics") 
+              x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics") ||
+              ((x.PathWithoutExtension.Contains("SparksCosmetics") || x.PathWithoutExtension.Contains("SparksSongTemplates")) && 
+              (x.NameWithoutExtension.StartsWith("Sparks_") || x.NameWithoutExtension.StartsWith("SID_") || x.NameWithoutExtension.StartsWith("SparksAura_"))) ||
+              (x.PathWithoutExtension.Contains("VehicleCosmetics") && x.NameWithoutExtension.StartsWith("ID_"))
             // itemshop assets
             : x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Catalog/NewDisplayAssets/") &&
               x.NameWithoutExtension.StartsWith("DAv2");
 
         entries = entries.Where(finder); // uses the function here for filter assets
-
         if (entries.Count() == 0)
         {
             if (action == Actions.AddNew) Log.Error("No new {type} found using {backup}.", type, backupName);
@@ -261,16 +264,19 @@ public class Dataminer
             }
 
             Log.Information("Building Shop with {tot} shopAssets", added);
+            string savePath;
             try
             {
                 File.WriteAllText(Path.Join(Config.config.shopDirectory, "shop.json"), shop.Build());
+                savePath = Config.config.shopDirectory;
             }
             catch (Exception err) // sometimes the path wont accept characters like . or -
             {
                 Log.Warning("An error has occurred while saving the shop: {err}. Saving in default directory (.profiles).", err.Message);
                 File.WriteAllText(Path.Join(DirectoryManager.Profiles, "shop.json"), shop.Build());
+                savePath = DirectoryManager.Profiles;
             }
-            Log.Information("Saved shop for {name}.", Config.config.athenaProfileId);
+            Log.Information("Saved shop for {name} in {path}.", Config.config.athenaProfileId, Config.config.shopDirectory);
         }
         else
         {
@@ -279,8 +285,8 @@ public class Dataminer
             {
                 try
                 {
-                    var exports = provider.LoadAllObjects(entry.Path);
-                    var variants = Helper.GetAllVariants(exports.First());
+                    var exports = await provider.LoadObjectAsync(entry.PathWithoutExtension + '.' + entry.NameWithoutExtension);
+                    var variants = Helper.GetAllVariants(exports);
                     profile.AddCosmetic(entry.NameWithoutExtension, variants);
                     Log.Information("Added \"{name}\" with {totVariants} channels variants.", entry.NameWithoutExtension, variants.Count);
                     added++;
@@ -294,16 +300,19 @@ public class Dataminer
             }
 
             Log.Information("Building Profile Athena with {tot} cosmetics.", added);
+            string savePath;
             try
             {
                 File.WriteAllText(Path.Join(Config.config.profileDirectory, "profile_athena.json"), profile.Build());
+                savePath = Config.config.profileDirectory;
             }
             catch (Exception err) // sometimes the path wont accept characters like . or -
             {
                 Log.Warning("An error has occurred while saving the profile: {err}. Saving in default directory (.profiles).", err.Message);
                 File.WriteAllText(Path.Join(DirectoryManager.Profiles, "profile_athena.json"), profile.Build());
+                savePath = DirectoryManager.Profiles;
             }
-            Log.Information("Saved Profile Athena for {name}.", Config.config.athenaProfileId);
+            Log.Information("Saved Profile Athena for {name} in {path}.", Config.config.athenaProfileId, savePath);
         }
 
         return true;
