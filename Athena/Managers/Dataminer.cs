@@ -235,6 +235,7 @@ public class Dataminer
             // cosmetics for the profile
             ? x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/Items/Cosmetics") ||
               x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics") ||
+              x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/MeshCosmetics/Content") /* THIS DIRECTORY IS BECAUSE CAPER & ALIAS ARE THE ONLY 2 SKINS HERE */ ||
               ((x.PathWithoutExtension.Contains("SparksCosmetics") || x.PathWithoutExtension.Contains("SparksSongTemplates")) && 
               (x.NameWithoutExtension.StartsWith("Sparks_") || x.NameWithoutExtension.StartsWith("SID_") || x.NameWithoutExtension.StartsWith("SparksAura_"))) ||
               (x.PathWithoutExtension.Contains("VehicleCosmetics") && x.NameWithoutExtension.StartsWith("ID_"))
