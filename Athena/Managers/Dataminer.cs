@@ -96,20 +96,16 @@ public class Dataminer
         {
             case "Profile Athena":
                 break;
-            case "Profile Common Core": // UPCOMING: not supported atm.
-                model = Model.ProfileCommonCore;
-                break;
             case "ItemShop Catalog":
                 model = Model.ItemShop;
                 break;
         }
+        // andre is stupid, and we know it
         await SelectMode(model);
     }
 
     private async Task SelectMode(Model model)
     {
-        // TODO: Add condition here for Model.ProfileCommonCore that doesn't need a generation with game files
-
         string[] opts = model == Model.ItemShop ?
             shopOptions : profileOptions;
         string type = model == Model.ProfileAthena ? 

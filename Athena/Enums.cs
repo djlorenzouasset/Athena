@@ -3,8 +3,7 @@
 public enum Model : int
 {
     ItemShop = 0,
-    ProfileAthena = 1,
-    ProfileCommonCore = 2 // upcoming feature
+    ProfileAthena = 1
 }
 
 public enum Actions : int
