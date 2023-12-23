@@ -31,8 +31,7 @@ public class Dataminer
     private string backupName = string.Empty;
 
     private readonly string[] athenaOptions = new[] { 
-        "Profile Athena",
-        "Profile Common Core",
+        "Profile Athena", 
         "ItemShop Catalog"
     };
     private readonly string[] profileOptions = new[] { 
@@ -110,12 +109,6 @@ public class Dataminer
     private async Task SelectMode(Model model)
     {
         // TODO: Add condition here for Model.ProfileCommonCore that doesn't need a generation with game files
-        if (model == Model.ProfileCommonCore)
-        {
-            CreateCommonCore();
-            await ReturnToMenu();
-            return;
-        }
 
         string[] opts = model == Model.ItemShop ?
             shopOptions : profileOptions;
@@ -356,27 +349,6 @@ public class Dataminer
         string type = model == Model.ProfileAthena ? "cosmetics ids" : "DAv2s";
         var names = AnsiConsole.Ask<string>($"Insert the [62]{type}[/] of the [62]items[/] you want generate separated by [62];[/]:");
         return names.Split(";").Select(x => x.Trim());
-    }
-
-    private void CreateCommonCore()
-    {
-        CommonCoreBuilder commonCore = new();
-        int vbucksQuantity = AnsiConsole.Ask<int>("How much [62]v-bucks[/] do you want in the server? (insert a number):");
-        commonCore.SetVbucksAmount(vbucksQuantity);
-
-        string savePath;
-        try
-        {
-            File.WriteAllText(Path.Join(Config.config.profileDirectory, "profile_common_core.json"), commonCore.Build());
-            savePath = Config.config.profileDirectory;
-        }
-        catch (Exception err)
-        {
-            Log.Warning("An error has occurred while saving the profile: {err}. Saving in default directory (.profiles).", err.Message);
-            File.WriteAllText(Path.Join(DirectoryManager.Profiles, "profile_common_core.json"), commonCore.Build());
-            savePath = DirectoryManager.Profiles;
-        }
-        Log.Information("Saved Profile Common Core for {name} in {path}.", Config.config.athenaProfileId, savePath);
     }
 
     private async Task ReturnToMenu(bool fromError = false, bool includeRequest = true)
