@@ -76,7 +76,7 @@ public class ShopBuilder
             ret.meta = meta;
             ret.requirements.Add(new() { requiredId = $"{GetItemType(assetName)}:{assetName}" });
             ret.metaInfo = metaInfo;
-            ret.displayAssetPath = Helper.DAv2ToDA(backendType);
+            ret.displayAssetPath = Helper.DAv2ToDA(backendType.Split("Featured_").Last());
             ret.itemGrants.Add(new() { templateId = $"{GetItemType(assetName)}:{assetName}" });
             AddAsset(ret);
         }
