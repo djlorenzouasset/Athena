@@ -240,8 +240,9 @@ public class Dataminer
               (x.NameWithoutExtension.StartsWith("Sparks_") || x.NameWithoutExtension.StartsWith("SID_") || x.NameWithoutExtension.StartsWith("SparksAura_"))) ||
               (x.PathWithoutExtension.Contains("VehicleCosmetics") && x.NameWithoutExtension.StartsWith("ID_"))
             // itemshop assets
-            : x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Catalog/NewDisplayAssets/") &&
-              x.NameWithoutExtension.StartsWith("DAv2");
+            : x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Catalog/NewDisplayAssets/") ||
+              x.PathWithoutExtension.StartsWith("FortniteGame/Content/Catalog/DisplayAssets/") ||
+              x.NameWithoutExtension.StartsWith("DAv2") && x.NameWithoutExtension.StartsWith("DA");
 
         entries = entries.Where(finder); // uses the function here for filter assets
         if (entries.Count() == 0)
@@ -342,7 +343,7 @@ public class Dataminer
 
     private IEnumerable<string> RequestSelectedItems(Model model)
     {
-        string type = model == Model.ProfileAthena ? "cosmetics ids" : "DAv2s";
+        string type = model == Model.ProfileAthena ? "cosmetics ids" : "DAv2s or DAs";
         var names = AnsiConsole.Ask<string>($"Insert the [62]{type}[/] of the [62]items[/] you want generate separated by [62];[/]:");
         return names.Split(";").Select(x => x.Trim());
     }

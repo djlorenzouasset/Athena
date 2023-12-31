@@ -28,7 +28,7 @@ public class ShopBuilder
     {
         string shopItem = shopAsset.Replace("FortniteGame/Content", "/Game");
         string backendType = shopAsset.Split("/").Last();
-        string assetName = shopAsset.Split("/").Last().Split("DAv2_").Last();
+        string assetName = shopAsset.Split("/").Last().Split('_', 2).Last().Split("Featured_").Last();
         string offerId = Helper.GenerateRandomOfferId();
 
         if (assetName.StartsWith("RMT")) // skip this offer type (in v26.30 they added this offer (??))
