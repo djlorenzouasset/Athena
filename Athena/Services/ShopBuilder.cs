@@ -28,7 +28,8 @@ public class ShopBuilder
     {
         string shopItem = shopAsset.Replace("FortniteGame/Content", "/Game");
         string backendType = shopAsset.Split("/").Last();
-        string assetName = shopAsset.Split("/").Last().Split('_', 2).Last().Split("Featured_").Last();
+        string assetName = shopAsset.Split("/").Last().Split("DAv2_").Last();
+        string DAassetName = shopAsset.Split("/").Last().Split("DA_").Last().Split("Featured_").Last();
         string offerId = Helper.GenerateRandomOfferId();
 
         if (assetName.StartsWith("RMT")) // skip this offer type (in v26.30 they added this offer (??))
@@ -56,6 +57,31 @@ public class ShopBuilder
             ret.displayAssetPath = Helper.DAv2ToDA(backendType, true);
             AddAsset(ret, true);
         }
+
+        else if(assetName.StartsWith("DA"))
+        {
+            List<MetaInfo> metaInfo = new()
+            {
+                new() { key = "NewDisplayAssetPath", value = shopItem + '.' + backendType },
+                new() { key = "SectionId", value = "Daily" },
+                new() { key = "TileSize", value = "Normal" }
+            };
+            Meta meta = new()
+            {
+                NewDisplayAssetPath = shopItem + '.' + backendType,
+                SectionId = "Daily",
+                TileSize = "Normal"
+            };
+            CosmeticCatalogEntry ret = new();
+            ret.offerId = "v2:/" + offerId; // DO NOT CHANGE
+            ret.meta = meta;
+            ret.requirements.Add(new() { requiredId = $"{GetItemType(DAassetName)}:{DAassetName}" });
+            ret.metaInfo = metaInfo;
+            ret.displayAssetPath = $"/Game/Catalog/DisplayAssets/{assetName}.{assetName}";
+            ret.itemGrants.Add(new() { templateId = $"{GetItemType(DAassetName)}:{DAassetName}" });
+            AddAsset(ret);
+        }
+
         else
         {
             List<MetaInfo> metaInfo = new()
@@ -76,7 +102,7 @@ public class ShopBuilder
             ret.meta = meta;
             ret.requirements.Add(new() { requiredId = $"{GetItemType(assetName)}:{assetName}" });
             ret.metaInfo = metaInfo;
-            ret.displayAssetPath = Helper.DAv2ToDA(backendType.Split("Featured_").Last());
+            ret.displayAssetPath = Helper.DAv2ToDA(backendType);
             ret.itemGrants.Add(new() { templateId = $"{GetItemType(assetName)}:{assetName}" });
             AddAsset(ret);
         }
