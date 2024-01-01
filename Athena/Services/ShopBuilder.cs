@@ -58,7 +58,7 @@ public class ShopBuilder
             AddAsset(ret, true);
         }
 
-        else if(assetName.StartsWith("DA"))
+       else if (assetName.StartsWith("DA_Featured_CID_") || assetName.StartsWith("DA_EID_") || assetName.StartsWith("DA_Featured_Glider_") || assetName.StartsWith("DA_Featured_BID_") || assetName.StartsWith("DA_Featured_Pickaxe_"))
         {
             List<MetaInfo> metaInfo = new()
             {
@@ -81,6 +81,9 @@ public class ShopBuilder
             ret.itemGrants.Add(new() { templateId = $"{GetItemType(DAassetName)}:{DAassetName}" });
             AddAsset(ret);
         }
+        
+        else if (assetName.StartsWith("DA_"))
+            return;
 
         else
         {
