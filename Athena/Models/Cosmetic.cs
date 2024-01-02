@@ -24,7 +24,7 @@ public class ProfileCosmetic
 
 public class Attributes
 {
-    public DateTime creation_time = DateTime.Now;
+    // public DateTime creation_time = DateTime.Now; this cause no variants on > 18.00 (???)
     public int max_level_bonus = 0;
     public int level = 1;
     public bool item_seen = true;
