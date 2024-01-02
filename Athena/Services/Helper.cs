@@ -79,9 +79,15 @@ public static class Helper
                 if (tag is null) 
                     continue;
 
-                ownedParts.Add(tag.Split(".").Last());
+                if (tag.Contains("Property.Color"))
+                {
+                    ownedParts.Add(tag.Split("Property.").Last());
+                }
+                else
+                {
+                    ownedParts.Add(tag.Split(".").Last());
+                }
             }
-
             variants.Add(channelName.Split('.').Last(), ownedParts);
         }
 
