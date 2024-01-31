@@ -234,6 +234,7 @@ public class Dataminer
         Func<VfsEntry, bool> finder = model == Model.ProfileAthena
             // cosmetics for the profile
             ? x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/Items/Cosmetics") ||
+              x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/items/Cosmetics") || // Fortnite Dev really made "items" lowercase (v28.10+). Previous folder directory still exists! Don't remove!
               x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics") ||
               x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/MeshCosmetics/Content") /* THIS DIRECTORY IS BECAUSE CAPER & ALIAS ARE THE ONLY 2 SKINS HERE */ ||
               ((x.PathWithoutExtension.Contains("SparksCosmetics") || x.PathWithoutExtension.Contains("SparksSongTemplates")) && 
