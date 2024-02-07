@@ -57,7 +57,7 @@ public static class Helper
                 "FortCosmeticGameplayTagVariant" => "GenericTagOptions",
                 "FortCosmeticMaterialVariant" => "MaterialOptions",
                 "FortCosmeticParticleVariant" => "ParticleOptions",
-                "FortCosmeticPropertyVariant" => "GenericPropertyOptions", // TEST FOR WHEELS
+                "FortCosmeticPropertyVariant" => "GenericPropertyOptions",
                 "FortCosmeticMeshVariant" => "MeshOptions",
                 _ => null
             };

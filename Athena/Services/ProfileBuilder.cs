@@ -91,8 +91,6 @@ public class ProfileBuilder
                 ret = new ProfileCosmetic(id, "AthenaDance");
                 break;
 
-            /* THE FIX BELLOW IS NOT DEFINITIVE */
-
             // vehicles
             case "id":
                 var type = id.Split('_')[1];
