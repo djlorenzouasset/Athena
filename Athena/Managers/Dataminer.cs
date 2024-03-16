@@ -14,6 +14,11 @@ using CUE4Parse.MappingsProvider;
 using Athena.Rest;
 using Athena.Models;
 using Athena.Services;
+using CUE4Parse.UE4.Assets.Objects;
+using CUE4Parse.UE4.Objects.UObject;
+using CUE4Parse.UE4.Assets.Exports;
+using CUE4Parse.GameTypes.FN.Enums;
+using static Athena.Models.ProfileAthena;
 
 namespace Athena.Managers;
 
@@ -38,8 +43,8 @@ public class Dataminer
         "All Cosmetics", "New Cosmetics", 
         "New Cosmetics (With Paks)",
         "Custom Cosmetics (by Id)",
-        "Pak Cosmetics", "Paks Bulk", 
-        "Back"
+        "Pak Cosmetics", "Paks Bulk",
+        "Back", "DEV-TEST Quests"
     };
     private readonly string[] shopOptions = new[] { 
         "New Cosmetics", "New Cosmetics (With Paks)",
@@ -139,6 +144,9 @@ public class Dataminer
             case "Custom Cosmetics (by Id)":
                 action = Actions.AddOnlySelected;
                 break;
+            case "DEV-TEST Quests":
+                action = Actions.AddQuestsTest;
+                break;
             case "Back":
                 // return to menu (hope it works fine)
                 await ReturnToMenu(includeRequest: false);
@@ -219,6 +227,12 @@ public class Dataminer
                     return;
             }
         }
+        else if (action == Actions.AddQuestsTest)
+        {
+            await LoadBackupAsync();
+            if (!Globals.bQuestsEnabledByDefault || !await GenerateSelectedModel(newEntries, model, action))
+                return;
+        }
 
         timer.Stop();
         Log.Information("All tasks finished in {tot}ms\n", Math.Round(timer.Elapsed.TotalSeconds, 2));
@@ -238,6 +252,7 @@ public class Dataminer
               x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/Items/Cosmetics") || 
               x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/items/Cosmetics") ||
               x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics") ||
+              (x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BattlePassS29_Quests/Content/Items/QuestBundles") && Globals.bQuestsEnabledByDefault) ||
               x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/MeshCosmetics/Content") /* THIS DIRECTORY IS BECAUSE CAPER & ALIAS ARE THE ONLY 2 SKINS HERE */ ||
               ((x.PathWithoutExtension.Contains("SparksCosmetics") || x.PathWithoutExtension.Contains("SparksSongTemplates")) && 
               (x.NameWithoutExtension.StartsWith("Sparks_") || x.NameWithoutExtension.StartsWith("SID_") || x.NameWithoutExtension.StartsWith("SparksAura_"))) ||
@@ -290,10 +305,31 @@ public class Dataminer
                 try
                 {
                     var exports = await provider.LoadObjectAsync(entry.PathWithoutExtension + '.' + entry.NameWithoutExtension);
-                    var variants = Helper.GetAllVariants(exports);
-                    profile.AddCosmetic(entry.NameWithoutExtension, variants);
-                    Log.Information("Added \"{name}\" with {totVariants} channels variants.", entry.NameWithoutExtension, variants.Count);
-                    added++;
+                    if (action == Actions.AddQuestsTest)
+                    {
+                        if (!exports.ExportType.Equals("FortChallengeBundleItemDefinition"))
+                            continue;
+
+                        if (!exports.TryGetValue(out FStructFallback[] quests, "QuestInfos"))
+                            continue;
+
+                        foreach (var quest in quests)
+                        {
+                            if (!quest.TryGetValue(out FSoftObjectPath questDefinition, "QuestDefinition") ||
+                                !questDefinition.TryLoad(out UObject? questDef) || questDef is null) continue;
+
+                            var rarity = questDef.GetOrDefault("Rarity", EFortRarity.Common);
+                            profile.AddQuest(questDef.Name, rarity.GetNameText().Text);
+                            Log.Information("Added quest \"{name}\" to profile and set to \"Active\".", questDef.Name);
+                        }
+                    }
+                    else
+                    {
+                        var variants = Helper.GetAllVariants(exports);
+                        profile.AddCosmetic(entry.NameWithoutExtension, variants);
+                        Log.Information("Added \"{name}\" with {totVariants} channels variants.", entry.NameWithoutExtension, variants.Count);
+                        added++;
+                    }
                 }
                 catch (Exception e)
                 {
