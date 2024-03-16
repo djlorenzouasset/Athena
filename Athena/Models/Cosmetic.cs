@@ -18,11 +18,11 @@ public class ProfileCosmetic
     }
 
     public string templateId { get; set; }
-    public Attributes attributes = new();
+    public ProfileAttributes attributes = new();
     public int quantity = 1;
 }
 
-public class Attributes
+public class ProfileAttributes
 {
     // public DateTime creation_time = DateTime.Now; this cause no variants on > 18.00 (???)
     public int max_level_bonus = 0;
