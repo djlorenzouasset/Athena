@@ -2,7 +2,10 @@
 
 public static class Globals
 {
-    public const string VERSION = "1.5.8";
+    public const bool bQuestsEnabledByDefault = true; // USED FOR NOW, DON'T SET TO TRUE IF YOU DON'T KNOW WHAT YOU'RE DOING.
+
+
+    public const string VERSION = "1.6.0 dev-quests";
     public const string APPID = "1142239120471634042";
     public const string DISCORD = "https://discord.gg/w4KArJVvz3";
     public const string DOWNLOAD = "https://github.com/djlorenzouasset/Athena/releases/latest";
