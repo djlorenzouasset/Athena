@@ -20,6 +20,8 @@ public static class Helper
         return new(chars);
     }
 
+    public static string GenerateRandomGuid() => Guid.NewGuid().ToString();
+
     public static string DAv2ToDA(string DAv2, bool bundle = false) // format the DAv2 to a DA shop asset 
     {
         if (!bundle)
