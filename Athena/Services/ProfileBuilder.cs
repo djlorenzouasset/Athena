@@ -13,26 +13,30 @@ public class ProfileBuilder
     private readonly int sparksLastIndex = 7;
     private ProfileAthena _profile;
     private List<ProfileCosmetic> _cosmetics;
+    private List<ProfileQuest> _quests;
 
     public ProfileBuilder()
     {        
         _profile = new();
         _cosmetics = new();
+        _quests = new();
     }
 
     public string Build()
     {
         var profileJson = JObject.FromObject(_profile);
-        if (profileJson is null)
-            return string.Empty;
+        if (profileJson is null) return string.Empty;
 
         var items = profileJson["items"];
-        if (items is null)
-            return string.Empty;
+        if (items is null) return string.Empty;
 
         foreach (var cosmetic in _cosmetics)
         {
             items[cosmetic.templateId] = JObject.FromObject(cosmetic);
+        }
+        foreach (var quest in _quests)
+        {
+            items[Helper.GenerateRandomGuid()] = JObject.FromObject(quest);
         }
 
         return profileJson.ToString(Formatting.Indented);
@@ -127,6 +131,13 @@ public class ProfileBuilder
         };
 
         _cosmetics.Add(ret);
+        return ret;
+    }
+
+    public ProfileQuest AddQuest(string questId, string rarity)
+    {
+        var ret = new ProfileQuest(questId, rarity);
+        _quests.Add(ret);
         return ret;
     }
 }
