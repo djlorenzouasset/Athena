@@ -7,7 +7,7 @@ Fortnite Profile Athena & Catalog creator for Private Servers that use Fortnite-
 > We take no responsibility for the inproper use of this program. Epic Games does not tolerate the possibility of having cosmetics that are NOT purchased in the game's official item shop within private servers (being violation of the [EULA](https://store.epicgames.com/en-US/eula)).
 
 > [!TIP]
-> You can use this program with [Neonite](https://github.com/HybridFNBR/Neonite) backend, saving the profile_athena.json in the profiles folder and shop.json in the responses folder. Make sure to save the `fortnitegame.json` (file situated in the .backend folder) in the responses folder.
+> You can use this program with [Neonite](https://github.com/HybridFNBR/Neonite) backend, saving the `profile_athena.json` in the `profiles` folder and `shop.json` in the `responses` folder. Make sure to save the `fortnitegame.json` (file situated in the `.backend` folder) in the `responses` folder.
 
 -----------------
 
@@ -36,5 +36,5 @@ Or install the latest release [here](https://github.com/djlorenzouasset/Athena/r
 -----------------
 
 ## Credits
-- A very big thank to [@andredotuasset](https://twitter.com/andredotuasset) & [@unrealhybrid](https://twitter.com/unrealhybrid) for helping in the development.
+- Large thanks to [@andredotuasset](https://twitter.com/andredotuasset) & [@unrealhybrid](https://twitter.com/unrealhybrid) for helping in the development.
 - Profile Athena model (modified) made by [@OutTheShade](https://github.com/OutTheShade).
