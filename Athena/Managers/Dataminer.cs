@@ -8,9 +8,11 @@ using CUE4Parse.UE4.Readers;
 using CUE4Parse.UE4.Versions;
 using CUE4Parse.UE4.VirtualFileSystem;
 using CUE4Parse.UE4.Objects.Core.Misc;
-using CUE4Parse.FileProvider;
-using CUE4Parse.Encryption.Aes;
+using CUE4Parse.UE4.Objects.Core.i18N;
+using CUE4Parse.GameTypes.FN.Enums;
 using CUE4Parse.MappingsProvider;
+using CUE4Parse.Encryption.Aes;
+using CUE4Parse.FileProvider;
 using Athena.Rest;
 using Athena.Models;
 using Athena.Services;
@@ -29,23 +31,42 @@ public class Dataminer
     private List<string> ioStoreNames = new();
     private List<string> itemsFilter = new();
     private string backupName = string.Empty;
+    private string currentGenerationType = string.Empty;
 
-    private readonly string[] athenaOptions = new[] { 
+    private Func<VfsEntry, bool> cosmeticsFilter = (
+        x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/Items/Cosmetics", StringComparison.OrdinalIgnoreCase) || /* epic sometimes do funny things */
+        x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics", StringComparison.OrdinalIgnoreCase) ||
+        x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/MeshCosmetics/Content") /* THIS DIRECTORY IS BECAUSE CAPER & ALIAS ARE THE ONLY 2 SKINS HERE */ ||
+        ((x.PathWithoutExtension.Contains("SparksCosmetics") || x.PathWithoutExtension.Contains("SparksSongTemplates")) &&
+        (x.NameWithoutExtension.StartsWith("Sparks_") || x.NameWithoutExtension.StartsWith("SID_") || x.NameWithoutExtension.StartsWith("SparksAura_"))) ||
+        (x.PathWithoutExtension.Contains("VehicleCosmetics") && x.NameWithoutExtension.StartsWith("ID_")));
+
+    private Func<VfsEntry, bool> shopAssetsFilter = (
+        x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Catalog/NewDisplayAssets/") &&
+        x.NameWithoutExtension.StartsWith("DAv2"));
+
+    private Func<VfsEntry, bool> weaponsFilter = x => x.NameWithoutExtension.StartsWith("WID_", StringComparison.OrdinalIgnoreCase);
+
+    private readonly string[] athenaOptions = [ 
         "Profile Athena", 
-        "ItemShop Catalog"
-    };
-    private readonly string[] profileOptions = new[] { 
+        "ItemShop Catalog",
+        "Weapons Dump"
+    ];
+    private readonly string[] profileOptions = [ 
         "All Cosmetics", "New Cosmetics", 
         "New Cosmetics (With Paks)",
         "Custom Cosmetics (by Id)",
         "Pak Cosmetics", "Paks Bulk", 
         "Back"
-    };
-    private readonly string[] shopOptions = new[] { 
+    ];
+    private readonly string[] shopOptions = [
         "New Cosmetics", "New Cosmetics (With Paks)",
         "Custom Cosmetics (by Id)", "Pak Cosmetics", 
         "Paks Bulk", "Back"
-    };
+    ];
+    private readonly string[] weaponsOptions = [
+        "All Weapons", "New Weapons", "Back"
+    ];
 
     public Dataminer(string mappingFile)
     {
@@ -71,9 +92,11 @@ public class Dataminer
         LoadAllEntries( // load only normal files, not paks
             x => x.EncryptionKeyGuid == zeroGuid || Endpoints.FNCentral.AesKey.DynamicKeys.Select(
             k => new FGuid(k.Guid)).Contains(x.EncryptionKeyGuid), true);
+
+        provider.LoadLocalization();
     }
 
-    public async Task ShowMenu() // this just show the menu :/ 
+    public async Task ShowMenu() /* this just show the menu */ 
     {
         Console.Clear();
         Console.Title = $"Athena v{Globals.VERSION}";
@@ -99,6 +122,9 @@ public class Dataminer
             case "ItemShop Catalog":
                 model = Model.ItemShop;
                 break;
+            case "Weapons Dump":
+                model = Model.WeaponsDump;
+                break;
         }
         // andre is stupid, and we know it
         await SelectMode(model);
@@ -106,14 +132,29 @@ public class Dataminer
 
     private async Task SelectMode(Model model)
     {
-        string[] opts = model == Model.ItemShop ?
-            shopOptions : profileOptions;
-        string type = model == Model.ProfileAthena ? 
-            "Profile Athena" : "ItemShop Catalog";
+        string[] opts = [];
+
+        switch (model)
+        {
+            case Model.ItemShop:
+                opts = shopOptions;
+                currentGenerationType = "ItemShop Catalog";
+                break;
+
+            case Model.ProfileAthena:
+                opts = profileOptions;
+                currentGenerationType = "Profile Athena";
+                break;
+
+            case Model.WeaponsDump:
+                opts = weaponsOptions;
+                currentGenerationType = "Weapons Dump";
+                break;
+        }
 
         var selected = AnsiConsole.Prompt(
         new SelectionPrompt<string>()
-            .Title($"What type of [62]{type}[/] do want you generate?")
+            .Title($"What type of [62]{currentGenerationType}[/] do want you generate?")
             .PageSize(10)
             .AddChoices(opts)
         );
@@ -122,9 +163,11 @@ public class Dataminer
         switch (selected)
         {
             case "All Cosmetics":
+            case "All Weapons":
                 action = Actions.AddEverything;
                 break;
             case "New Cosmetics":
+            case "New Weapons":
                 action = Actions.AddNew;
                 break;
             case "New Cosmetics (With Paks)":
@@ -145,16 +188,13 @@ public class Dataminer
                 return;
         }
 
-        await WeLoveCats(model, action);
+        await ProcessRequest(model, action);
     }
 
-    private async Task WeLoveCats(Model model, Actions action) // yes ignore the name of this function (andre is a cat)
+    private async Task ProcessRequest(Model model, Actions action)
     {
-        var timer = new Stopwatch(); // timer??
-        string type = model == Model.ProfileAthena ? 
-            "Profile Athena" : "ItemShop Catalog";
-
-        DiscordRichPresence.Update($"Generating {type}.");
+        var timer = new Stopwatch(); // timer?
+        DiscordRichPresence.Update($"Generating {currentGenerationType}.");
         timer.Start();
         
         if (action == Actions.AddEverything) 
@@ -229,28 +269,34 @@ public class Dataminer
     private async Task<bool> GenerateSelectedModel(IEnumerable<VfsEntry> entries, Model model, Actions action)
     {
         int added = 0;
-        string type = model == Model.ProfileAthena ? "cosmetics" : "shop assets";
+        string type;
+        Func<VfsEntry, bool> filter;
 
-        Func<VfsEntry, bool> finder = model == Model.ProfileAthena
-            // cosmetics for the profile
-            // See a path twice? Don't remove it. One of them has the "Items" folder lowercase.
-            ? x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/items/Cosmetics") ||
-              x.PathWithoutExtension.StartsWith("FortniteGame/Content/Athena/Items/Cosmetics") || 
-              x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/items/Cosmetics") ||
-              x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/BRCosmetics/Content/Athena/Items/Cosmetics") ||
-              x.PathWithoutExtension.StartsWith("FortniteGame/Plugins/GameFeatures/MeshCosmetics/Content") /* THIS DIRECTORY IS BECAUSE CAPER & ALIAS ARE THE ONLY 2 SKINS HERE */ ||
-              ((x.PathWithoutExtension.Contains("SparksCosmetics") || x.PathWithoutExtension.Contains("SparksSongTemplates")) && 
-              (x.NameWithoutExtension.StartsWith("Sparks_") || x.NameWithoutExtension.StartsWith("SID_") || x.NameWithoutExtension.StartsWith("SparksAura_"))) ||
-              (x.PathWithoutExtension.Contains("VehicleCosmetics") && x.NameWithoutExtension.StartsWith("ID_"))
-            // itemshop assets
-            : x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Catalog/NewDisplayAssets/") &&
-              x.NameWithoutExtension.StartsWith("DAv2");
+        switch (model)
+        {
+            case Model.ProfileAthena:
+                type = "cosmetics";
+                filter = cosmeticsFilter;
+                break;
+            case Model.ItemShop:
+                type = "shop assets";
+                filter = shopAssetsFilter;
+                break;
+            case Model.WeaponsDump:
+                type = "weapons";
+                filter = weaponsFilter;
+                break;
+            default:
+                Log.Error("An unknown error has occured.");
+                await ReturnToMenu(true);
+                return false;
+        }
 
-        entries = entries.Where(finder); // uses the function here for filter assets
+        entries = entries.Where(filter); // uses the function here for filter assets
         if (entries.Count() == 0)
         {
             if (action == Actions.AddNew) Log.Error("No new {type} found using {backup}.", type, backupName);
-            else if (action == Actions.AddEverything) Log.Error("No cosmetics found.");
+            else if (action == Actions.AddEverything) Log.Error("No {type} found.", type);
             else if (action == Actions.AddArchive) Log.Error("No {type} found in {ioStoreNames}.", type, string.Join(", ", ioStoreNames));
             else if (action == Actions.BulkArchive) Log.Error("No {type} found in {ioStoreNames}.", type, string.Join(", ", ioStoreNames));
             await ReturnToMenu(true);
@@ -271,18 +317,18 @@ public class Dataminer
             string savePath;
             try
             {
-                File.WriteAllText(Path.Join(Config.config.shopDirectory, "shop.json"), shop.Build());
+                await File.WriteAllTextAsync(Path.Join(Config.config.shopDirectory, "shop.json"), shop.Build());
                 savePath = Config.config.shopDirectory;
             }
             catch (Exception err) // sometimes the path wont accept characters like . or -
             {
                 Log.Warning("An error has occurred while saving the shop: {err}. Saving in default directory (.profiles).", err.Message);
-                File.WriteAllText(Path.Join(DirectoryManager.Profiles, "shop.json"), shop.Build());
+                await File.WriteAllTextAsync(Path.Join(DirectoryManager.Profiles, "shop.json"), shop.Build());
                 savePath = DirectoryManager.Profiles;
             }
             Log.Information("Saved shop for {name} in {path}.", Config.config.athenaProfileId, Config.config.shopDirectory);
         }
-        else
+        else if (model == Model.ProfileAthena)
         {
             ProfileBuilder profile = new();
             foreach (var entry in entries)
@@ -307,16 +353,51 @@ public class Dataminer
             string savePath;
             try
             {
-                File.WriteAllText(Path.Join(Config.config.profileDirectory, "profile_athena.json"), profile.Build());
+                await File.WriteAllTextAsync(Path.Join(Config.config.profileDirectory, "profile_athena.json"), profile.Build());
                 savePath = Config.config.profileDirectory;
             }
             catch (Exception err) // sometimes the path wont accept characters like . or -
             {
                 Log.Warning("An error has occurred while saving the profile: {err}. Saving in default directory (.profiles).", err.Message);
-                File.WriteAllText(Path.Join(DirectoryManager.Profiles, "profile_athena.json"), profile.Build());
+                await File.WriteAllTextAsync(Path.Join(DirectoryManager.Profiles, "profile_athena.json"), profile.Build());
                 savePath = DirectoryManager.Profiles;
             }
             Log.Information("Saved Profile Athena for {name} in {path}.", Config.config.athenaProfileId, savePath);
+        }
+        else
+        {
+            List<string> weapons = new();
+            string currentVer = manifest!.ManifestFile!.Version.ToString();
+            weapons.Add($"WEAPONS DUMP - {currentVer}\n\n");
+
+            foreach (var entry in entries)
+            {
+                try
+                {
+                    var wid = await provider.LoadObjectAsync(entry.PathWithoutExtension + '.' + entry.NameWithoutExtension);
+                    if (!(wid.ExportType.Equals("FortWeaponRangedItemDefinition") || 
+                        wid.ExportType.Equals("FortWeaponMeleeItemDefinition") || 
+                        wid.ExportType.Equals("AthenaGadgetItemDefinition"))) continue;
+
+                    string weaponName = wid.GetOrDefault("ItemName", new FText("NONE")).Text.TrimEnd();
+                    string weaponRarity = ParseRarity(wid.GetOrDefault("Rarity", EFortRarity.Common));
+                    string weaponId = wid.Name;
+
+                    weapons.Add($"[{weaponName} : {weaponRarity}] {weaponId}");
+                    added++;
+                    Log.Information("Added [{name} : {rarity}] {id} of type {type}.", weaponName, weaponRarity, weaponId, wid.ExportType);
+                }
+                catch (Exception e)
+                {
+#if DEBUG
+                    Log.Error("Skipped entry {name} for {err}.", entry.Name, e.Message);
+#endif
+                }
+            }
+
+            Log.Information("Saving Weapons dump with {tot} weapons.", added);
+            await File.WriteAllLinesAsync(Path.Join(DirectoryManager.Current, $"weapons_dump_{currentVer}.txt"), weapons);
+            Log.Information("Saved Weapons Dump in {path}.", DirectoryManager.Current);
         }
 
         return true;
@@ -367,6 +448,8 @@ public class Dataminer
         newEntries.Clear();
         ioStoreNames.Clear();
         itemsFilter.Clear();
+        backupName = string.Empty;
+        currentGenerationType = string.Empty;
         await ShowMenu();
     }
 
@@ -456,6 +539,17 @@ public class Dataminer
         }
         timer.Stop();
         Log.Information("Loaded {tot} new VfsEntries in {s}ms", newEntries.Count, Math.Round(timer.Elapsed.TotalSeconds, 2));
+    }
+
+    private string ParseRarity(EFortRarity rarity)
+    {
+
+        string r = rarity.GetNameText().Text;
+        if (provider.LocalizedResources.ContainsKey("Fort.Rarity"))
+        {
+            return provider.LocalizedResources["Fort.Rarity"][r];
+        }
+        return "Common";
     }
 
     private void LoadKey() // this just load the main key
