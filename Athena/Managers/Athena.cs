@@ -28,6 +28,7 @@ public static class Athena
         // discord rich presence 
         DiscordRichPresence.Initialize();
 
+        await Dataminer.InitializeOodle();
         await CheckAuth();
         await TryGetAesKeys();
         if (!await TryGetMappings()) return;
