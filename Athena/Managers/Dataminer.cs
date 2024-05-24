@@ -13,6 +13,7 @@ using CUE4Parse.GameTypes.FN.Enums;
 using CUE4Parse.MappingsProvider;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.FileProvider;
+using CUE4Parse.Compression;
 using Athena.Rest;
 using Athena.Models;
 using Athena.Services;
@@ -73,6 +74,23 @@ public class Dataminer
         provider = new("FortniteLive", true, new VersionContainer(EGame.GAME_UE5_LATEST));
         provider.MappingsContainer = new FileUsmapTypeMappingsProvider(mappingFile);
         manifest = new("http://epicgames-download1.akamaized.net/Builds/Fortnite/CloudDir/ChunksV4/");
+        /* provisory */
+        InitializeOodle().GetAwaiter().GetResult();
+    }
+
+    private async Task InitializeOodle()
+    {
+        var path = Path.Combine(DirectoryManager.ChunksDir, OodleHelper.OODLE_DLL_NAME);
+        if (File.Exists(OodleHelper.OODLE_DLL_NAME))
+        {
+            File.Move(OodleHelper.OODLE_DLL_NAME, path, true);
+        }
+        else if (!File.Exists(path))
+        {
+            await OodleHelper.DownloadOodleDllAsync(path);
+        }
+
+        OodleHelper.Initialize(path);
     }
 
     public async Task LoadAllPaksAsync(RestResponse manifestData)
