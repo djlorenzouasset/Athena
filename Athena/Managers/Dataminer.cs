@@ -70,7 +70,7 @@ public class Dataminer
 
     public Dataminer(string mappingFile)
     {
-        provider = new("FortniteLive", true, new VersionContainer(EGame.GAME_UE5_4));
+        provider = new("FortniteLive", true, new VersionContainer(EGame.GAME_UE5_LATEST));
         provider.MappingsContainer = new FileUsmapTypeMappingsProvider(mappingFile);
         manifest = new("http://epicgames-download1.akamaized.net/Builds/Fortnite/CloudDir/ChunksV4/");
     }
