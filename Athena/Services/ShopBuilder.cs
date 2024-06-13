@@ -4,17 +4,17 @@ namespace Athena.Services;
 
 public class ShopBuilder
 {
-    private List<object> _catalogEntries;
-    private List<List<CosmeticCatalogEntry>> _daily;
-    private List<List<BundleCatalogEntry>> _featured;
-    private ShopModel _shopModel;
+    private readonly List<object> _catalogEntries;
+    private readonly List<List<CosmeticCatalogEntry>> _daily;
+    private readonly List<List<BundleCatalogEntry>> _featured;
+    private readonly ShopModel _shopModel;
 
     public ShopBuilder()
     {
         _shopModel = new();
-        _catalogEntries = new();
-        _daily = new();
-        _featured = new();
+        _catalogEntries = [];
+        _daily = [];
+        _featured = [];
     }
 
     public string Build()
@@ -40,13 +40,13 @@ public class ShopBuilder
             {
                 new() { key = "NewDisplayAssetPath", value = shopItem + '.' + backendType },
                 new() { key = "SectionId", value = "Featured" },
-                new() { key = "TileSize", value = "DoubleWide" }
+                new() { key = "TileSize", value = "Size_2_x_2" } // DoubleWide -> Size_2_x_2 (+v30.10)
             };
             Meta meta = new()
             {
                 NewDisplayAssetPath = shopItem + '.' + backendType,
                 SectionId = "Featured",
-                TileSize = "DoubleWide"
+                TileSize = "Size_2_x_2" // DoubleWide -> Size_2_x_2 (+v30.10)
             };
 
             BundleCatalogEntry ret = new();
@@ -62,13 +62,13 @@ public class ShopBuilder
             {
                 new() { key = "NewDisplayAssetPath", value = shopItem + '.' + backendType },
                 new() { key = "SectionId", value = "Daily" },
-                new() { key = "TileSize", value = "Normal" }
+                new() { key = "TileSize", value = "Size_1_x_2" } // Normal -> Size_1_x_2 (+v30.10)
             };
             Meta meta = new()
             {
                 NewDisplayAssetPath = shopItem + '.' + backendType,
                 SectionId = "Daily",
-                TileSize = "Normal"
+                TileSize = "Size_1_x_2" // Normal -> Size_1_x_2 (+v30.10)
             };
 
             CosmeticCatalogEntry ret = new();
@@ -94,7 +94,7 @@ public class ShopBuilder
         {
             if (_featured.Count == 0 || _featured.Last().Count == 2)
             {
-                _featured.Add(new() { (BundleCatalogEntry) data });
+                _featured.Add([(BundleCatalogEntry) data]);
             }
             else
             {
@@ -112,7 +112,7 @@ public class ShopBuilder
         {
             if (_daily.Count == 0 || _daily.Last().Count == 5)
             {
-                _daily.Add(new() { (CosmeticCatalogEntry) data });
+                _daily.Add([(CosmeticCatalogEntry) data]);
             }
             else
             {
