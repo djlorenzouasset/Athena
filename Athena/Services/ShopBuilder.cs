@@ -26,7 +26,7 @@ public class ShopBuilder
 
     public void AddCatalogEntry(string shopAsset)
     {
-        string shopItem = shopAsset.Replace("FortniteGame/Content", "/Game");
+        string shopItem = shopAsset.Replace("FortniteGame/Plugins/GameFeatures/OfferCatalog/Content", "/OfferCatalog");
         string backendType = shopAsset.Split("/").Last();
         string assetName = shopAsset.Split("/").Last().Split("DAv2_").Last();
         string offerId = Helper.GenerateRandomOfferId();

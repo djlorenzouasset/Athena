@@ -25,13 +25,13 @@ public static class Helper
         {
             string id = DAv2.Split("DAv2_").Last();
             string assetName = $"DA_Featured_{id}";
-            return $"/Game/Catalog/DisplayAssets/{assetName}.{assetName}";
+            return $"/OfferCatalog/DisplayAssets/{assetName}.{assetName}";
         }
         else
         {
             string id = DAv2.Split("Featured_").Last();
             string assetName = $"DA_Featured_{id}_Bundle";
-            return $"/Game/Catalog/DisplayAssets/{assetName}.{assetName}";
+            return $"/OfferCatalog/DisplayAssets/{assetName}.{assetName}";
         }
     }
 

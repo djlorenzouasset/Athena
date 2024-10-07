@@ -42,9 +42,7 @@ public class Dataminer
         (x.NameWithoutExtension.StartsWith("Sparks_") || x.NameWithoutExtension.StartsWith("SID_") || x.NameWithoutExtension.StartsWith("SparksAura_"))) ||
         (x.PathWithoutExtension.Contains("VehicleCosmetics") && x.NameWithoutExtension.StartsWith("ID_")));
 
-    private Func<VfsEntry, bool> shopAssetsFilter = (
-        x => x.PathWithoutExtension.StartsWith("FortniteGame/Content/Catalog/NewDisplayAssets/") &&
-        x.NameWithoutExtension.StartsWith("DAv2"));
+    private Func<VfsEntry, bool> shopAssetsFilter = (x => x.NameWithoutExtension.StartsWith("DAv2"));
 
     private Func<VfsEntry, bool> weaponsFilter = x => x.NameWithoutExtension.StartsWith("WID_", StringComparison.OrdinalIgnoreCase);
 
