@@ -5,7 +5,7 @@
 - [ ] General fixes for Cars and Variants
 - [ ] Support for Fortnite Festival, Rocket Racing and Lego Kits in the Item Shop/Profile Athena
 - [ ] Code improvements
-- [ ] <s>Cosmetics in bundles</s> (<b>cancelled until v2</b>)
+- [ ] <s>Cosmetics in bundles</s> (<b>moved to v2</b>)
 
 ## Athena v2
 - [ ] Auto update on new program version
@@ -14,6 +14,7 @@
 - [ ] More settings options
 - [ ] Generation times improved by the 40% or more
 - [ ] Custom prices and custom level in game
+- [ ] Cosmetics in bundles
 
 ## Athena v2.?
 - [ ] Interactive interface
