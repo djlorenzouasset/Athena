@@ -1,40 +1,44 @@
+namespace Athena.Models;
+
+/* REWRITE IN V2 */
+
 public class ShopModel
 {
     public int refreshIntervalHrs = 1;
     public int dailyPurchaseHrs = 24;
     public DateTime expiration = new DateTime(9999, 12, 31, 23, 59, 59); // when the world will be nothing, the shop will be still not updated
-    public List<Storefront> storefronts = new();
+    public List<Storefront> storefronts = [];
 }
 
 public class Storefront
 {
     public string name { get; set; }
-    public List<object> catalogEntries { get; set; } = new(); // use <object> for specify that more type of classes can be added
+    public List<object> catalogEntries { get; set; } = []; // use <object> for specify that more type of classes can be added
 }
 
 public class BundleCatalogEntry
 {
     public string devName = "[VIRTUAL]1 x Funny Thing for -9 MtxCurrency";
     public string offerId { get; set; } = string.Empty; // DO NOT CHANGE
-    public List<object> fulfillmentIds = new();
+    public List<object> fulfillmentIds = [];
     public int dailyLimit = -1;
     public int weeklyLimit = -1;
     public int monthlyLimit = -1;
-    public List<string> categories = new(); // this was a string array, now is empty
-    public List<Price> prices = new();
+    public List<string> categories = []; // this was a string array, now is empty
+    public List<Price> prices = [];
     public DynamicBundleInfo dynamicBundleInfo = new();
     public Meta meta { get; set; } = new();
     public string matchFilter = string.Empty;
     public double filterWeight = 0.0;
-    public List<string> appStoreId = new();
-    public List<object> requirements = new();
+    public List<string> appStoreId = [];
+    public List<object> requirements = [];
     public string offerType = "DynamicBundle";
     public GiftInfo giftInfo = new();
     public bool refundable = true;
-    public List<MetaInfo> metaInfo { get; set; } = new();
+    public List<MetaInfo> metaInfo { get; set; } = [];
     public string displayAssetPath { get; set; } = string.Empty;
-    public List<ItemGrant> itemGrants = new() { new() { templateId = "AthenaCharacter:CID_349_Athena_Commando_M_Banana" } }; // peely is just a placeholder, you can change it
-    public List<object> additionalGrants = new();
+    public List<ItemGrant> itemGrants = [new() { templateId = "AthenaCharacter:CID_349_Athena_Commando_M_Banana" }];
+    public List<object> additionalGrants = [];
     public int sortPriority = -1;
     public int catalogGroupPriority = 0;
 }
@@ -43,24 +47,24 @@ public class CosmeticCatalogEntry
 {
     public string devName = "[VIRTUAL]1 x Funny Thing for -9 MtxCurrency";
     public string offerId { get; set; } = string.Empty; // DO NOT CHANGE
-    public List<object> fulfillmentIds = new();
+    public List<object> fulfillmentIds = [];
     public int dailyLimit = -1;
     public int weeklyLimit = -1;
     public int monthlyLimit = -1;
-    public List<string> categories = new();
-    public List<Price> prices = new() { new() };
+    public List<string> categories = [];
+    public List<Price> prices = [new()];
     public Meta meta { get; set; } = new();
     public string matchFilter = string.Empty;
     public double filterWeight = 0.0;
-    public List<string> appStoreId = new();
-    public List<Requirement> requirements = new();
+    public List<string> appStoreId = [];
+    public List<Requirement> requirements = [];
     public string offerType = "StaticPrice";
     public GiftInfo giftInfo = new();
     public bool refundable = true;
-    public List<MetaInfo> metaInfo { get; set; } = new();
+    public List<MetaInfo> metaInfo { get; set; } = [];
     public string displayAssetPath { get; set; } = string.Empty;
-    public List<ItemGrant> itemGrants = new();
-    public List<object> additionalGrants = new();
+    public List<ItemGrant> itemGrants = [];
+    public List<object> additionalGrants = [];
     public int sortPriority = -2;
     public int catalogGroupPriority = 0;
 }
@@ -84,7 +88,7 @@ public class DynamicBundleInfo
     public string currencyType = "MtxCurrency";
     public string currencySubType = string.Empty;
     public string displayType = "AmountOff";
-    public List<BundleRequirement> bundleItems = new();
+    public List<BundleRequirement> bundleItems = [];
 }
 
 public class Meta // dont touch nothing here
@@ -103,7 +107,7 @@ public class BundleRequirement
     public int regularPrice = -999999;
     public int discountedPrice = -999999;
     public int alreadyOwnedPriceReduction = -999999;
-    public Item item = new() { templateId = "AthenaCharacter:CID_349_Athena_Commando_M_Banana", quantity = 10 }; // yes, 10 peelys
+    public Item item = new() { templateId = "AthenaCharacter:CID_349_Athena_Commando_M_Banana", quantity = 1 };
 }
 
 public class Requirement // dont touch nothing here
@@ -117,8 +121,8 @@ public class GiftInfo
 {
     public bool bIsEnabled = true;
     public string forcedGiftBoxTemplateId = string.Empty;
-    public List<object> purchaseRequirements = new(); // we dont know what are these, this is why <object>
-    public List<object> giftRecordIds = new();
+    public List<object> purchaseRequirements = []; // we dont know what are these, this is why <object>
+    public List<object> giftRecordIds = [];
 }
 
 public class MetaInfo
