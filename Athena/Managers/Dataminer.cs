@@ -616,11 +616,11 @@ public class Dataminer
         {
             foreach (var (key, value) in IReader.Files)
             {
-                if (value is not VfsEntry entry || entry.Path.EndsWith(".uexp") ||
-                    entry.Path.EndsWith(".ubulk") || entry.Path.EndsWith(".uptnl") ||
-                    entry.Path.EndsWith(".umap") || entry.Path.EndsWith(".ini") ||
-                    entry.Path.EndsWith(".locres") || entry.Path.EndsWith(".uplugin"))
-                    continue;
+                if (value is not VfsEntry entry || paths.Contains(key) || 
+                    entry.Path.EndsWith(".uexp") || entry.Path.EndsWith(".ubulk") || 
+                    entry.Path.EndsWith(".uptnl") || entry.Path.EndsWith(".umap") || 
+                    entry.Path.EndsWith(".ini") || entry.Path.EndsWith(".locres") || 
+                    entry.Path.EndsWith(".uplugin")) continue;
 
                 _newEntries.Add(entry);
             }
