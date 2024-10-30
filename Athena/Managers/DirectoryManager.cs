@@ -25,17 +25,15 @@ public static class DirectoryManager
         }
     }
 
-    public static bool GetSavedMappings(out string mappingsPath)
+    public static string? GetSavedMappings()
     {
         DirectoryInfo mappingsDir = new(MappingsDir);
-        var recent = mappingsDir.GetFiles("*.usmap").OrderByDescending(f => f.LastWriteTime).First();
-        if (recent is not null)
-        {
-            mappingsPath = recent.FullName;
-            return true;
-        }
+        var recent = mappingsDir.GetFiles("*.usmap")
+            .OrderByDescending(f => f.LastWriteTime).FirstOrDefault();
 
-        mappingsPath = string.Empty;
-        return false;
+        if (recent is null)
+            return null;
+
+        return recent.FullName;
     }
 }

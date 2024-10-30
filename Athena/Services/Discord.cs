@@ -4,25 +4,29 @@ namespace Athena.Services;
 
 public static class DiscordRichPresence
 {
-    private static DiscordRpcClient? Client;
-    private static readonly RichPresence Default = new()
+    private static DiscordRpcClient? _client;
+
+    private static readonly RichPresence _default = new()
     {
         Timestamps = new() { Start = DateTime.UtcNow },
         Assets = new() { LargeImageKey = "logo", LargeImageText = $"Athena {Globals.VERSION}" },
-        Buttons = new Button[] { new() { Label = "Download Athena", Url = Globals.DOWNLOAD } }
+        Buttons = [
+            new() { Label = "Join Athena", Url = Globals.DISCORD },
+            new() { Label = "Download Athena", Url = Globals.DOWNLOAD }
+        ]
     };
 
     public static void Initialize()
     {
-        Client = new DiscordRpcClient(Globals.APPID);
-        Client.OnReady += (_, args) => Log.Information("Discord Rich Presence Started for {Username}", args.User.Username);
-        Client.OnError += (_, args) => throw new Exception($"Error while starting Discord RPC: {args.Message}");
-        Client.Initialize();
-        Client.SetPresence(Default);
+        _client = new DiscordRpcClient(Globals.APPID);
+        _client.OnReady += (_, args) => Log.Information("Discord Presence started for {username}", args.User.Username);
+        _client.OnError += (_, args) => throw new Exception($"Error while starting Discord RPC: {args.Message}");
+        _client.Initialize();
+        _client.SetPresence(_default);
     }
 
     public static void Update(string text)
     {
-        Client?.UpdateState(text);
+        _client?.UpdateState(text);
     }
 }

@@ -1,21 +1,15 @@
 ﻿using Newtonsoft.Json;
+using CUE4Parse.Utils;
+using Athena.Models;
 
 namespace Athena.Services;
 
 public class ShopBuilder
 {
-    private readonly List<object> _catalogEntries;
-    private readonly List<List<CosmeticCatalogEntry>> _daily;
-    private readonly List<List<BundleCatalogEntry>> _featured;
-    private readonly ShopModel _shopModel;
-
-    public ShopBuilder()
-    {
-        _shopModel = new();
-        _catalogEntries = [];
-        _daily = [];
-        _featured = [];
-    }
+    private readonly ShopModel _shopModel = new();
+    private readonly List<object> _catalogEntries = [];
+    private readonly List<List<CosmeticCatalogEntry>> _daily = [];
+    private readonly List<List<BundleCatalogEntry>> _featured = [];
 
     public string Build()
     {
@@ -29,54 +23,72 @@ public class ShopBuilder
         string shopItem = shopAsset.Replace("FortniteGame/Plugins/GameFeatures/OfferCatalog/Content", "/OfferCatalog");
         string backendType = shopAsset.Split("/").Last();
         string assetName = shopAsset.Split("/").Last().Split("DAv2_").Last();
-        string offerId = Helper.GenerateRandomOfferId();
+        string offerId = Helper.GenerateRandomOfferId(); // this is because now the game checks it
 
-        if (assetName.StartsWith("RMT")) // skip this offer type (in v26.30 they added this offer (??))
+        if (assetName.StartsWith("RMT"))
             return;
+
+        /* 
+        TileSizes (+v30.10):
+            - DoubleWide: Size_2_x_2
+            - Normal: Size_1_x_2
+
+        There are more but we dont need them atm 
+        */
 
         else if (assetName.StartsWith("Bundle"))
         {
-            List<MetaInfo> metaInfo = new()
-            {
+            List<MetaInfo> metaInfo =
+            [
                 new() { key = "NewDisplayAssetPath", value = shopItem + '.' + backendType },
                 new() { key = "SectionId", value = "Featured" },
-                new() { key = "TileSize", value = "Size_2_x_2" } // DoubleWide -> Size_2_x_2 (+v30.10)
-            };
-            Meta meta = new()
+                new() { key = "TileSize", value = "Size_2_x_2" }
+            ];
+
+            var meta = new Meta
             {
                 NewDisplayAssetPath = shopItem + '.' + backendType,
                 SectionId = "Featured",
-                TileSize = "Size_2_x_2" // DoubleWide -> Size_2_x_2 (+v30.10)
+                TileSize = "Size_2_x_2"
             };
-
-            BundleCatalogEntry ret = new();
-            ret.offerId = "v2:/" + offerId; // DO NOT CHANGE
-            ret.meta = meta;
-            ret.metaInfo = metaInfo;
-            ret.displayAssetPath = Helper.DAv2ToDA(backendType, true);
+            var ret = new BundleCatalogEntry
+            {
+                offerId = "v2:/" + offerId,
+                meta = meta,
+                metaInfo = metaInfo,
+                displayAssetPath = Helper.DAv2ToDA(backendType, true)
+            };
             AddAsset(ret, true);
         }
         else
         {
-            List<MetaInfo> metaInfo = new()
+            if (assetName.StartsWith("Featured") ||  assetName.StartsWith("BuildingProp"))
             {
+                assetName = assetName.SubstringAfter('_');
+            }
+
+            List<MetaInfo> metaInfo =
+            [
                 new() { key = "NewDisplayAssetPath", value = shopItem + '.' + backendType },
                 new() { key = "SectionId", value = "Daily" },
-                new() { key = "TileSize", value = "Size_1_x_2" } // Normal -> Size_1_x_2 (+v30.10)
-            };
-            Meta meta = new()
+                new() { key = "TileSize", value = "Size_1_x_2" }
+            ];
+
+            var meta = new Meta
             {
                 NewDisplayAssetPath = shopItem + '.' + backendType,
                 SectionId = "Daily",
-                TileSize = "Size_1_x_2" // Normal -> Size_1_x_2 (+v30.10)
+                TileSize = "Size_1_x_2"
+            };
+            var ret = new CosmeticCatalogEntry
+            {
+                offerId = "v2:/" + offerId,
+                meta = meta,
+                metaInfo = metaInfo,
+                displayAssetPath = Helper.DAv2ToDA(backendType)
             };
 
-            CosmeticCatalogEntry ret = new();
-            ret.offerId = "v2:/" + offerId; // DO NOT CHANGE
-            ret.meta = meta;
             ret.requirements.Add(new() { requiredId = $"{GetItemType(assetName)}:{assetName}" });
-            ret.metaInfo = metaInfo;
-            ret.displayAssetPath = Helper.DAv2ToDA(backendType);
             ret.itemGrants.Add(new() { templateId = $"{GetItemType(assetName)}:{assetName}" });
             AddAsset(ret);
         }
@@ -129,32 +141,6 @@ public class ShopBuilder
 
     private string GetItemType(string dav2)
     {
-        string type = dav2.Split("_").First();
-
-        return (type.ToLower()) switch
-        {
-            "cid" => "AthenaCharacter",
-            "character" => "AthenaCharacter",
-
-            "bid" => "AthenaBackpack",
-            "backpak" => "AthenaBackpack",
-
-            "pickaxe" => "AthenaPickaxe",
-            "eid" => "AthenaDance",
-            "glider" => "AthenaGlider",
-            "wrap" => "AthenaItemWrap",
-            "musicpack" => "AthenaMusicPack",
-
-            "loadingscreen" => "AthenaLoadingScreen",
-            "lsid" => "AthenaLoadingScreen",
-
-            "contrail" => "AthenaSkyDiveContrail",
-            "trails" => "AthenaSkyDiveContrail",
-
-            "spray" => "AthenaDance",
-            "emoji" => "AthenaDance",
-
-            _ => "TBD"
-        };
+        return Helper.GetItemBackendType(dav2);
     }
 }

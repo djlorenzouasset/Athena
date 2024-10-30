@@ -1,5 +1,7 @@
 ﻿namespace Athena.Models;
 
+/* REWRITE IN V2*/
+
 public class ProfileCosmetic
 {
     public ProfileCosmetic(string cosmeticId, string backendType, Dictionary<string, List<string>>? variants = null)
@@ -8,11 +10,16 @@ public class ProfileCosmetic
         attributes.favorite = false;
         attributes.archived = false;
 
-        if (variants is not null && variants.Count > 0)
+        if (variants != null && variants.Count > 0)
         {
             foreach (var (channel, ownedParts) in variants)
             {
-                attributes.variants.Add(new() { channel = channel, active = ownedParts[0], owned = ownedParts });
+                attributes.variants.Add(new() 
+                { 
+                    channel = channel, 
+                    active = ownedParts.Count > 0 ? ownedParts[0] : "", // scuffed thing for FortCosmeticRichColorVariant
+                    owned = ownedParts 
+                });
             }
         }
     }
@@ -30,7 +37,7 @@ public class Attributes
     public bool item_seen = true;
     public int rnd_sel_cnt = 0;
     public int xp = 0;
-    public List<ProfileAthena.Variant> variants = new();
+    public List<ProfileAthena.Variant> variants = [];
     public bool favorite = false;
     public bool archived = false;
 }

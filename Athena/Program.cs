@@ -1,10 +1,4 @@
-﻿await Athena.Managers.Athena.Initialize();
+﻿using Athena.Services;
 
-// The Application will remain open till the user presses the enter key
-Log.Information("Press the enter key to close the application");
-
-ConsoleKeyInfo keyInfo;
-do { keyInfo = Console.ReadKey(true); }
-while (keyInfo.Key != ConsoleKey.Enter);
-
-Log.Information(" --------------- Application Closed --------------- ");
+await Athena.Managers.Athena.Initialize();
+Helper.ExitThread();
