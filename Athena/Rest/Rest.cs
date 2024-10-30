@@ -2,12 +2,7 @@
 
 namespace Athena.Rest;
 
-public abstract class RestBase
+public abstract class RestBase(RestClient client)
 {
-    protected readonly RestClient _client;
-
-    protected RestBase(RestClient client)
-    {
-        _client = client;
-    }
+    protected readonly RestClient _client = client;
 }

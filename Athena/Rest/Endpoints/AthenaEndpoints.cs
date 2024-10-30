@@ -1,13 +1,10 @@
 ﻿using RestSharp;
-using Athena.Rest;
 using Athena.Models;
 
-public class AthenaEndpoints : RestBase
-{
-    public AthenaEndpoints(RestClient client) : base(client)
-    {
-    }
+namespace Athena.Rest.Endpoints;
 
+public class AthenaEndpoints(RestClient client) : RestBase(client)
+{
     public async Task<bool> DownloadFileAsync(string url, string path)
     {
         var request = new RestRequest(url);
@@ -20,11 +17,13 @@ public class AthenaEndpoints : RestBase
         return false;
     }
 
-    public async Task<Backup[]> GetBackupAsync()
+    public async Task<Backup[]?> GetBackupAsync()
     {
         var request = new RestRequest(Globals.BACKUPS, Method.Get);
         var response = await _client.ExecuteAsync<Backup[]>(request).ConfigureAwait(false);
-        Log.Information("[{Method}] {StatusDescription} ({StatusCode}): {URI}", request.Method, response.StatusDescription, (int)response.StatusCode, request.Resource);
+        Log.Information("[{Method}] {StatusDescription} ({StatusCode}): {URI}", 
+            request.Method, response.StatusDescription, (int)response.StatusCode, request.Resource);
+
         return response.Data;
     }
 }

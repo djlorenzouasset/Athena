@@ -1,8 +1,9 @@
 ﻿using RestSharp;
+using Athena.Rest.Endpoints;
 
 namespace Athena.Rest;
 
-public static class Endpoints
+public static class APIEndpoints
 {
     private static readonly RestClient _client = new(new RestClientOptions()
     {
