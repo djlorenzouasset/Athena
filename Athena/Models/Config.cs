@@ -6,7 +6,7 @@ namespace Athena.Models;
 
 public class Config
 {
-    public static Config config;
+    public static Config config = null!;
 
     public string athenaProfileId { get; set; } = "[PH] LoadOut_01";
     public string accessToken { get; set; } = string.Empty; // for who download the program, to avoid errors
@@ -60,7 +60,7 @@ public class Config
         }
         else
         {
-            config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Path.Combine(DirectoryManager.Settings, "settings.json")));
+            config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Path.Combine(DirectoryManager.Settings, "settings.json")))!;
         }
     }
 
