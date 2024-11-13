@@ -43,7 +43,7 @@ public class Dataminer
         "CID", "Character",
         "BID", "Backpack",
         "EID", "Pickaxe",
-        "Glider", "Wrap",
+        "Glider", "Wrap", "Shoes",
         "MusicPack", "Umbrella",
         "LSID", "LoadingScreen",
         "Contrail", "Trails",
@@ -61,7 +61,7 @@ public class Dataminer
         "AthenaEmojiItemDefinition", "AthenaSprayItemDefinition",
         "AthenaLoadingScreenItemDefinition", "AthenaDanceItemDefinition",
         "AthenaSkyDiveContrailItemDefinition", "AthenaItemWrapDefinition",
-        "AthenaMusicPackItemDefinition",
+        "AthenaMusicPackItemDefinition", "CosmeticShoesItemDefinition",
 
         // FORTNITE FESTIVAL
         "SparksGuitarItemDefinition", "SparksBassItemDefinition",
@@ -85,6 +85,7 @@ public class Dataminer
     private readonly Func<VfsEntry, bool> _cosmeticsFilter = (x => (
         x.Path.Contains("Athena/Items/Cosmetics/", StringComparison.OrdinalIgnoreCase) ||
         x.Path.Contains("GameFeatures/MeshCosmetics/", StringComparison.OrdinalIgnoreCase) /* Caper and Alias cosmetics */ ||
+        x.Path.Contains("GameFeatures/CosmeticShoes/", StringComparison.OrdinalIgnoreCase) /* Fortnite Shoes */ ||
         
         x.Path.Contains("GameFeatures/SparksCosmetics/", StringComparison.OrdinalIgnoreCase) || 
         x.Path.Contains("GameFeatures/FM/SparksSongTemplates/", StringComparison.OrdinalIgnoreCase) ||

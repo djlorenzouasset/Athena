@@ -120,6 +120,7 @@ public static class Helper
             "pickaxe" => "AthenaPickaxe",
             "contrail" => "AthenaSkyDiveContrail",
             "trails" => "AthenaSkyDiveContrail",
+            "shoes" => "CosmeticShoes",
 
             /* FESTIVAL */
             "mic" => "SparksMicrophone",
