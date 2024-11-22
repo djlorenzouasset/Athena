@@ -99,6 +99,11 @@ public class Meta // dont touch nothing here
     public string TileSize { get; set; } = string.Empty;
     public string AnalyticOfferGroupId = "ISTHISNEEDED??";
     public string FirstSeen = "31/12/9999"; // this is here for some reasons??
+
+    // epic now use API colors (thanks @ShiinaBR for the colors <3)
+    public string Color1 = "#424242";
+    public string Color2 = "#212121";
+    public string Color3 = "#121212";
 }
 
 public class BundleRequirement

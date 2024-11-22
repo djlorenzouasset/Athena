@@ -10,6 +10,11 @@ public class ShopBuilder
     private readonly List<object> _catalogEntries = [];
     private readonly List<List<CosmeticCatalogEntry>> _daily = [];
     private readonly List<List<BundleCatalogEntry>> _featured = [];
+    private readonly List<MetaInfo> _backgroundColors = [
+        new() { key = "color1", value = "#424242" },
+        new() { key = "color2", value = "#212121" },
+        new() { key = "color3", value = "#121212" },
+    ];
 
     public string Build()
     {
@@ -42,7 +47,8 @@ public class ShopBuilder
             [
                 new() { key = "NewDisplayAssetPath", value = shopItem + '.' + backendType },
                 new() { key = "SectionId", value = "Featured" },
-                new() { key = "TileSize", value = "Size_2_x_2" }
+                new() { key = "TileSize", value = "Size_2_x_2" },
+                .._backgroundColors
             ];
 
             var meta = new Meta
@@ -71,7 +77,8 @@ public class ShopBuilder
             [
                 new() { key = "NewDisplayAssetPath", value = shopItem + '.' + backendType },
                 new() { key = "SectionId", value = "Daily" },
-                new() { key = "TileSize", value = "Size_1_x_2" }
+                new() { key = "TileSize", value = "Size_1_x_2" },
+                .._backgroundColors
             ];
 
             var meta = new Meta
