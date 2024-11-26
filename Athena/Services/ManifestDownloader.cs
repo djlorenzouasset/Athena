@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
-using OffiUtils;
 using EpicManifestParser;
 using EpicManifestParser.UE;
 using EpicManifestParser.Api;
+using EpicManifestParser.ZlibngDotNetDecompressor;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.Compression;
 using Athena.Managers;
@@ -33,7 +33,8 @@ public class ManifestDownloader
             ChunkCacheDirectory = DirectoryManager.ChunksDir,
             ManifestCacheDirectory = DirectoryManager.ChunksDir,
             ChunkBaseUrl = CHUNKS_ENDPOINT,
-            Zlibng = ZlibHelper.Instance
+            Decompressor = ManifestZlibngDotNetDecompressor.Decompress,
+            DecompressorState = ZlibHelper.Instance,
         };
 
         (Manifest, _) = await manifest.DownloadAndParseAsync(options);
@@ -42,7 +43,7 @@ public class ManifestDownloader
 
     private void InitInformations(ManifestInfo manifest)
     {
-        GameBuild = Manifest.ManifestMeta.BuildVersion;
+        GameBuild = Manifest.Meta.BuildVersion;
 
         var parsed = manifest.Elements[0].TryParseVersionAndCL(out var ver, out int cl);
         if (!parsed || ver is null)
@@ -57,7 +58,7 @@ public class ManifestDownloader
 
     public void LoadArchives()
     {
-        foreach (var file in Manifest.FileManifestList)
+        foreach (var file in Manifest.Files)
         {
             if (file.FileName.Contains("optional"))
                 continue;
@@ -80,13 +81,13 @@ public class ManifestDownloader
         else if (file.FileName.EndsWith(".utoc"))
         {
             var _stream = file.GetStream();
-            _dataminer.Provider.RegisterVfs(file.FileName, [(IRandomAccessStream)_stream],
+            _dataminer.Provider.RegisterVfs(file.FileName, [_stream],
                 it => new FRandomAccessStreamArchive(it, GetStream(it), versions));
         }
         else
         {
             var _stream = file.GetStream();
-            _dataminer.Provider.RegisterVfs(file.FileName, [(IRandomAccessStream)_stream], null);
+            _dataminer.Provider.RegisterVfs(file.FileName, [_stream], null);
         }
 
         timer.Stop();
@@ -96,7 +97,7 @@ public class ManifestDownloader
 
     private FFileManifestStream GetStream(string fileName)
     {
-        var _file = Manifest.FileManifestList.First(x => x.FileName.Equals(fileName));
+        var _file = Manifest.Files.First(x => x.FileName.Equals(fileName));
         return _file.GetStream();
     }
 }
