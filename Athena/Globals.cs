@@ -2,10 +2,11 @@
 
 public static class Globals
 {
-    public const string VERSION = "1.7.2";
+    public const string VERSION = "1.7.3";
     public const string APPID = "1142239120471634042";
     public const string DISCORD = "https://discord.gg/nJBj9NjUS4";
     public const string DOWNLOAD = "https://github.com/djlorenzouasset/Athena/releases/latest";
+    public const string RELEASE = "https://djlorexzo.dev/api/v1/athena/release";
 
     // endpoints
     public const string MAPPINGS = "https://fortnitecentral.genxgames.gg/api/v1/mappings";

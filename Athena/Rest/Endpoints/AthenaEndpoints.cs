@@ -17,6 +17,16 @@ public class AthenaEndpoints(RestClient client) : RestBase(client)
         return false;
     }
 
+    public async Task<AthenaRelease?> GetReleaseInfoAsync()
+    {
+        var request = new RestRequest(Globals.RELEASE, Method.Get);
+        var response = await _client.ExecuteAsync<AthenaRelease>(request).ConfigureAwait(false);
+        Log.Information("[{Method}] {StatusDescription} ({StatusCode}): {URI}",
+            request.Method, response.StatusDescription, (int)response.StatusCode, request.Resource);
+
+        return response.Data;
+    }
+
     public async Task<Backup[]?> GetBackupAsync()
     {
         var request = new RestRequest(Globals.BACKUPS, Method.Get);

@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CUE4Parse-Conversion", "CUE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EpicManifestParser", "EpicManifestParser\src\EpicManifestParser\EpicManifestParser.csproj", "{F4109697-699F-459F-A262-31F04D8BBF45}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Athena.Updater", "Athena.Updater\Athena.Updater.csproj", "{C9B06EE3-07A3-4623-BF72-DDD82B355E5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{F4109697-699F-459F-A262-31F04D8BBF45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4109697-699F-459F-A262-31F04D8BBF45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4109697-699F-459F-A262-31F04D8BBF45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9B06EE3-07A3-4623-BF72-DDD82B355E5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9B06EE3-07A3-4623-BF72-DDD82B355E5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9B06EE3-07A3-4623-BF72-DDD82B355E5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9B06EE3-07A3-4623-BF72-DDD82B355E5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
