@@ -1,9 +1,11 @@
-﻿using CUE4Parse.Utils;
+﻿using System.Runtime.InteropServices;
+using CUE4Parse.Utils;
 using CUE4Parse.Compression;
 using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Objects.UObject;
 using Athena.Managers;
+using System.Diagnostics;
 
 namespace Athena.Services;
 
@@ -12,6 +14,12 @@ public static class Helper
     private static readonly string DEFAULT_VARIANT_NAME = "[PH] VariantName"; // default name for variants name
     private static readonly string DEFAULT_STYLE_NAME = "[PH] StyleName"; // default name for styles name
     private static readonly string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // characters for the offerId
+
+    [DllImport("user32.dll")]
+    public static extern int MessageBox(IntPtr hInstance, string lpText, string lpCaption, uint type);
+
+    [DllImport("kernel32.dll")]
+    public static extern int GetConsoleWindow();
 
     public static void ExitThread(int exitCode = 0)
     {
@@ -24,6 +32,27 @@ public static class Helper
         Log.Information(" --------------- Application Closed --------------- ");
         Log.CloseAndFlush();
         Environment.Exit(exitCode);
+    }
+
+    public static void ExitThreadAfterUpdate(string version)
+    {
+        Log.Information("Starting Athena updater.");
+        string thisInstance = Path.Combine(DirectoryManager.Current, "Athena.exe");
+        string newVersion = Path.Combine(DirectoryManager.ChunksDir, "Athena.exe");
+
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = DirectoryManager.UpdaterFile,
+            Arguments = $"\"{thisInstance}\" \"{newVersion}\" \"{version}\"",
+            UseShellExecute = true,
+            CreateNoWindow = true,
+            WindowStyle = ProcessWindowStyle.Hidden
+        };
+
+        Process.Start(startInfo);
+        Log.Information(" --------------- Application closed after update --------------- ");
+        Log.CloseAndFlush();
+        Environment.Exit(0);
     }
 
     public static async Task InitializeOodle()
