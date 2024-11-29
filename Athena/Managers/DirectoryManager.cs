@@ -1,4 +1,6 @@
-﻿namespace Athena.Managers;
+﻿using Spectre.Console;
+
+namespace Athena.Managers;
 
 public static class DirectoryManager
 {
@@ -9,6 +11,15 @@ public static class DirectoryManager
     public static string Profiles = Path.Combine(Current, ".profiles"); // not really needed
     public static string MappingsDir = Path.Combine(ChunksDir, ".mappings");
     public static string BackupsDir = Path.Combine(ChunksDir, ".backups");
+    public static string UpdaterFile = Path.Combine(ChunksDir, "AthenaUpdater.exe");
+
+    private static string[] _prohibitedDirs = [
+        Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads")
+    ];
+
+    public static bool IsCurrentDirectoryValid()
+        => !_prohibitedDirs.Contains(Current);
 
     public static void CreateFolders()
     {
