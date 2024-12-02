@@ -10,7 +10,7 @@
 - [x] Code improvements
 
 ## Athena v2
-- [ ] Auto update on new program version
+- [x] (ADDED IN v1.7.3) Auto update on new program version
 - [ ] Function for check new paks: when something gets decrypted Athena generates it instantly
 - [ ] Lot of improvements in the code (performances too)
 - [ ] More settings options
