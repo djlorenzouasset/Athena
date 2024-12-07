@@ -96,8 +96,7 @@ public class Dataminer
 
     private readonly string[] _athenaOptions = [ 
         "Profile Athena",
-        "ItemShop Catalog",
-        // "Weapons Dump" <-- disabled until v2
+        "ItemShop Catalog"
     ];
     private readonly string[] _profileOptions = [ 
         "All Cosmetics", "New Cosmetics", 
