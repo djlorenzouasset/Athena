@@ -19,12 +19,11 @@ public class ManifestDownloader
     public string GameBuild = string.Empty;
     public string ManifestId = string.Empty;
 
-    private const string _pattern = @"^FortniteGame(/|\\)Content(/|\\)Paks(/|\\)";
     private const string CHUNKS_ENDPOINT = "https://epicgames-download1.akamaized.net/Builds/Fortnite/CloudDir/";
 
     private readonly Dataminer _dataminer = Dataminer.Instance;
-    private readonly Regex _pakFinder = new(_pattern, RegexOptions.Compiled |
-        RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+    private readonly Regex _pakFinder = new(@"^FortniteGame[/\\]Content[/\\]Paks[/\\]", 
+        RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     public async Task DownloadManifest(ManifestInfo manifest)
     {
@@ -37,7 +36,8 @@ public class ManifestDownloader
             DecompressorState = ZlibHelper.Instance,
         };
 
-        (Manifest, _) = await manifest.DownloadAndParseAsync(options);
+        (Manifest, _) = await manifest.DownloadAndParseAsync(options, 
+            elementManifestPredicate: static x => x.Uri.Host != "cloudflare.epicgamescdn.com");
         InitInformations(manifest);
     }
 
@@ -58,13 +58,9 @@ public class ManifestDownloader
 
     public void LoadArchives()
     {
-        foreach (var file in Manifest.Files)
-        {
-            if (file.FileName.Contains("optional"))
-                continue;
-
-            LoadFileManifest(file);
-        }
+        Parallel.ForEach(Manifest.Files.Where(
+            x => _pakFinder.IsMatch(x.FileName)), 
+            file => LoadFileManifest(file));
     }
 
     private void LoadFileManifest(FFileManifest file)
@@ -72,10 +68,7 @@ public class ManifestDownloader
         var timer = Stopwatch.StartNew(); /* starts the stopwatch for calculate the loading time */
         var versions = _dataminer.Provider.Versions;
 
-        if (!_pakFinder.IsMatch(file.FileName))
-            return;
-
-        else if (file.FileName.EndsWith(".ucas") || file.FileName.EndsWith(".sig"))
+        if (file.FileName.EndsWith(".ucas") || file.FileName.EndsWith(".sig"))
             return;
 
         else if (file.FileName.EndsWith(".utoc"))
