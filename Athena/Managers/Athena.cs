@@ -38,10 +38,10 @@ public static class Athena
             Helper.ExitThread(1);
         }
 
+        DirectoryManager.CreateFolders();
         // check for updates
         await CheckForUpdates();
 
-        DirectoryManager.CreateFolders();
         Config.LoadSettings();
         // clear the console for a better look in case the user inserted paths 
         Console.Clear();

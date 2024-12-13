@@ -2,7 +2,7 @@
 
 public static class Globals
 {
-    public const string VERSION = "1.7.4";
+    public const string VERSION = "1.7.5";
     public const string APPID = "1142239120471634042";
     public const string DISCORD = "https://discord.gg/nJBj9NjUS4";
     public const string DOWNLOAD = "https://github.com/djlorenzouasset/Athena/releases/latest";
@@ -17,5 +17,5 @@ public static class Globals
     public const string MANIFEST = "https://launcher-public-service-prod06.ol.epicgames.com/launcher/api/public/assets/v2/platform/Windows/namespace/fn/catalogItem/4fe75bbc5a674f4f9b356b5c90567da5/app/Fortnite/label/Live";
     
     // auth
-    public const string BASIC = "basic MzQ0NmNkNzI2OTRjNGE0NDg1ZDgxYjc3YWRiYjIxNDE6OTIwOWQ0YTVlMjVhNDU3ZmI5YjA3NDg5ZDMxM2I0MWE=";
+    public const string BASIC = "basic M2Y2OWU1NmM3NjQ5NDkyYzhjYzI5ZjFhZjA4YThhMTI6YjUxZWU5Y2IxMjIzNGY1MGE2OWVmYTY3ZWY1MzgxMmU=";
 }
