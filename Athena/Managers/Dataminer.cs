@@ -94,25 +94,28 @@ public class Dataminer
         x.Path.Contains("GameFeatures/Juno/", StringComparison.OrdinalIgnoreCase)) &&
         Instance._accepted.Any(k => x.NameWithoutExtension.StartsWith(k, StringComparison.OrdinalIgnoreCase)));
 
-    private readonly string[] _athenaOptions = [ 
+    private readonly List<string> _athenaOptions = [ 
         "Profile Athena",
         "ItemShop Catalog"
     ];
-    private readonly string[] _profileOptions = [ 
+    private readonly List<string> _profileOptions = [ 
         "All Cosmetics", "New Cosmetics", 
         "New Cosmetics (With Paks)",
         "Custom Cosmetics (by Id)",
         "Pak Cosmetics", "Paks Bulk", 
         "Back"
     ];
-    private readonly string[] _shopOptions = [
+    private readonly List<string> _shopOptions = [
         "New Cosmetics", "New Cosmetics (With Paks)",
         "Custom Cosmetics (by Id)", "Pak Cosmetics", 
         "Paks Bulk", "Back"
     ];
 
-    public async Task Initialize()
+    private readonly List<string> _notices = [];
+
+    public async Task Initialize(List<string> notices)
     {
+        _notices.AddRange(notices);
         _manifestService = new();
         Provider = new(string.Empty, true, new VersionContainer(EGame.GAME_UE5_LATEST));
 
@@ -201,9 +204,14 @@ public class Dataminer
         Console.Title = $"Athena v{Globals.VERSION} - FortniteGame v{_manifestService.GameVersion}";
         DiscordRichPresence.Update($"In Menu - FortniteGame v{_manifestService.GameVersion}");
         // this menu is static, and will never be removed
-        AnsiConsole.Write(new Markup($"[63]Athena v{Globals.VERSION}[/]: Made with [124]<3[/] by [99]@djlorenzouasset[/] & [99]@andredotuasset[/] with the help of [99]@unrealhybrid[/]\n"));
-        AnsiConsole.Write(new Markup($"[63]Need to change your profiles directory?[/] Go in the [99]%appdata%/Athena[/] folder and edit the [99]settings.json[/] file.\n"));
-        AnsiConsole.Write(new Markup($"Join the [63]discord server[/] if you need help using Athena: [99]{Globals.DISCORD}[/]\n\n"));
+        AnsiConsole.Write(new Markup($"[50]Athena v{Globals.VERSION}[/]: Made with [124]<3[/] by [50]@djlorenzouasset[/] & [50]@andredotuasset[/] with the help of [50]@unrealhybrid[/]\n"));
+        AnsiConsole.Write(new Markup($"[50]Need to change your profiles directory?[/] Go in the [50]%appdata%/Athena[/] folder and edit the [50]settings.json[/] file.\n"));
+        AnsiConsole.Write(new Markup($"Join the [50]discord server[/] if you need help using Athena: [99]{Globals.DISCORD}[/]\n\n"));
+
+        foreach (var msg in _notices)
+        {
+            AnsiConsole.Write(new Markup(msg));
+        }
 
         // main menu
         var selected = AnsiConsole.Prompt(
@@ -227,7 +235,7 @@ public class Dataminer
 
     private async Task SelectMode(Model model)
     {
-        string[] opts = [];
+        List<string> opts = [];
 
         switch (model)
         {

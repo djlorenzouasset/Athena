@@ -46,8 +46,11 @@ public static class Athena
         // clear the console for a better look in case the user inserted paths 
         Console.Clear();
 
+        var latestRelease = await GetLatestRelease();
+        var notices = latestRelease?.Notices ?? [];
+
         DiscordRichPresence.Initialize(); // this will be optional in v2 :/
-        await Dataminer.Instance.Initialize();
+        await Dataminer.Instance.Initialize(notices);
         await Dataminer.Instance.ShowMenu();
     }
 

@@ -8,6 +8,7 @@ public class AthenaRelease
     public string Changelog { get; set; }
     public string UpdaterFile { get; set; }
     public List<string> Authors { get; set; }
+    public List<string> Notices { get; set; }
 
     public bool VersionChanged() => !Globals.VERSION.Equals(Version);
 }
