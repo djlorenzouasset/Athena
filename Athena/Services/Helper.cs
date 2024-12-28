@@ -11,6 +11,11 @@ namespace Athena.Services;
 
 public static class Helper
 {
+    private static readonly Dictionary<string, string> _defaultCosmetics = new() { // default items (issue #33)
+        { "DefaultPickaxe", "AthenaPickaxe" },
+        { "DefaultGlider", "AthenaGlider" }
+    };
+
     private static readonly string DEFAULT_VARIANT_NAME = "[PH] VariantName"; // default name for variants name
     private static readonly string DEFAULT_STYLE_NAME = "[PH] StyleName"; // default name for styles name
     private static readonly string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // characters for the offerId
@@ -111,7 +116,11 @@ public static class Helper
     public static string GetItemBackendType(string id)
     {
         string prefix;
-        if (id.StartsWith("Sparks_"))
+        if (_defaultCosmetics.TryGetValue(id, out string? value))
+        {
+            return value;
+        }
+        else if (id.StartsWith("Sparks_"))
         {
             prefix = id.SubstringAfter('_').SubstringBefore('_');
         }
