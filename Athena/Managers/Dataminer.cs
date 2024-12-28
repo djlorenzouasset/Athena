@@ -51,8 +51,7 @@ public class Dataminer
         "Toy", "Emoji", "Spray",
         "Sparks_", "SparksAura", "SID",
         "ID", "Wheel", "CarBody", "CarSkin",
-        "JBPID_", "JBSID_", // _ is for avoid export errors
-        "DefaultContrail", "DefaultGlider", "DefaultPickaxe" // default items (issue #33)
+        "JBPID_", "JBSID_" // _ is for avoid export errors
     ];
     private readonly string[] _classes = [
         // BR
@@ -91,7 +90,6 @@ public class Dataminer
         x.Path.Contains("GameFeatures/SparksCosmetics/", StringComparison.OrdinalIgnoreCase) || 
         x.Path.Contains("GameFeatures/FM/SparksSongTemplates/", StringComparison.OrdinalIgnoreCase) ||
         x.Path.Contains("GameFeatures/FM/SparksCosmetics/", StringComparison.OrdinalIgnoreCase) ||
-        x.Path.Contains("GameFeatures/FM/SparksCharacterCommon/", StringComparison.OrdinalIgnoreCase) || //default sparks cosmetics (issue #33)
         x.Path.Contains("GameFeatures/VehicleCosmetics/", StringComparison.OrdinalIgnoreCase) || 
         x.Path.Contains("GameFeatures/Juno/", StringComparison.OrdinalIgnoreCase)) &&
         Instance._accepted.Any(k => x.NameWithoutExtension.StartsWith(k, StringComparison.OrdinalIgnoreCase)));
@@ -208,7 +206,7 @@ public class Dataminer
         // this menu is static, and will never be removed
         AnsiConsole.Write(new Markup($"[50]Athena v{Globals.VERSION}[/]: Made with [124]<3[/] by [50]@djlorenzouasset[/] & [50]@andredotuasset[/] with the help of [50]@unrealhybrid[/]\n"));
         AnsiConsole.Write(new Markup($"[50]Need to change your profiles directory?[/] Go in the [50]%appdata%/Athena[/] folder and edit the [50]settings.json[/] file.\n"));
-        AnsiConsole.Write(new Markup($"Join the [50]discord server[/] if you need help using Athena: [underline 99]{Globals.DISCORD}[/]\n\n"));
+        AnsiConsole.Write(new Markup($"Join the [50]discord server[/] if you need help using Athena: [99]{Globals.DISCORD}[/]\n\n"));
 
         foreach (var msg in _notices)
         {
@@ -357,6 +355,7 @@ public class Dataminer
             }
         }
 
+        start.Stop();
         Log.Information("All tasks finished in {tot}s ({ms}ms)\n", start.Elapsed.Seconds, Math.Round(start.Elapsed.TotalMilliseconds));
         await ReturnToMenu();
         return;
