@@ -206,9 +206,9 @@ public class Dataminer
         Console.Title = $"Athena v{Globals.VERSION} - FortniteGame v{_manifestService.GameVersion}";
         DiscordRichPresence.Update($"In Menu - FortniteGame v{_manifestService.GameVersion}");
         // this menu is static, and will never be removed
-        AnsiConsole.Write(new Markup($"[50]Athena v{Globals.VERSION}[/]: Made with [124]<3[/] by [50]@djlorenzouasset[/] & [50]@andredotuasset[/] with the help of [50]@unrealhybrid[/]\n"));
-        AnsiConsole.Write(new Markup($"[50]Need to change your profiles directory?[/] Go in the [50]%appdata%/Athena[/] folder and edit the [50]settings.json[/] file.\n"));
-        AnsiConsole.Write(new Markup($"Join the [50]discord server[/] if you need help using Athena: [underline 99]{Globals.DISCORD}[/]\n\n"));
+        AnsiConsole.Write(new Markup($"[63]Athena v{Globals.VERSION}[/]: Made with [124]<3[/] by [99]@djlorenzouasset[/] & [99]@andredotuasset[/] with the help of [99]@unrealhybrid[/]\n"));
+        AnsiConsole.Write(new Markup($"[63]Need to change your profiles directory?[/] Go in the [underline 99]%appdata%/Athena[/] folder and edit the [99]settings.json[/] file.\n"));
+        AnsiConsole.Write(new Markup($"Join the [63]discord server[/] if you need help using Athena: [underline 99]{Globals.DISCORD}[/]\n\n"));
 
         foreach (var msg in _notices)
         {
