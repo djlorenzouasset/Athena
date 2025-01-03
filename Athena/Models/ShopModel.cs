@@ -6,7 +6,7 @@ public class ShopModel
 {
     public int refreshIntervalHrs = 1;
     public int dailyPurchaseHrs = 24;
-    public DateTime expiration = new DateTime(9999, 12, 31, 23, 59, 59); // when the world will be nothing, the shop will be still not updated
+    public DateTime expiration = new(9999, 12, 31, 23, 59, 59); // when the world will be nothing, the shop will still be a thing
     public List<Storefront> storefronts = [];
 }
 
@@ -52,7 +52,7 @@ public class CosmeticCatalogEntry
     public int weeklyLimit = -1;
     public int monthlyLimit = -1;
     public List<string> categories = [];
-    public List<Price> prices = [new()];
+    public List<Price> prices = [ new() ];
     public Meta meta { get; set; } = new();
     public string matchFilter = string.Empty;
     public double filterWeight = 0.0;
@@ -76,7 +76,7 @@ public class Price
     public int regularPrice = -999999; // you can change here the in-game price
     public int dynamicRegularPrice = -999999;
     public int finalPrice = -999999;
-    public DateTime saleExpiration = new DateTime(9999, 12, 31, 23, 59, 59);
+    public DateTime saleExpiration = new(9999, 12, 31, 23, 59, 59);
     public int basePrice = -999999;
 }
 
@@ -88,7 +88,7 @@ public class DynamicBundleInfo
     public string currencyType = "MtxCurrency";
     public string currencySubType = string.Empty;
     public string displayType = "AmountOff";
-    public List<BundleRequirement> bundleItems = [];
+    public List<BundleRequirement> bundleItems = [ new() ];
 }
 
 public class Meta // dont touch nothing here

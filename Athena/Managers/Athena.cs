@@ -39,8 +39,10 @@ public static class Athena
         }
 
         DirectoryManager.CreateFolders();
+#if !DEBUG
         // check for updates
         await CheckForUpdates();
+#endif
 
         Config.LoadSettings();
         // clear the console for a better look in case the user inserted paths 
