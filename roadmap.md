@@ -1,7 +1,6 @@
 # Athena Roadmap for next major updates
 
 ## Athena v2
-- [x] (ADDED IN v1.7.3) Auto update on new program version
 - [ ] Function for check new paks: when something gets decrypted Athena generates it instantly
 - [ ] Lot of improvements in the code (performances too)
 - [ ] More settings options
