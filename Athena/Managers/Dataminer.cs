@@ -422,10 +422,6 @@ public class Dataminer
                 savePath = DirectoryManager.Profiles;
             }
             Log.Information("Saved shop for {name} in {path}.", Config.config.athenaProfileId, Config.config.shopDirectory);
-
-            /* this log will be here until hybrid implements it in neonite */
-            Log.Warning("If you see the message \"No offers available\" in-game, save the fortnitegame.json file in the neonite .responses folder.");
-            Log.Warning("You can get the file follwing this link: https://github.com/djlorenzouasset/Athena/blob/main/backend/fortnitegame.json");
         }
         else if (model == Model.ProfileAthena)
         {
