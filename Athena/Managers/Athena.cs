@@ -14,7 +14,9 @@ public static class Athena
         Console.Title = "Athena: Starting"; // do we really need this??
 
         Log.Logger = new LoggerConfiguration().WriteTo
-            .Console(LogEventLevel.Information, theme: AnsiConsoleTheme.Literate).WriteTo
+            .Logger(consoleLogger => consoleLogger.Filter
+            .ByExcluding(logEvent => logEvent.Properties.ContainsKey("NoConsole")).WriteTo
+            .Console(LogEventLevel.Information, theme: AnsiConsoleTheme.Literate)).WriteTo
             .File(Path.Combine(DirectoryManager.Logs, $"Athena-Log-{DateTime.Now:dd-MM-yyyy}.log"))
             .CreateLogger();
 

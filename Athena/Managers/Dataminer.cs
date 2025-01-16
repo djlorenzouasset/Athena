@@ -232,6 +232,7 @@ public class Dataminer
             break;
         }
 
+        Log.ForContext("NoConsole", true).Information("User selected {0}", model);
         await SelectMode(model);
     }
 
@@ -284,6 +285,7 @@ public class Dataminer
             return;
         }
 
+        Log.ForContext("NoConsole", true).Information("User selected {0}", action);
         await ProcessRequest(model, action);
     }
 
