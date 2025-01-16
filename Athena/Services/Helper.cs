@@ -16,8 +16,8 @@ public static class Helper
         { "DefaultGlider", "AthenaGlider" }
     };
 
-    private static readonly string DEFAULT_VARIANT_NAME = "[PH] VariantName"; // default name for variants name
-    private static readonly string DEFAULT_STYLE_NAME = "[PH] StyleName"; // default name for styles name
+    private static readonly string DEFAULT_VARIANT_NAME = "UnknownVariantName"; // default name for variants name
+    private static readonly string DEFAULT_STYLE_NAME = "Unknown.Variant.Tag"; // default name for styles name
     private static readonly string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // characters for the offerId
 
     [DllImport("user32.dll")]
