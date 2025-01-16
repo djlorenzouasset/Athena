@@ -10,7 +10,7 @@ public class ShopBuilder
     private readonly List<object> _catalogEntries = [];
     private readonly List<List<CosmeticCatalogEntry>> _daily = [];
     private readonly List<List<BundleCatalogEntry>> _featured = [];
-    private readonly List<MetaInfo> _backgroundColors = [
+    private readonly List<MetaInfo> _backgroundColors = [ // change these if you want to change colors
         new() { key = "color1", value = "#424242" },
         new() { key = "color2", value = "#212121" },
         new() { key = "color3", value = "#121212" },
@@ -107,7 +107,8 @@ public class ShopBuilder
         _daily.ForEach(x => _catalogEntries.AddRange(x));
     }
 
-    private void AddAsset(object data, bool isBundle = false) // (should work) (idk) (i hope)
+    // this is really scuffed, need to be rewrited in v2
+    private void AddAsset(object data, bool isBundle = false)
     {
         if (isBundle)
         {
