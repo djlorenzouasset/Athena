@@ -431,7 +431,7 @@ public class Dataminer
                 try
                 {
                     var export = await Provider.LoadObjectAsync(entry.PathWithoutExtension + '.' + entry.NameWithoutExtension);
-                    if (!_classes.Contains(export.ExportType)) continue; // this will prefent issues trust
+                    if (!_classes.Contains(export.ExportType)) continue; // this will prevent issues trust
 
                     var variants = Helper.GetAllVariants(export);
                     profile.AddCosmetic(entry.NameWithoutExtension, variants);
@@ -453,7 +453,7 @@ public class Dataminer
                 await File.WriteAllTextAsync(Path.Join(Config.config.profileDirectory, "profile_athena.json"), profile.Build());
                 savePath = Config.config.profileDirectory;
             }
-            catch (Exception err) // sometimes the path wont accept characters like . or -
+            catch (Exception err) // sometimes the path dont accept characters like . or -
             {
                 Log.Warning("An error has occurred while saving the profile: {err}. Saving in default directory (.profiles).", err.Message);
                 await File.WriteAllTextAsync(Path.Join(DirectoryManager.Profiles, "profile_athena.json"), profile.Build());

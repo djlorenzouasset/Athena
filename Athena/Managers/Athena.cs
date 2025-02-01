@@ -20,15 +20,15 @@ public static class Athena
             .File(Path.Combine(DirectoryManager.Logs, $"Athena-Log-{DateTime.Now:dd-MM-yyyy}.log"))
             .CreateLogger();
 
-        /* informations needed for support */
-        Log.Information("      --------------------------------------      ");
-        Log.Information("Log file opened: {date}", DateTime.Now);
-        Log.Information("Athena version is: {ver}", Globals.VERSION);
-        Log.Information("Current folder is {path}", DirectoryManager.Current);
-        Log.Information(".NET version is: {RuntimeVer}", RuntimeInformation.FrameworkDescription);
+        /* information needed for support */
+        Log.ForContext("NoConsole", true).Information("      --------------------------------------      ");
+        Log.ForContext("NoConsole", true).Information("Log file opened: {date}", DateTime.Now);
+        Log.ForContext("NoConsole", true).Information("Athena version is: {ver}", Globals.VERSION);
+        Log.ForContext("NoConsole", true).Information("Current folder is {path}", DirectoryManager.Current);
+        Log.ForContext("NoConsole", true).Information(".NET version is: {runtimeVer}", RuntimeInformation.FrameworkDescription);
 
 #if DEBUG
-        Log.Information("bIsDebug: {bDebug}", true); // funny
+        Log.ForContext("NoConsole", true).Information("bIsDebug: {bDebug}", true); // funny
 #else
         Log.Information("bIsDebug: {bDebug}", false);
 #endif
@@ -53,7 +53,7 @@ public static class Athena
         var latestRelease = await GetLatestRelease();
         var notices = latestRelease?.Notices ?? [];
 
-        DiscordRichPresence.Initialize(); // this will be optional in v2 :/
+        DiscordRichPresence.Initialize();
         await Dataminer.Instance.Initialize(notices);
         await Dataminer.Instance.ShowMenu();
     }
