@@ -8,7 +8,7 @@ public class Config
 {
     public static Config config = null!;
 
-    public string athenaProfileId { get; set; } = "[PH] LoadOut_01";
+    public string athenaProfileId { get; set; } = "AthenaProfile";
     public string accessToken { get; set; } = string.Empty; // for who download the program, to avoid errors
     public string profileDirectory { get; set; } = DirectoryManager.Profiles;
     public string shopDirectory { get; set; } = DirectoryManager.Profiles;

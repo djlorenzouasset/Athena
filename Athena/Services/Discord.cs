@@ -11,8 +11,8 @@ public static class DiscordRichPresence
         Timestamps = new() { Start = DateTime.UtcNow },
         Assets = new() { LargeImageKey = "logo", LargeImageText = $"Athena {Globals.VERSION}" },
         Buttons = [
-            new() { Label = "Join Athena", Url = Globals.DISCORD },
-            new() { Label = "Download Athena", Url = Globals.DOWNLOAD }
+            new() { Label = "Download", Url = Globals.DOWNLOAD },
+            new() { Label = "Join Athena", Url = Globals.DISCORD }
         ]
     };
 

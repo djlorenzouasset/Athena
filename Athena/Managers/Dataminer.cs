@@ -232,6 +232,7 @@ public class Dataminer
             break;
         }
 
+        Log.ForContext("NoConsole", true).Information("User selected {0}", model);
         await SelectMode(model);
     }
 
@@ -284,6 +285,7 @@ public class Dataminer
             return;
         }
 
+        Log.ForContext("NoConsole", true).Information("User selected {0}", action);
         await ProcessRequest(model, action);
     }
 
@@ -420,10 +422,6 @@ public class Dataminer
                 savePath = DirectoryManager.Profiles;
             }
             Log.Information("Saved shop for {name} in {path}.", Config.config.athenaProfileId, Config.config.shopDirectory);
-
-            /* this log will be here until hybrid implements it in neonite */
-            Log.Warning("If you see the message \"No offers available\" in-game, save the fortnitegame.json file in the neonite .responses folder.");
-            Log.Warning("You can get the file follwing this link: https://github.com/djlorenzouasset/Athena/blob/main/backend/fortnitegame.json");
         }
         else if (model == Model.ProfileAthena)
         {
@@ -433,7 +431,7 @@ public class Dataminer
                 try
                 {
                     var export = await Provider.LoadObjectAsync(entry.PathWithoutExtension + '.' + entry.NameWithoutExtension);
-                    if (!_classes.Contains(export.ExportType)) continue; // this will prefent issues trust
+                    if (!_classes.Contains(export.ExportType)) continue; // this will prevent issues trust
 
                     var variants = Helper.GetAllVariants(export);
                     profile.AddCosmetic(entry.NameWithoutExtension, variants);
@@ -455,7 +453,7 @@ public class Dataminer
                 await File.WriteAllTextAsync(Path.Join(Config.config.profileDirectory, "profile_athena.json"), profile.Build());
                 savePath = Config.config.profileDirectory;
             }
-            catch (Exception err) // sometimes the path wont accept characters like . or -
+            catch (Exception err) // sometimes the path dont accept characters like . or -
             {
                 Log.Warning("An error has occurred while saving the profile: {err}. Saving in default directory (.profiles).", err.Message);
                 await File.WriteAllTextAsync(Path.Join(DirectoryManager.Profiles, "profile_athena.json"), profile.Build());
