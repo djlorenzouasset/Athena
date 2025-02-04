@@ -3,18 +3,34 @@ using Athena.Models.API.Fortnite;
 
 namespace Athena.Models;
 
+public class ProfileSettings
+{
+    public string ProfileId { get; set; } = "AthenaProfile";
+    public int BattlepassLevel { get; set; } = 999999;
+}
+
+public class CatalogSettings
+{
+    public int BundlePrice { get; set; } = -999999;
+    public int ItemPrice { get; set; } = -999999;
+}
+
 public class UserSettings
 {
     public static UserSettings Current = null!;
 
-    public string AthenaProfileId { get; set; } = "AthenaProfile";
+    // output settings
     public string ProfilesPath { get; set; } = ""; // TBD
     public string CatalogPath { get; set; } = ""; // TBD
 
+    // models settings
+    public ProfileSettings Profiles { get; set; } = new();
+    public CatalogSettings Catalog { get; set; } = new();
+
+    // app settings
+    public EpicAuth EpicAuth { get; set; } = null!;
     public bool bUseDiscordRPC { get; set; } = true;
     public bool bShowChangelog { get; set; } = false;
-
-    public EpicAuth EpicAuth { get; set; } = null!;
 
     // @TODO: change settings path on final release
     public static void LoadSettings()
