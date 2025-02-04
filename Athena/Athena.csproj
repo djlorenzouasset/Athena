@@ -7,4 +7,16 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	<PackageReference Include="Serilog" Version="4.2.0" />
+	<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+	<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <ProjectReference Include="..\CUE4Parse\CUE4Parse-Conversion\CUE4Parse-Conversion.csproj" />
+    <ProjectReference Include="..\CUE4Parse\CUE4Parse\CUE4Parse.csproj" />
+    <ProjectReference Include="..\EpicManifestParser\src\EpicManifestParser\EpicManifestParser.csproj" />
+  </ItemGroup>
 </Project>
