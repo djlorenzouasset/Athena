@@ -1,4 +1,6 @@
-﻿namespace Athena.Models.API.Athena;
+﻿using Athena.Models.App;
+
+namespace Athena.Models.API.Athena;
 
 public class AthenaRelease
 {
