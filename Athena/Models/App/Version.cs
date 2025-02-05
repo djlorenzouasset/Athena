@@ -1,4 +1,4 @@
-﻿namespace Athena.Models;
+﻿namespace Athena.Models.App;
 
 public class AthenaVersion : IComparable<AthenaVersion>
 {

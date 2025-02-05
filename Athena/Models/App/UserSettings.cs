@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using System.Diagnostics;
+using Newtonsoft.Json;
+using Athena.Services;
 using Athena.Models.API.Fortnite;
 
-namespace Athena.Models;
+namespace Athena.Models.App;
 
 public class ProfileSettings
 {
@@ -17,11 +19,15 @@ public class CatalogSettings
 
 public class UserSettings
 {
+    private static readonly string _settingsFile = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Athena", "settingsv2.json"
+    );
+
     public static UserSettings Current = null!;
 
     // output settings
-    public string ProfilesPath { get; set; } = ""; // TBD
-    public string CatalogPath { get; set; } = ""; // TBD
+    public string ProfilesPath { get; set; } = Directories.Output.FullName; // TBD
+    public string CatalogPath { get; set; } = Directories.Output.FullName; // TBD
 
     // models settings
     public ProfileSettings Profiles { get; set; } = new();
@@ -32,28 +38,17 @@ public class UserSettings
     public bool bUseDiscordRPC { get; set; } = true;
     public bool bShowChangelog { get; set; } = false;
 
-    // @TODO: change settings path on final release
     public static void LoadSettings()
     {
-        if (File.Exists(Path.Combine(Environment.CurrentDirectory, "debug-settings.json"))) 
-        {
-            Current = JsonConvert.DeserializeObject<UserSettings>(Path.Combine(Environment.CurrentDirectory, "debug-settings.json"))!;
-        }
-        else
+        if (!File.Exists(_settingsFile))
         {
             CreateSettings();
+            return;
         }
+
+        Current = JsonConvert.DeserializeObject<UserSettings>(_settingsFile)!;
     }
 
-    public static void SaveSettings()
-    {
-        var data = JsonConvert.SerializeObject(
-            Current, Formatting.Indented, Globals.JsonSettings
-        );
-
-        File.WriteAllText(Path.Combine(Environment.CurrentDirectory, "debug-settings.json"), data);
-    }
-    
     public static void CreateSettings()
     {
         Current = new UserSettings();
@@ -65,5 +60,19 @@ public class UserSettings
         // @TODO: add discord shit
 
         SaveSettings(); // save settings for prevent unsaving on application exit
+    }
+
+    public static void OpenSettings()
+    {
+        Process.Start(_settingsFile);
+    }
+
+    public static void SaveSettings()
+    {
+        var settings = JsonConvert.SerializeObject(
+            Current, Formatting.Indented, Globals.JsonSettings
+        );
+
+        File.WriteAllText(_settingsFile, settings);
     }
 }
