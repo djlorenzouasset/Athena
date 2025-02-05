@@ -1,7 +1,7 @@
 ﻿using CUE4Parse.UE4.Objects.Core.Misc;
-using Athena.Models;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
+using Athena.Models.App;
 
 namespace Athena;
 
