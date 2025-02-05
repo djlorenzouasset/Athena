@@ -1,1 +1,3 @@
-﻿Console.WriteLine("Athena v2!");
+﻿using Athena.Core;
+
+AthenaCore.Init().GetAwaiter();
