@@ -11,8 +11,6 @@ public static class APIEndpoints
         Timeout = TimeSpan.FromMilliseconds(1000 * 5),
     }, configureSerialization: s => s.UseSerializer<JsonNetSerializer>());
 
-
-
     public static async Task<bool> DownloadFileAsync(string url, string path, bool bOverride = true)
     {
         var request = new RestRequest(url);

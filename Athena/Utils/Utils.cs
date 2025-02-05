@@ -14,12 +14,4 @@ public static class FUtils
         Log.CloseAndFlush();
         Environment.Exit(exitCode);
     }
-
-    public static void ExitThreadAfterUpdate(string version)
-    {
-        Log.Information("Starting Athena updater.");
-
-        // @TODO: add updater logic
-        ExitThread();
-    }
 }

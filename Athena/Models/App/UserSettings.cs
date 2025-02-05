@@ -19,9 +19,10 @@ public class CatalogSettings
 
 public class UserSettings
 {
-    private static readonly string _settingsFile = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Athena", "settingsv2.json"
+    private static readonly string _settings = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Athena"
     );
+    private static readonly string _file = Path.Combine(_settings, "settingsv2.json");
 
     public static UserSettings Current = null!;
 
@@ -40,13 +41,13 @@ public class UserSettings
 
     public static void LoadSettings()
     {
-        if (!File.Exists(_settingsFile))
+        if (!File.Exists(_file))
         {
             CreateSettings();
             return;
         }
 
-        Current = JsonConvert.DeserializeObject<UserSettings>(_settingsFile)!;
+        Current = JsonConvert.DeserializeObject<UserSettings>(_file)!;
     }
 
     public static void CreateSettings()
@@ -64,7 +65,7 @@ public class UserSettings
 
     public static void OpenSettings()
     {
-        Process.Start(_settingsFile);
+        Process.Start(_file);
     }
 
     public static void SaveSettings()
@@ -73,6 +74,6 @@ public class UserSettings
             Current, Formatting.Indented, Globals.JsonSettings
         );
 
-        File.WriteAllText(_settingsFile, settings);
+        File.WriteAllText(_file, settings);
     }
 }
