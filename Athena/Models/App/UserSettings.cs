@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Newtonsoft.Json;
+using Spectre.Console;
 using Athena.Services;
 using Athena.Models.API.Fortnite;
 
@@ -9,12 +10,14 @@ public class ProfileSettings
 {
     public string ProfileId { get; set; } = "AthenaProfile";
     public int BattlepassLevel { get; set; } = 999999;
+    public string OutputPath { get; set; } = Directories.Output.FullName;
 }
 
 public class CatalogSettings
 {
     public int BundlePrice { get; set; } = -999999;
     public int ItemPrice { get; set; } = -999999;
+    public string OutputPath { get; set; } = Directories.Output.FullName;
 }
 
 public class UserSettings
@@ -25,15 +28,8 @@ public class UserSettings
 
     public static UserSettings Current = null!;
 
-    // output settings
-    public string ProfilesPath { get; set; } = Directories.Output.FullName; // TBD
-    public string CatalogPath { get; set; } = Directories.Output.FullName; // TBD
-
-    // models settings
     public ProfileSettings Profiles { get; set; } = new();
     public CatalogSettings Catalog { get; set; } = new();
-
-    // app settings
     public EpicAuth EpicAuth { get; set; } = null!;
     public bool bUseDiscordRPC { get; set; } = true;
     public bool bShowChangelog { get; set; } = false;
@@ -54,11 +50,18 @@ public class UserSettings
     {
         Current = new UserSettings();
 
-        askProfileId: { }
-        askProfilePath: { }
-        askCatalogPath: { }
+        var profileName = AnsiConsole.Ask<string>(
+            "What [62]name[/] would you use for the [62]Profile[/]? (type [236]d[/] for use the default one):"
+        );
+        if (profileName != "d")
+        {
+            Current.Profiles.ProfileId = profileName;
+        }
 
-        // @TODO: add discord shit
+        Current.AskPath(EModelType.ProfileAthena);
+        Current.AskPath(EModelType.ItemShopCatalog);
+
+        Current.bUseDiscordRPC = AnsiConsole.Confirm("Do you want to use the Discord Presence?");
 
         SaveSettings(); // save settings for prevent unsaving on application exit
     }
@@ -75,5 +78,38 @@ public class UserSettings
         );
 
         File.WriteAllText(_file, settings);
+    }
+
+    private void AskPath(EModelType forModel)
+    {
+        var modelName = forModel.Equals(EModelType.ProfileAthena)
+            ? "Profiles" : "ItemShop";
+
+        askOnInvalidPath:
+        {
+            var path = AnsiConsole.Ask<string>(
+                $"Insert the [62]path[/] to use for save the [62]{modelName}[/] (type [236]d[/] for use the default one):"
+            );
+
+            if (path != "d")
+            {
+                if (!Directory.Exists(path))
+                {
+                    Log.Error("The directory you inserted doesn't exists.");
+                    goto askOnInvalidPath;
+                }
+
+                if (forModel == EModelType.ProfileAthena)
+                {
+                    Profiles.OutputPath = path;
+                }
+                else
+                {
+                    Catalog.OutputPath = path;
+                }
+
+                Log.Information("{type} path successfully set to {dir}.", modelName, path);
+            }
+        }
     }
 }
