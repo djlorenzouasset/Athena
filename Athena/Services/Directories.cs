@@ -9,7 +9,7 @@ public class Directories
     public static readonly DirectoryInfo Backups = new(Path.Combine(Environment.CurrentDirectory, "Backups"));
     public static readonly DirectoryInfo Output = new(Path.Combine(Environment.CurrentDirectory, "Output"));
 
-    private static List<string> _prohibitedDirs = [
+    private static List<string> _prohibitedDirs = [ // Athena sometimes breaks because of those folders idk why
         Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads")
     ];
@@ -40,9 +40,6 @@ public class Directories
         var recent = Mappings.GetFiles("*.usmap")
             .OrderByDescending(f => f.LastWriteTime).FirstOrDefault();
 
-        if (recent is null)
-            return null;
-
-        return recent.FullName;
+        return recent?.FullName;
     }
 }

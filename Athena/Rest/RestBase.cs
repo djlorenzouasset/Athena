@@ -21,7 +21,7 @@ public abstract class AthenaRestClient(RestClient client)
 
         return response.Data;
     }
-
+    
     protected async Task<RestResponse> ExecuteAsync(string url, Method method = Method.Get, bool bLog = true, params Parameter[] prms)
     {
         var request = new RestRequest(url, method);
