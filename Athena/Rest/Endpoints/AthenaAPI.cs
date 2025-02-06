@@ -5,7 +5,7 @@ namespace Athena.Rest.Endpoints;
 
 public class AthenaEndpoints(RestClient client) : AthenaRestClient(client)
 {
-    private const string RELEASE_ENDPOINT = "https://djlorexzo.dev/api/v1/athena/release";
+    private const string RELEASE_ENDPOINT = "https://djlorexzo.dev/api/v1/athena/dev/release";
 
     public async Task<AthenaRelease?> GetReleaseInfoAsync()
     {
