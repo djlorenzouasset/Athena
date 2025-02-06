@@ -25,9 +25,9 @@ public class EpicGamesAPI(RestClient client) : AthenaRestClient(client)
         return response.IsSuccessful;
     }
 
-    public async Task<ManifestInfo?> GetManifestAsync(EpicAuth auth, bool bLog = true)
+    public async Task<ManifestInfo?> GetManifestAsync(EpicAuth auth)
     {
-        var response = await ExecuteAsync(MANIFEST_ENDPOINT, Method.Get, bLog,
+        var response = await ExecuteAsync(MANIFEST_ENDPOINT, Method.Get, true,
             new HeaderParameter("Authorization", $"bearer {auth.AccessToken}"));
 
         return response.IsSuccessful ? ManifestInfo.Deserialize(response.RawBytes) : null;
