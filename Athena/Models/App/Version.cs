@@ -1,4 +1,7 @@
-﻿namespace Athena.Models.App;
+﻿using Newtonsoft.Json;
+using System.Text;
+
+namespace Athena.Models.App;
 
 public class AthenaVersion : IComparable<AthenaVersion>
 {
@@ -25,7 +28,6 @@ public class AthenaVersion : IComparable<AthenaVersion>
         if (split.Length > 1) Major = int.Parse(split[1]);
         if (split.Length > 2) Minor = int.Parse(split[2]);
         if (split.Length > 3) Patch = int.Parse(split[3]);
-
     }
 
     public static bool operator >(AthenaVersion a, AthenaVersion b)
@@ -73,8 +75,42 @@ public class AthenaVersion : IComparable<AthenaVersion>
         return 0;
     }
 
+    public string DisplayName => 'v' + ToString();
+
     public override string ToString()
     {
-        return $"{Release}.{Major}.{Minor}.{Patch}";
+        var versionString = new StringBuilder();
+
+        versionString.Append(Release);
+        versionString.Append('.');
+        versionString.Append(Major);
+        versionString.Append('.');
+        versionString.Append(Minor);
+
+        if (Patch > 0)
+        {
+            versionString.Append('.');
+            versionString.Append(Patch);
+        }
+
+        return versionString.ToString();
+    }
+}
+
+public class AthenaVersionConverter : JsonConverter<AthenaVersion>
+{
+    public override AthenaVersion? ReadJson(JsonReader reader, Type objectType, AthenaVersion? existingValue, bool hasExistingValue, JsonSerializer serializer)
+    {
+        var value = reader.Value?.ToString();
+        if (string.IsNullOrWhiteSpace(value)) return null;
+
+        return new AthenaVersion(value);
+    }
+
+    public override void WriteJson(JsonWriter writer, AthenaVersion? value, JsonSerializer serializer)
+    {
+        if (value is not AthenaVersion version) return;
+
+        serializer.Serialize(writer, version.ToString());
     }
 }
