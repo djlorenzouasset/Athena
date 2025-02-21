@@ -590,7 +590,7 @@ public class Dataminer
         memoryStream.Position = 0;
         await using var archive = new FStreamArchive(fileStream.Name, memoryStream);
 
-        var paths = new HashSet<string>();
+        var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var bkMagic = archive.Read<uint>();
 
         if (bkMagic == _backupMagic)
@@ -600,7 +600,9 @@ public class Dataminer
             for (var i = 0; i < count; i++)
             {
                 archive.Position += sizeof(long) + sizeof(byte);
-                paths.Add(archive.ReadString().ToLower()[1..]);
+                var fullPath = archive.ReadString();
+                if (version < EBackupVersion.PerfectPath) fullPath = fullPath[1..];
+                paths.Add(fullPath);
             }
 
             Log.Information("Parsed backup {bkp} in {tot}s (version: {ver}).", backup.FileName, start.Elapsed.Seconds, version);
