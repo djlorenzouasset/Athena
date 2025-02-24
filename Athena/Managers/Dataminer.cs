@@ -430,7 +430,7 @@ public class Dataminer
             {
                 try
                 {
-                    var export = await Provider.LoadObjectAsync(entry.PathWithoutExtension + '.' + entry.NameWithoutExtension);
+                    var export = await Provider.LoadPackageObjectAsync(entry.PathWithoutExtension + '.' + entry.NameWithoutExtension);
                     if (!_classes.Contains(export.ExportType)) continue; // this will prevent issues trust
 
                     var variants = Helper.GetAllVariants(export);
