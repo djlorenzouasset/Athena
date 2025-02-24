@@ -14,7 +14,7 @@ class Updater
 
         if (args.Length != 3)
         {
-            Log.Error($"Invalid arguments! Neeed 3. Received {args.Length}");
+            Log.Error($"Invalid arguments! Needed 3. Received {args.Length}");
             return;
         }
 

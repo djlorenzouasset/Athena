@@ -37,7 +37,7 @@ public class ManifestDownloader
         };
 
         (Manifest, _) = await manifest.DownloadAndParseAsync(options, 
-            elementManifestPredicate: static x => x.Uri.Host != "cloudflare.epicgamescdn.com");
+            elementManifestPredicate: static x => x.Uri.Host != "download.epicgames.com");
         InitInformations(manifest);
     }
 
