@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Spectre.Console;
 using Athena.Services;
 using Athena.Models.API.Fortnite;
@@ -66,11 +65,6 @@ public class UserSettings
         SaveSettings(); // save settings for prevent unsaving on application exit
     }
 
-    public static void OpenSettings()
-    {
-        Process.Start(_file);
-    }
-
     public static void SaveSettings()
     {
         var settings = JsonConvert.SerializeObject(
@@ -78,6 +72,21 @@ public class UserSettings
         );
 
         File.WriteAllText(_file, settings);
+    }
+
+    public static async Task<bool> CreateAuth()
+    {
+        var auth = await APIEndpoints.EpicGames.CreateAuthAsync();
+        if (auth is null)
+        {
+            Log.Error("Failed to create Epic Games Auth code.");
+            return false;
+        }
+
+        Log.Information("Successfully created Epic Games auth. Expiration {expire_at}", auth.ExpiresAt);
+        Current.EpicAuth = auth;
+        SaveSettings();
+        return true;
     }
 
     private void AskPath(EModelType forModel)

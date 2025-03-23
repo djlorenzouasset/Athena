@@ -6,4 +6,9 @@ public class EpicAuth
 {
     [J("access_token")] public string AccessToken;
     [J("expires_at")] public DateTime ExpiresAt;
+
+    public bool IsValid()
+    {
+        return ExpiresAt > DateTime.Now;
+    }
 }

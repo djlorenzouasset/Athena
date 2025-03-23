@@ -1,11 +1,9 @@
 ﻿using System.Runtime.InteropServices;
-using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
-
+using Serilog.Events;
 using Athena.Utils;
 using Athena.Services;
 using Athena.Models.App;
-using Athena.Rest;
 
 namespace Athena.Core;
 
@@ -55,6 +53,14 @@ public class AthenaCore
         if (UserSettings.Current.bUseDiscordRPC)
         {
             DiscordRichPresence.Initialize();
+        }
+
+        if (UserSettings.Current.EpicAuth is null || !UserSettings.Current.EpicAuth.IsValid())
+        {
+            if (!await UserSettings.CreateAuth())
+            {
+                FUtils.ExitThread(1);
+            }
         }
     }
 }
