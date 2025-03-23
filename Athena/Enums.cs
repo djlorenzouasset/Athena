@@ -24,6 +24,8 @@ public enum EBackupVersion : byte
     BeforeVersionWasAdded = 0,
     Initial,
 
+    PerfectPath,
+
     LatestPlusOne,
     Latest = LatestPlusOne - 1
 }

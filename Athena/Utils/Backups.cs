@@ -12,7 +12,7 @@ public static class FBackup
 
     public static async Task<HashSet<string>> ParseBackup(FileInfo backupPath)
     {
-        var entries = new HashSet<string>();
+        var entries = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         
         var start = Stopwatch.StartNew();
         await using var memoryStream = new MemoryStream();
@@ -40,7 +40,9 @@ public static class FBackup
         for (var i = 0; i < count; i++)
         {
             archive.Position += sizeof(long) + sizeof(byte);
-            entries.Add(archive.ReadString().ToLower()[1..]);
+            var fullPath = archive.ReadString();
+            if (version < EBackupVersion.PerfectPath) fullPath = fullPath[1..];
+            entries.Add(fullPath);
         }
 
         Log.Information("Parsed backup {bkp} in {tot}s ({ms}ms). Version: {ver}.", 
