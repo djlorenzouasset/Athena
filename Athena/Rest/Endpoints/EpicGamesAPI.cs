@@ -17,14 +17,6 @@ public class EpicGamesAPI(RestClient client) : AthenaRestClient(client)
             new GetOrPostParameter("grant_type", "client_credentials"));
     }
 
-    public async Task<bool> ValidateAuthAsync(EpicAuth auth)
-    {
-        var response = await ExecuteAsync(OAUTH_ENDPOINT, Method.Get, true,
-            new HeaderParameter("Authorization", $"Bearer {auth.AccessToken}"));
-
-        return response.IsSuccessful;
-    }
-
     public async Task<ManifestInfo?> GetManifestAsync(EpicAuth auth)
     {
         var response = await ExecuteAsync(MANIFEST_ENDPOINT, Method.Get, true,
