@@ -174,7 +174,7 @@ public class Dataminer
         Log.Information(loadedEntries == 0
             ? "No VFs have been loaded." 
             : "Loaded {num} VFs in {tot}s ({ms}ms)", 
-            loadedEntries, start.Elapsed.TotalSeconds, 
+            loadedEntries, Math.Round(start.Elapsed.TotalSeconds, 2), 
             Math.Round(start.Elapsed.TotalMilliseconds));
     }
 }

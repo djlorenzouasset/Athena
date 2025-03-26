@@ -65,8 +65,8 @@ public static class FBackup
             entries.Add(fullPath);
         }
 
-        Log.Information("Parsed backup {bkp} in {tot}s ({ms}ms). Version: {ver}.", 
-            backupPath.Name, start.Elapsed.Seconds, start.ElapsedMilliseconds, version);
+        Log.Information("Parsed backup {bkp} in {tot}s ({ms}ms). Version: {ver}.", backupPath.Name, 
+            Math.Round(start.Elapsed.TotalSeconds, 2), Math.Round(start.Elapsed.TotalMilliseconds), version);
 
         return entries;
     }
