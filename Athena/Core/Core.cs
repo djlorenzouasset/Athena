@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
-using Serilog.Sinks.SystemConsole.Themes;
 using Serilog.Events;
+using Serilog.Sinks.SystemConsole.Themes;
 using Athena.Utils;
 using Athena.Services;
 using Athena.Models.App;
@@ -12,10 +12,11 @@ public class AthenaCore
     public static async Task Init()
     {
         Console.Title = "Athena: Starting..";
+
         Log.Logger = new LoggerConfiguration().WriteTo
             .Logger(consoleLogger => consoleLogger.Filter
             .ByExcluding(logEvent => logEvent.Properties.ContainsKey("NoConsole")).WriteTo
-            .Console(LogEventLevel.Information, theme: AnsiConsoleTheme.Literate)).WriteTo
+            .Console(LogEventLevel.Information, "[{Level:u3}] {Message:lj}{NewLine}{Exception}", theme: AnsiConsoleTheme.Literate)).WriteTo
             .File($"Athena-Log-{DateTime.Now:dd-MM-yyyy}.log")
             .CreateLogger();
 
@@ -62,5 +63,12 @@ public class AthenaCore
                 FUtils.ExitThread(1);
             }
         }
+
+        // initialize the dataminer shit
+        await Dataminer.Instance.Initialize();
+
+        // initialize main menu (errors are handled inside of that class)
+        var generator = new Generator();
+        await generator.ShowMainMenu();
     }
 }
