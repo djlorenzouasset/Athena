@@ -1,9 +1,10 @@
-﻿using EpicManifestParser;
+﻿using System.Text.RegularExpressions;
+using EpicManifestParser;
 using EpicManifestParser.UE;
 using EpicManifestParser.Api;
 using EpicManifestParser.ZlibngDotNetDecompressor;
-using CUE4Parse.Compression;
 using CUE4Parse.UE4.Readers;
+using CUE4Parse.Compression;
 using Athena.Services;
 
 namespace Athena.Core;
@@ -19,6 +20,9 @@ public class ManifestDownloader
 
     private const string CHUNKS_ENDPOINT = "https://epicgames-download1.akamaized.net/Builds/Fortnite/CloudDir/";
 
+    private readonly Regex _pakFilter = new(@"^FortniteGame[/\\]Content[/\\]Paks[/\\]",
+        RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
     public async Task DownloadManifest(ManifestInfo manifest)
     {
         var options = new ManifestParseOptions
@@ -30,9 +34,10 @@ public class ManifestDownloader
             ManifestCacheDirectory = Directories.Data.FullName,
         };
 
-        InitInformations(manifest); // save some informations that we need later
         (Manifest, _) = await manifest.DownloadAndParseAsync(options,
             elementManifestPredicate: static x => x.Uri.Host != "download.epicgames.com");
+
+        InitInformations(manifest); // save some informations that we need later
     }
 
     private void InitInformations(ManifestInfo manifest)
@@ -49,5 +54,24 @@ public class ManifestDownloader
     }
 
     public void LoadManifestArchives()
-    { }
+    {
+        Manifest.Files
+            .Where(x => _pakFilter.IsMatch(x.FileName))
+            .AsParallel()
+            .WithDegreeOfParallelism(8)
+            .ForAll(file => LoadFileManifest(file));
+    }
+
+    private void LoadFileManifest(FFileManifest file)
+    {
+        var versions = Dataminer.Instance.Provider.Versions;
+
+        Dataminer.Instance.Provider.RegisterVfs(file.FileName, [file.GetStream()], 
+            it => new FRandomAccessStreamArchive(it, GetStream(it), versions));
+    }
+
+    private FFileManifestStream GetStream(string fileName)
+    {
+        return Manifest.FindFile(fileName)!.GetStream();
+    }
 }
