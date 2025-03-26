@@ -16,7 +16,6 @@ public class ManifestDownloader
     public string GameVersion = string.Empty;
     public string GameBuild = string.Empty;
     public string ManifestId = string.Empty;
-    public string ManifestFileName => ManifestId + ".manifest";
 
     private const string CHUNKS_ENDPOINT = "https://epicgames-download1.akamaized.net/Builds/Fortnite/CloudDir/";
 
