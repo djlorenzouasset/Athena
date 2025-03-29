@@ -17,13 +17,13 @@ public static class APIEndpoints
     public static readonly EpicGamesAPI EpicGames = new(_client);
     public static readonly FortniteCentralAPI FortniteCentral = new(_client);
 
-    public static async Task<bool> DownloadFileAsync(string url, string path, bool bOverride = true)
+    public static async Task<bool> DownloadFileAsync(string url, string path, bool bOverwrite = true)
     {
         var request = new RestRequest(url);
         var data = await _client.DownloadDataAsync(request);
         if (data is null) return false;
 
-        if (!File.Exists(path) || bOverride)
+        if (!File.Exists(path) || bOverwrite)
         {
             var file = new FileInfo(path);
             await File.WriteAllBytesAsync(file.FullName, data);

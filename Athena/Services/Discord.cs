@@ -1,4 +1,5 @@
 ﻿using DiscordRPC;
+using Athena.Extensions;
 
 namespace Athena.Services;
 
@@ -29,5 +30,10 @@ public static class DiscordRichPresence
     public static void Update(string text)
     {
         _client?.UpdateState(text);
+    }
+
+    public static void Update(EGenerationType generationType)
+    {
+        _client?.UpdateState($"Generating {generationType.GetDescription()}");
     }
 }

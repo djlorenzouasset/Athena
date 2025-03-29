@@ -171,10 +171,15 @@ public class Dataminer
             }
         }
 
-        Log.Information(loadedEntries == 0
-            ? "No VFs have been loaded." 
-            : "Loaded {num} VFs in {tot}s ({ms}ms)", 
-            loadedEntries, Math.Round(start.Elapsed.TotalSeconds, 2), 
-            Math.Round(start.Elapsed.TotalMilliseconds));
+        if (loadedEntries == 0)
+        {
+            Log.Warning("No VFs have been loaded.");
+        }
+        else
+        {
+            Log.Information("Loaded {num} VFs in {tot}s ({ms}ms)", loadedEntries, 
+                Math.Round(start.Elapsed.TotalSeconds, 2), 
+                Math.Round(start.Elapsed.TotalMilliseconds));
+        }
     }
 }

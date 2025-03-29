@@ -69,6 +69,5 @@ public class AthenaCore
 
         // initialize main menu (errors are handled inside of that class)
         var generator = new Generator();
-        await generator.ShowMainMenu();
     }
 }
