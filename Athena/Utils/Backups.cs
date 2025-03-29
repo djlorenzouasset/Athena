@@ -34,9 +34,10 @@ public static class FBackup
     {
         var entries = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         
-        var start = Stopwatch.StartNew();
         await using var memoryStream = new MemoryStream();
         await using var backupStream = new FileStream(backupPath.FullName, FileMode.Open);
+
+        var start = Stopwatch.StartNew();
 
         if (backupStream.Read<uint>() == _LZ4Magic)
         {
@@ -46,7 +47,7 @@ public static class FBackup
         }
         else await backupStream.CopyToAsync(memoryStream);
 
-        backupStream.Position = 0;
+        memoryStream.Position = 0;
         await using var archive = new FStreamArchive(backupStream.Name, memoryStream);
 
         if (archive.Read<uint>() != _backupMagic)
