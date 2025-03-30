@@ -9,7 +9,7 @@ using Athena.Services;
 
 namespace Athena.Core;
 
-public class ManifestDownloader
+public partial class ManifestDownloader
 {
     public FBuildPatchAppManifest Manifest = null!;
 
@@ -18,10 +18,6 @@ public class ManifestDownloader
     public string ManifestId = string.Empty;
 
     private const string CHUNKS_ENDPOINT = "https://epicgames-download1.akamaized.net/Builds/Fortnite/CloudDir/";
-
-    private readonly Regex _versionRegex = new(@"-(\d+\.\d+)-CL-(\d+)-", RegexOptions.IgnoreCase);
-    private readonly Regex _pakFilter = new(@"^FortniteGame[/\\]Content[/\\]Paks[/\\]",
-        RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     public async Task DownloadManifest(ManifestInfo manifest)
     {
@@ -57,7 +53,7 @@ public class ManifestDownloader
     public void LoadManifestArchives()
     {
         Manifest.Files
-            .Where(x => _pakFilter.IsMatch(x.FileName))
+            .Where(x => MyRegex().IsMatch(x.FileName))
             .AsParallel()
             .WithDegreeOfParallelism(8)
             .ForAll(file => LoadFileManifest(file));
@@ -75,4 +71,7 @@ public class ManifestDownloader
     {
         return Manifest.FindFile(fileName)!.GetStream();
     }
+
+    [GeneratedRegex(@"^FortniteGame[/\\]Content[/\\]Paks[/\\]", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant)]
+    private static partial Regex MyRegex();
 }
