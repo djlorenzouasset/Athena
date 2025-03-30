@@ -1,8 +1,12 @@
-﻿namespace Athena;
+﻿using System.ComponentModel;
+
+namespace Athena;
 
 public enum EModelType : int
 {
+    [Description("Profile Athena")]
     ProfileAthena = 0,
+    [Description("ItemShop Catalog")]
     ItemShopCatalog = 1
 }
 
