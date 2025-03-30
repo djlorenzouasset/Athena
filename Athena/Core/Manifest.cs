@@ -19,6 +19,7 @@ public class ManifestDownloader
 
     private const string CHUNKS_ENDPOINT = "https://epicgames-download1.akamaized.net/Builds/Fortnite/CloudDir/";
 
+    private readonly Regex _versionRegex = new(@"-(\d+\.\d+)-CL-(\d+)-", RegexOptions.IgnoreCase);
     private readonly Regex _pakFilter = new(@"^FortniteGame[/\\]Content[/\\]Paks[/\\]",
         RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
@@ -41,14 +42,15 @@ public class ManifestDownloader
 
     private void InitInformations(ManifestInfo manifest)
     {
-        var uri = manifest.Elements[0].Manifests[0].Uri;
-
-        var parsed = manifest.Elements[0].TryParseVersionAndCL(out var ver, out _);
-        if (!parsed || ver is null) // this is very unlikely
-            return;
-
         GameBuild = Manifest.Meta.BuildVersion;
-        GameVersion = ver.ToString(2);
+
+        var data = GameBuild.Split('-');
+        if (data.Length > 2)
+        {
+            GameVersion = data[2];
+        }
+
+        var uri = manifest.Elements[0].Manifests[0].Uri;
         ManifestId = uri.AbsolutePath.Split('/').Last();
     }
 
