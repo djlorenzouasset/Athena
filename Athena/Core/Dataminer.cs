@@ -21,13 +21,12 @@ public class Dataminer
     public AESKeys? AESKeys = null;
 
     public StreamedFileProvider Provider = null!;
+    public ManifestDownloader _manifestManager = null!;
 
     public readonly List<VfsEntry> AllEntries = [];
     public readonly List<VfsEntry> NewEntries = [];
 
-    private ManifestDownloader _manifestManager = null!;
-
-    private HashSet<string> _excludedExtensions = [
+    private readonly HashSet<string> _excludedExtensions = [
         ".uexp", ".ubulk", ".uptnl", ".umap",
         ".ini", ".locres", ".uplugin"
     ];
