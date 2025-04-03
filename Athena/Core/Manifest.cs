@@ -43,7 +43,7 @@ public partial class ManifestDownloader
         var data = GameBuild.Split('-');
         if (data.Length > 2)
         {
-            GameVersion = data[2];
+            GameVersion = data[1];
         }
 
         var uri = manifest.Elements[0].Manifests[0].Uri;
