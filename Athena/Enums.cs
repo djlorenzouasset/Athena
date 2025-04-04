@@ -20,17 +20,15 @@ public enum EGenerationType : int
     NewCosmeticsAndArchives = 2, // >> add only new cosmetics + encrypted archives
 
     [Description("Pak Cosmetics")]
-    SingleArchive = 3, // >> add a single archive
-    [Description("Multiple Paks Cosmetics")]
-    MultipleArchives = 4, // >> add multiple archives by name or guid
+    ArchiveCosmetics = 3, // >> add a single archive
     [Description("Wait for Pak decryption")]
-    WaitForArchivesUpdate = 5, // >> watch for new archives to become availables
+    WaitForArchivesUpdate = 4, // >> watch for new archives to become availables
 
     [Description("Custom Cosmetics")]
-    SelectedCosmeticsOnly = 6, // >> add only selected cosmetics by ID/DAv2
+    SelectedCosmeticsOnly = 5, // >> add only selected cosmetics by ID/DAv2
 
     [Description("Return to Menu")]
-    ReturnToMenu = 7 // >> return to main menù
+    ReturnToMenu = 6 // >> return to main menù
 }
 
 public enum EBackupVersion : byte
