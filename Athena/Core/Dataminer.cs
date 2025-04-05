@@ -139,7 +139,7 @@ public class Dataminer
         Provider.SubmitKey(guid, key);
     }
 
-    public void LoadEntries(Func<IAesVfsReader, bool> filter, ICollection<string>? customItemsOrOldPaths = null, bool bNew = false, bool bIsCustom = false)
+    public void LoadEntries(Func<IAesVfsReader, bool> filter, HashSet<string>? customItemsOrOldPaths = null, bool bNew = false, bool bIsCustom = false)
     {
         int loadedEntries = 0;
         var start = Stopwatch.StartNew();
