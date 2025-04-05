@@ -21,19 +21,14 @@ public class Dataminer
     public AESKeys? AESKeys = null;
 
     public StreamedFileProvider Provider = null!;
-    public ManifestDownloader _manifestManager = null!;
+    public ManifestDownloader Manifest = null!;
 
     public readonly List<VfsEntry> AllEntries = [];
     public readonly List<VfsEntry> NewEntries = [];
 
-    private readonly HashSet<string> _excludedExtensions = [
-        ".uexp", ".ubulk", ".uptnl", ".umap",
-        ".ini", ".locres", ".uplugin"
-    ];
-
     public async Task Initialize()
     {
-        _manifestManager = new();
+        Manifest = new();
         Provider = new("", new(EGame.GAME_UE5_LATEST), StringComparer.OrdinalIgnoreCase);
 
         Log.Information("Loading required libraries.");
@@ -53,10 +48,9 @@ public class Dataminer
         await LoadMappings(); // this may break during updates (like exporting shit)
         await LoadAESKeys();
 
-        var keysGuids = AESKeys?.DynamicKeys.Select(k => new FGuid(k.Guid));
         LoadEntries(
-            r => r.EncryptionKeyGuid.Equals(Globals.ZERO_GUID) || 
-            keysGuids?.Contains(r.EncryptionKeyGuid) == true
+            r => r.EncryptionKeyGuid.Equals(Globals.ZERO_GUID) ||
+            (AESKeys?.GuidsList.Contains(r.EncryptionKeyGuid) ?? false)
         );
     }
 
@@ -86,16 +80,16 @@ public class Dataminer
         }
 
         var start = Stopwatch.StartNew();
-        await _manifestManager.DownloadManifest(manifest!);
+        await Manifest.DownloadManifest(manifest!);
 
-        Log.Information("Downloaded manifest {id} with version: {version}", _manifestManager.ManifestId,
-            _manifestManager.GameVersion, start.Elapsed.Seconds, start.ElapsedMilliseconds);
+        Log.Information("Downloaded manifest {id} with version: {version}", Manifest.ManifestId,
+            Manifest.GameVersion, start.Elapsed.Seconds, start.ElapsedMilliseconds);
     }
 
     private async Task MountArchives()
     {
-        Log.Information("Downloading archives for {version}", _manifestManager.GameBuild);
-        _manifestManager.LoadManifestArchives();
+        Log.Information("Downloading archives for {version}", Manifest.GameBuild);
+        Manifest.LoadManifestArchives();
         await Provider.MountAsync();
     }
 
@@ -127,6 +121,7 @@ public class Dataminer
 
         LoadKey(Globals.ZERO_GUID, new(AESKeys.MainKey));
         LoadKeys(AESKeys.DynamicKeys);
+        Log.Information("Loaded {0} Dynamic Keys.", AESKeys.DynamicKeys.Count);
     }
 
     public void LoadKeys(List<DynamicKey> dynamicKeys)
@@ -144,25 +139,27 @@ public class Dataminer
         Provider.SubmitKey(guid, key);
     }
 
-    public void LoadEntries(Func<IAesVfsReader, bool> filter, List<string>? customItemsOrOldPaths = null, bool bNew = false, bool bIsCustom = false)
+    public void LoadEntries(Func<IAesVfsReader, bool> filter, ICollection<string>? customItemsOrOldPaths = null, bool bNew = false, bool bIsCustom = false)
     {
         int loadedEntries = 0;
-        var start = Stopwatch.StartNew(); // starts the stopwatch for calculating loading time
+        var start = Stopwatch.StartNew();
 
-        var readers = Provider.MountedVfs.Where(filter); // filter only the requested VFs
+        // we load only required VFs
+        var readers = Provider.MountedVfs.Where(filter);
         foreach (var reader in readers)
         {
-            foreach (var file in reader.Files.Values)
+            foreach (var (path, file) in reader.Files)
             {
-                if (file is not VfsEntry entry || _excludedExtensions.Contains(Path.GetExtension(entry.Path)))
+                // entry.IsUePackage so we load only .uasset files
+                if (file is not VfsEntry entry || !entry.IsUePackage)
                     continue;
 
-                // filter only reader files or new files not found in the backup
-                if (bNew && customItemsOrOldPaths?.Contains(entry.Path) == true)
+                // filter only new files (used when customItemsOrOldPaths contains backup files aka old files)
+                if (bNew && (customItemsOrOldPaths?.Contains(path) ?? false))
                     continue;
 
-                // filter cosmetics from the user input
-                if (bIsCustom && !customItemsOrOldPaths!.Contains(entry.NameWithoutExtension.ToLower()))
+                // this filter is used when the user wants only selected items (by ID)
+                if (bIsCustom && (!customItemsOrOldPaths!.Contains(entry.NameWithoutExtension.ToLower())))
                     continue;
 
                 (bNew || bIsCustom ? NewEntries : AllEntries).Add(entry);
@@ -176,8 +173,8 @@ public class Dataminer
         }
         else
         {
-            Log.Information("Loaded {num} VFs in {tot}s ({ms}ms)", loadedEntries, 
-                Math.Round(start.Elapsed.TotalSeconds, 2), 
+            Log.Information("Loaded {num} VFs in {tot}s ({ms}ms)", loadedEntries,
+                Math.Round(start.Elapsed.TotalSeconds, 2),
                 Math.Round(start.Elapsed.TotalMilliseconds));
         }
     }
