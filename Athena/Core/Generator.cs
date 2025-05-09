@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Spectre.Console;
+using CUE4Parse.Utils;
 using CUE4Parse.UE4.VirtualFileSystem;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using Athena.Utils;
@@ -45,20 +46,17 @@ public class Generator
         "AthenaLoadingScreenItemDefinition", "AthenaDanceItemDefinition",
         "AthenaSkyDiveContrailItemDefinition", "AthenaItemWrapDefinition",
         "AthenaMusicPackItemDefinition", "CosmeticShoesItemDefinition",
-
         // FORTNITE FESTIVAL
         "SparksGuitarItemDefinition", "SparksBassItemDefinition",
         "SparksKeyboardItemDefinition", "SparksDrumItemDefinition",
         "SparksMicItemDefinition", "SparksAuraItemDefinition",
         "SparksSongItemDefinition",
-
         // ROCKET RACING
         "FortVehicleCosmeticsItemDefinition_Skin",
         "FortVehicleCosmeticsItemDefinition_Body",
         "FortVehicleCosmeticsItemDefinition_Booster",
         "FortVehicleCosmeticsItemDefinition_Wheel",
         "FortVehicleCosmeticsItemDefinition_DriftTrail",
-
         // LEGO
         "JunoBuildingPropAccountItemDefinition",
         "JunoBuildingSetAccountItemDefinition"
@@ -108,8 +106,31 @@ public class Generator
         DiscordRichPresence.Update(model);
 
         var start = Stopwatch.StartNew();
+        switch (generationType)
+        {
+            case EGenerationType.AllCosmetics:
+                break;
 
-        // TODO: add models handling
+            case EGenerationType.NewCosmetics:
+                await HandleNewCosmetics();
+                break;
+
+            case EGenerationType.NewCosmeticsAndArchives:
+                await HandleNewCosmetics(true);
+                break;
+
+            case EGenerationType.ArchiveCosmetics:
+                HandleArchiveCosmetics();
+                break;
+
+            case EGenerationType.WaitForArchivesUpdate:
+                await HandleWaitForArchivesUpdate();
+                break;
+
+            case EGenerationType.SelectedCosmeticsOnly:
+                HandleSelectedCosmetics(model);
+                break;
+        }
 
         Log.Information("All tasks finished in {sec}s ({ms}ms).", 
             Math.Round(start.Elapsed.TotalSeconds, 2),
@@ -120,6 +141,7 @@ public class Generator
     }
 
     #region SELECTORS
+
     private EModelType SelectModel()
     {
         return AnsiConsole.Prompt(
@@ -151,18 +173,86 @@ public class Generator
             .AddChoices(Dataminer.Instance.AESKeys!.DynamicKeys)
             .UseConverter(e => $"{e.Name} ({e.Size.Formatted}, {e.FileCount} files)"));
     }
+
+    private List<string> GetCustomCosmetics(EModelType model)
+    {
+        var type = model == EModelType.ProfileAthena ? "cosmetics ids" : "DAv2s";
+        var selected = AnsiConsole.Ask<string>($"Insert the [62]{type}[/] you want to add separated by [62];[/]:");
+        return selected.Split(';').Select(x => x.Trim()).ToList();
+    }
+
     #endregion
+
+    #region HANDLERS
+
+    private async Task HandleNewCosmetics(bool includeArchives = false)
+    {
+        var oldFiles = await LoadBackup();
+        Dataminer.Instance.LoadEntries(
+            ar => ar.EncryptionKeyGuid.Equals(Globals.ZERO_GUID) || (includeArchives && 
+            (Dataminer.Instance.AESKeys?.GuidsList.Contains(ar.EncryptionKeyGuid) ?? false)),
+            oldFiles,
+            bNew: true
+        );
+    }
+
+    private void HandleArchiveCosmetics()
+    {
+        var dynamicKeys = SelectArchives();
+        _customCosmeticsOrPaks.AddRange(dynamicKeys.Select(p => p.Name));
+
+        Dataminer.Instance.LoadEntries(
+            ar => dynamicKeys.Select(k => new FGuid(k.Guid)).Contains(ar.EncryptionKeyGuid),
+            bNew: true
+        );
+    }
+
+    private async Task HandleWaitForArchivesUpdate()
+    {
+        var newKeys = await APITask.GetNewDynamicKeys();
+
+        Dataminer.Instance.LoadKeys(newKeys);
+        Dataminer.Instance.LoadEntries(
+            ar => newKeys.Select(k => new FGuid(k.Guid)).Contains(ar.EncryptionKeyGuid),
+            bNew: true
+        );
+    }
+
+    private void HandleSelectedCosmetics(EModelType model)
+    {
+        var customIds = GetCustomCosmetics(model);
+        _customCosmeticsOrPaks.AddRange(customIds);
+
+        Dataminer.Instance.LoadEntries(
+            ar => ar.EncryptionKeyGuid.Equals(Globals.ZERO_GUID) ||
+                  (Dataminer.Instance.AESKeys?.GuidsList.Contains(ar.EncryptionKeyGuid) ?? false),
+            _customCosmeticsOrPaks.ToHashSet(),
+            bIsCustom: true
+        );
+    }
+
+    #endregion
+
+    private async Task<HashSet<string>> LoadBackup()
+    {
+        var backupFile = await FBackup.Download();
+        if (backupFile is null)
+        {
+            Log.Error("Backup response was invalid!");
+            return [];
+        }
+
+        _backupName = backupFile.Name.SubstringBeforeLast('.');
+        return await FBackup.Parse(backupFile);
+    }
 
     private async Task ReturnToMenu(bool bSkipRequest = false, bool bFromError = false)
     {
-        if (bSkipRequest) // return to the menu without asking
+        if (!bSkipRequest)
         {
-            await ShowMenu();
-            return;
+            string prompt = bFromError ? "Do you want to try again?" : "Do you want to go back to menu?";
+            if (!AnsiConsole.Confirm(prompt)) return;
         }
-
-        string prompt = bFromError ? "Do you want to try again?" : "Do you want to go back to menu?";
-        if (!AnsiConsole.Confirm(prompt)) return;
 
         _backupName = "";
         _customCosmeticsOrPaks.Clear();
