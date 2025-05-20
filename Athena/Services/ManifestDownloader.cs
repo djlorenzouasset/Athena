@@ -58,9 +58,11 @@ public class ManifestDownloader
 
     public void LoadArchives()
     {
-        Parallel.ForEach(Manifest.Files.Where(
-            x => _pakFinder.IsMatch(x.FileName)), 
-            file => LoadFileManifest(file));
+        Manifest.Files
+            .Where(x => _pakFinder.IsMatch(x.FileName))
+            .AsParallel()
+            .WithDegreeOfParallelism(8)
+            .ForAll(file => LoadFileManifest(file));
     }
 
     private void LoadFileManifest(FFileManifest file)
