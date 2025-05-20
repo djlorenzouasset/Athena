@@ -1,11 +1,11 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using CUE4Parse.Utils;
 using CUE4Parse.Compression;
 using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Objects.UObject;
 using Athena.Managers;
-using System.Diagnostics;
 
 namespace Athena.Services;
 
@@ -172,6 +172,7 @@ public static class Helper
             /* ROCKET RACING */
             "id" => $"VehicleCosmetics_{id.Split('_')[1]}",
             "wheel" => $"VehicleCosmetics_Wheel",
+            "body" => $"VehicleCosmetics_Body", // issue #54
             "carbody" => $"VehicleCosmetics_Body",
             "carskin" => $"VehicleCosmetics_Skin",
 
@@ -243,7 +244,7 @@ public static class Helper
                     string tag = customizationVariantTag.GetOrDefault("TagName", new FName(DEFAULT_STYLE_NAME)).Text;
                     if (tag is null) continue;
 
-                    if (tag.Contains("Property.Color") || tag.Contains("Vehicle.Painted"))
+                    if (tag.Contains("Property.Color") || tag.Contains("Vehicle.Painted") || tag.Contains("Vehicle.Tier") /* <- issue #54 */)
                     {
                         ownedParts.Add(tag.Split("Property.").Last());
                     }

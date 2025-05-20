@@ -28,8 +28,8 @@ public class Dataminer
     private string _backupName = string.Empty;
     private string _currentGenerationType = string.Empty;
 
-    private readonly List<VfsEntry> _allEntries = [];
-    private readonly List<VfsEntry> _newEntries = [];
+    private readonly HashSet<VfsEntry> _allEntries = [];
+    private readonly HashSet<VfsEntry> _newEntries = [];
     private readonly List<string> _ioStoreNames = [];
     private readonly List<string> _itemsFilter = [];
 
@@ -50,7 +50,7 @@ public class Dataminer
         "Petcarrier", "Spid",
         "Toy", "Emoji", "Spray",
         "Sparks_", "SparksAura", "SID",
-        "ID", "Wheel", "CarBody", "CarSkin",
+        "ID", "Wheel", "CarBody", "CarSkin", "Body" /* issue #54 */,
         "JBPID_", "JBSID_", // _ is for avoid export errors
         "DefaultContrail", "DefaultGlider", "DefaultPickaxe" // default items (issue #33)
     ];
@@ -119,7 +119,7 @@ public class Dataminer
     {
         _notices.AddRange(notices);
         _manifestService = new();
-        Provider = new(string.Empty, true, new VersionContainer(EGame.GAME_UE5_LATEST));
+        Provider = new(string.Empty, new VersionContainer(EGame.GAME_UE5_LATEST), StringComparer.OrdinalIgnoreCase);
 
         Log.Information("Initializing required libraries.");
         await Helper.InitializeOodle(); /* lib required by CUE4Parse */
@@ -522,10 +522,7 @@ public class Dataminer
         {
             foreach (var value in reader.Files.Values)
             {
-                if (value is not VfsEntry entry || entry.Path.EndsWith(".uexp") || 
-                    entry.Path.EndsWith(".ubulk") || entry.Path.EndsWith(".uptnl") ||
-                    entry.Path.EndsWith(".umap") || entry.Path.EndsWith(".ini") ||
-                    entry.Path.EndsWith(".locres") || entry.Path.EndsWith(".uplugin")) 
+                if (value is not VfsEntry entry || !entry.IsUePackage) 
                     continue;
 
                 if (global) _allEntries.Add(entry); // used for filter new files
@@ -625,11 +622,8 @@ public class Dataminer
         {
             foreach (var (key, value) in IReader.Files)
             {
-                if (value is not VfsEntry entry || paths.Contains(key) || 
-                    entry.Path.EndsWith(".uexp") || entry.Path.EndsWith(".ubulk") || 
-                    entry.Path.EndsWith(".uptnl") || entry.Path.EndsWith(".umap") || 
-                    entry.Path.EndsWith(".ini") || entry.Path.EndsWith(".locres") || 
-                    entry.Path.EndsWith(".uplugin")) continue;
+                if (value is not VfsEntry entry || paths.Contains(key) || !entry.IsUePackage) 
+                    continue;
 
                 _newEntries.Add(entry);
             }
