@@ -19,7 +19,7 @@ public class ManifestDownloader
     public string GameBuild = string.Empty;
     public string ManifestId = string.Empty;
 
-    private const string CHUNKS_ENDPOINT = "https://epicgames-download1.akamaized.net/Builds/Fortnite/CloudDir/";
+    private const string CHUNKS_ENDPOINT = "http://download.epicgames.com/Builds/Fortnite/CloudDir/"; // akamaized is broken (v35.20)
 
     private readonly Dataminer _dataminer = Dataminer.Instance;
     private readonly Regex _pakFinder = new(@"^FortniteGame[/\\]Content[/\\]Paks[/\\]", 
@@ -37,7 +37,7 @@ public class ManifestDownloader
         };
 
         (Manifest, _) = await manifest.DownloadAndParseAsync(options, 
-            elementManifestPredicate: static x => x.Uri.Host != "download.epicgames.com");
+            elementManifestPredicate: static x => x.Uri.Host == "download.epicgames.com"); // akamaized is broken (v35.20)
         InitInformations(manifest);
     }
 
