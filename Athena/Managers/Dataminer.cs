@@ -82,7 +82,7 @@ public class Dataminer
         "JunoBuildingSetAccountItemDefinition"
     ];
 
-    private readonly Func<VfsEntry, bool> _shopAssetsFilter = x => x.NameWithoutExtension.StartsWith("DAv2");
+    private readonly Func<VfsEntry, bool> _shopAssetsFilter = x => x.NameWithoutExtension.StartsWith("DAv2") && !x.Name.Contains("MusicPass");
     private readonly Func<VfsEntry, bool> _cosmeticsFilter = (x => (
         x.Path.Contains("Athena/Items/Cosmetics/", StringComparison.OrdinalIgnoreCase) ||
         x.Path.Contains("GameFeatures/MeshCosmetics/", StringComparison.OrdinalIgnoreCase) /* Caper and Alias cosmetics */ ||
