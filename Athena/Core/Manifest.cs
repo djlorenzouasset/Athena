@@ -17,7 +17,7 @@ public partial class ManifestDownloader
     public string GameBuild = string.Empty;
     public string ManifestId = string.Empty;
 
-    private const string CHUNKS_ENDPOINT = "https://epicgames-download1.akamaized.net/Builds/Fortnite/CloudDir/";
+    private const string CHUNKS_ENDPOINT = "http://download.epicgames.com/Builds/Fortnite/CloudDir/";
 
     public async Task DownloadManifest(ManifestInfo manifest)
     {
@@ -31,7 +31,7 @@ public partial class ManifestDownloader
         };
 
         (Manifest, _) = await manifest.DownloadAndParseAsync(options,
-            elementManifestPredicate: static x => x.Uri.Host != "download.epicgames.com");
+            elementManifestPredicate: static x => x.Uri.Host == "download.epicgames.com");
 
         InitInformations(manifest); // save some informations that we need later
     }
