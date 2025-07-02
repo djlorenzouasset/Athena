@@ -412,16 +412,16 @@ public class Dataminer
             string savePath;
             try
             {
-                await File.WriteAllTextAsync(Path.Join(Config.config.shopDirectory, "shop.json"), shop.Build());
+                await File.WriteAllTextAsync(Path.Combine(Config.config.shopDirectory, "shop.json"), shop.Build());
                 savePath = Config.config.shopDirectory;
             }
-            catch (Exception err) // sometimes the path wont accept characters like . or -
+            catch (Exception err)
             {
                 Log.Warning("An error has occurred while saving the shop: {err}. Saving in default directory (.profiles).", err.Message);
-                await File.WriteAllTextAsync(Path.Join(DirectoryManager.Profiles, "shop.json"), shop.Build());
+                await File.WriteAllTextAsync(Path.Combine(DirectoryManager.Profiles, "shop.json"), shop.Build());
                 savePath = DirectoryManager.Profiles;
             }
-            Log.Information("Saved shop for {name} in {path}.", Config.config.athenaProfileId, Config.config.shopDirectory);
+            Log.Information("Saved shop for {name} in {path}.", Config.config.athenaProfileId, savePath);
         }
         else if (model == Model.ProfileAthena)
         {
@@ -450,13 +450,13 @@ public class Dataminer
             string savePath;
             try
             {
-                await File.WriteAllTextAsync(Path.Join(Config.config.profileDirectory, "profile_athena.json"), profile.Build());
+                await File.WriteAllTextAsync(Path.Combine(Config.config.profileDirectory, "profile_athena.json"), profile.Build());
                 savePath = Config.config.profileDirectory;
             }
-            catch (Exception err) // sometimes the path dont accept characters like . or -
+            catch (Exception err)
             {
                 Log.Warning("An error has occurred while saving the profile: {err}. Saving in default directory (.profiles).", err.Message);
-                await File.WriteAllTextAsync(Path.Join(DirectoryManager.Profiles, "profile_athena.json"), profile.Build());
+                await File.WriteAllTextAsync(Path.Combine(DirectoryManager.Profiles, "profile_athena.json"), profile.Build());
                 savePath = DirectoryManager.Profiles;
             }
             Log.Information("Saved Profile Athena for {name} in {path}.", Config.config.athenaProfileId, savePath);
