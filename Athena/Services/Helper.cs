@@ -11,6 +11,10 @@ namespace Athena.Services;
 
 public static class Helper
 {
+    private static readonly List<string> _notPrefixedPickaxes = [ // pickaxes without prefix (issue #61)
+        "BoltonPickaxe", "Dev_Test_Pickaxe", "HalloweenScythe",
+        "HappyPickaxe", "SickleBatPickaxe", "SkiIcePickaxe", "SpikyPickaxe"
+    ];
     private static readonly Dictionary<string, string> _defaultCosmetics = new() { // default items (issue #33)
         { "DefaultPickaxe", "AthenaPickaxe" },
         { "DefaultGlider", "AthenaGlider" }
@@ -120,14 +124,18 @@ public static class Helper
         {
             return value;
         }
+        else if (_notPrefixedPickaxes.Contains(id))
+        {
+            return "AthenaPickaxe";
+        }
         else if (id.StartsWith("Sparks_"))
         {
             prefix = id.SubstringAfter('_').SubstringBefore('_');
         }
         else
         {
-            prefix = id.StartsWith("SparksAura") 
-                ? "aura" : id.Remove(id.IndexOf('_')); 
+            prefix = id.StartsWith("SparksAura")
+                ? "aura" : id.Remove(id.IndexOf('_'));
         }
 
         return prefix.ToLower() switch

@@ -52,7 +52,10 @@ public class Dataminer
         "Sparks_", "SparksAura", "SID",
         "ID", "Wheel", "CarBody", "CarSkin", "Body" /* issue #54 */,
         "JBPID_", "JBSID_", // _ is for avoid export errors
-        "DefaultContrail", "DefaultGlider", "DefaultPickaxe" // default items (issue #33)
+        "DefaultContrail", "DefaultGlider", "DefaultPickaxe", // default items (issue #33)
+
+        "BoltonPickaxe", "Dev_Test_Pickaxe", "HalloweenScythe", // pickaxes without prefix (issue #61)
+        "HappyPickaxe", "SickleBatPickaxe", "SkiIcePickaxe", "SpikyPickaxe"
     ];
     private readonly string[] _classes = [
         // BR
