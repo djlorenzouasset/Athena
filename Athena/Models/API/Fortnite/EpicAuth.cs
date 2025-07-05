@@ -9,6 +9,9 @@ public class EpicAuth
 
     public bool IsValid()
     {
-        return ExpiresAt > DateTime.Now;
+        return (
+            !string.IsNullOrEmpty(AccessToken) &&
+            ExpiresAt > DateTime.UtcNow
+        );
     }
 }

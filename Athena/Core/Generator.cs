@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Spectre.Console;
 using CUE4Parse.Utils;
-using CUE4Parse.UE4.VirtualFileSystem;
+using CUE4Parse.FileProvider.Objects;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using Athena.Utils;
 using Athena.Services;
@@ -31,7 +31,7 @@ public class Generator
     private static readonly List<EGenerationType> _profileOptions = [
         EGenerationType.AllCosmetics, .._shopOptions
     ];
-    private readonly Dictionary<EModelType, List<EGenerationType>> _options = new()
+    private readonly Dictionary<EModelType, List<EGenerationType>> _modelsOptions = new()
     {
         { EModelType.ProfileAthena, _profileOptions },
         { EModelType.ItemShopCatalog, _shopOptions },
@@ -63,7 +63,7 @@ public class Generator
     ];
     private static readonly List<string> _acceptedPaths = [
         "Athena/Items/Cosmetics/",
-        "GameFeatures/MeshCosmetics/", // Caper and Alias cosmetics
+        "GameFeatures/MeshCosmetics/",
         "GameFeatures/CosmeticShoes/",
         "GameFeatures/SparksCosmetics/",
         "GameFeatures/FM/SparksSongTemplates/",
@@ -73,8 +73,8 @@ public class Generator
         "GameFeatures/Juno/"
     ];
 
-    private readonly Func<VfsEntry, bool> _shopAssetsFilter = (x => x.Name.StartsWith("DAv2"));
-    private readonly Func<VfsEntry, bool> _cosmeticsFilter = (x => _acceptedPaths.Any(
+    public static readonly Func<GameFile, bool> ShopAssetsFilter = (x => x.Name.StartsWith("DAv2"));
+    public static readonly Func<GameFile, bool> CosmeticsFilter = (x => _acceptedPaths.Any(
         p => x.Path.Contains(p, StringComparison.OrdinalIgnoreCase))
     );
 
@@ -105,7 +105,6 @@ public class Generator
         Log.ForContext("NoConsole", true).Information("User selected {model} - {type}", model, generationType);
         DiscordRichPresence.Update(model);
 
-        var start = Stopwatch.StartNew();
         switch (generationType)
         {
             case EGenerationType.AllCosmetics:
@@ -132,12 +131,86 @@ public class Generator
                 break;
         }
 
+        var start = Stopwatch.StartNew();
+        if (!await GenerateModel(model, generationType))
+            return; // this is already handled in the function
+
         Log.Information("All tasks finished in {sec}s ({ms}ms).", 
             Math.Round(start.Elapsed.TotalSeconds, 2),
             Math.Round(start.Elapsed.TotalMilliseconds));
 
         await ReturnToMenu();
         return;
+    }
+
+    private async Task<bool> GenerateModel(EModelType model, EGenerationType generationType)
+    {
+        var dataminer = Dataminer.Instance;
+
+        bool bIsProfile = model is EModelType.ProfileAthena;
+        bool bUseAllEntries = generationType is EGenerationType.AllCosmetics;
+
+        string itemType = bIsProfile ? "cosmetics" : "shop assets";
+        var filter = (bIsProfile ? CosmeticsFilter : ShopAssetsFilter);
+        var entries = (bUseAllEntries ? dataminer.AllEntries : dataminer.NewEntries);
+
+        var filtered = entries.Where(filter).ToHashSet();
+        if (filtered.Count == 0)
+        {
+            switch (generationType)
+            {
+                case EGenerationType.AllCosmetics:
+                    Log.Error("No {name} have been found.", itemType);
+                    break;
+                case EGenerationType.NewCosmetics:
+                case EGenerationType.NewCosmeticsAndArchives:
+                    Log.Error("No new {name} have been found.", itemType);
+                    break;
+                case EGenerationType.ArchiveCosmetics:
+                case EGenerationType.WaitForArchivesUpdate:
+                    Log.Error("No new {name} have been found in the following paks: {list}.", 
+                        itemType, string.Join(',', _customCosmeticsOrPaks));
+                    break;
+                case EGenerationType.SelectedCosmeticsOnly:
+                    Log.Error("The selected {name} could not be found.", itemType);
+                    break;
+            }
+            await ReturnToMenu(bFromError: true);
+            return false;
+        }
+
+        int added = 0;
+        if (bIsProfile)
+        {
+            foreach (var entry in filtered)
+            {
+                // TODO: implement logic
+            }
+        }
+        else
+        {
+            foreach (var entry in filtered)
+            {
+                // TODO: implement logic
+            }
+        }
+
+        return true;
+    }
+
+    private async Task ReturnToMenu(bool bSkipRequest = false, bool bFromError = false)
+    {
+        if (!bSkipRequest)
+        {
+            string prompt = bFromError ? "\nDo you want to try again?" : "\nDo you want to go back to menu?";
+            if (!AnsiConsole.Confirm(prompt)) return;
+        }
+
+        _backupName = "";
+        _customCosmeticsOrPaks.Clear();
+        Dataminer.Instance.NewEntries.Clear();
+
+        await ShowMenu();
     }
 
     #region SELECTORS
@@ -154,8 +227,7 @@ public class Generator
 
     private EGenerationType SelectGenerationType(EModelType model)
     {
-        _options.TryGetValue(model, out var optionsToShow);
-
+        _modelsOptions.TryGetValue(model, out var optionsToShow);
         return AnsiConsole.Prompt(
             new SelectionPrompt<EGenerationType>()
             .Title($"What do you want to use to generate this [62]{model.GetDescription()}[/]?")
@@ -177,7 +249,7 @@ public class Generator
     private List<string> GetCustomCosmetics(EModelType model)
     {
         var type = model == EModelType.ProfileAthena ? "cosmetics ids" : "DAv2s";
-        var selected = AnsiConsole.Ask<string>($"Insert the [62]{type}[/] you want to add separated by [62];[/]:");
+        var selected = FUtils.Ask($"Insert the [62]{type}[/] you want to add separated by [62];[/]:");
         return selected.Split(';').Select(x => x.Trim()).ToList();
     }
 
@@ -199,7 +271,9 @@ public class Generator
     private void HandleArchiveCosmetics()
     {
         var dynamicKeys = SelectArchives();
-        _customCosmeticsOrPaks.AddRange(dynamicKeys.Select(p => p.Name));
+        _customCosmeticsOrPaks.AddRange(dynamicKeys.Select(
+            p => p.Name.Split("pakchunk").Last().Split('-').First()
+        ));
 
         Dataminer.Instance.LoadEntries(
             ar => dynamicKeys.Select(k => new FGuid(k.Guid)).Contains(ar.EncryptionKeyGuid),
@@ -211,6 +285,9 @@ public class Generator
     {
         var newKeys = await APITask.GetNewDynamicKeys();
 
+        _customCosmeticsOrPaks.AddRange(newKeys.Select(
+            p => p.Name.Split("pakchunk").Last().Split('-').First()
+        ));
         Dataminer.Instance.LoadKeys(newKeys);
         Dataminer.Instance.LoadEntries(
             ar => newKeys.Select(k => new FGuid(k.Guid)).Contains(ar.EncryptionKeyGuid),
@@ -244,20 +321,5 @@ public class Generator
 
         _backupName = backupFile.Name.SubstringBeforeLast('.');
         return await FBackup.Parse(backupFile);
-    }
-
-    private async Task ReturnToMenu(bool bSkipRequest = false, bool bFromError = false)
-    {
-        if (!bSkipRequest)
-        {
-            string prompt = bFromError ? "Do you want to try again?" : "Do you want to go back to menu?";
-            if (!AnsiConsole.Confirm(prompt)) return;
-        }
-
-        _backupName = "";
-        _customCosmeticsOrPaks.Clear();
-        Dataminer.Instance.NewEntries.Clear();
-
-        await ShowMenu();
     }
 }
