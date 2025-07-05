@@ -41,7 +41,7 @@ public interface ICatalogEntry
 
 public class BundleCatalogEntry : ICatalogEntry
 {
-    public string DevName { get; set; } = "[VIRTUAL]1 x Funny Thing for -9 MtxCurrency";
+    public string DevName { get; set; } = "[VIRTUAL]1 x Funny Thing for -1 MtxCurrency";
     public string OfferId { get; set; } = string.Empty;
     public List<object> FulfillmentIds { get; set; } = [];
     public int DailyLimit { get; set; } = -1;
@@ -68,7 +68,7 @@ public class BundleCatalogEntry : ICatalogEntry
 
 public class CosmeticCatalogEntry : ICatalogEntry
 {
-    public string DevName { get; set; } = "[VIRTUAL]1 x Funny Thing for -9 MtxCurrency";
+    public string DevName { get; set; } = "[VIRTUAL]1 x Funny Thing for -1 MtxCurrency";
     public string OfferId { get; set; } = string.Empty;
     public List<object> FulfillmentIds { get; set; } = [];
     public int DailyLimit { get; set; } = -1;
@@ -121,7 +121,7 @@ public class Meta
     public string LayoutId { get; set; }
     public string TileSize { get; set; }
 
-    public string AnalyticOfferGroupId = "ISTHISNEEDED??";
+    public string AnalyticOfferGroupId = "AnalyticOfferGroupId";
     public string FirstSeen = "31/12/9999";
     public string Color1 = "#424242";
     public string Color2 = "#212121";
