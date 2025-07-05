@@ -13,7 +13,7 @@ public static class FBackup
     
     public static async Task<FileInfo?> Download()
     {
-        var backups = await APIEndpoints.Backups.GetBackupsAsync();
+        var backups = await APEndpoints.Instance.Backups.GetBackupsAsync();
         if (backups is null || backups.Length == 0)
         {
             return null;
@@ -22,7 +22,7 @@ public static class FBackup
         var backup = backups.Last();
         var file = new FileInfo(Path.Combine(Directories.Backups.FullName, backup.FileName));
 
-        if (await APIEndpoints.DownloadFileAsync(backup.DownloadUrl, file.FullName))
+        if (await APEndpoints.Instance.DownloadFileAsync(backup.DownloadUrl, file.FullName))
         {
             return file; // directly return the previous instance of FileInfo
         }

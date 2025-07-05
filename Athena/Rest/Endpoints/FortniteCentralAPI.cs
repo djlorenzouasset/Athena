@@ -15,7 +15,7 @@ public class FortniteCentralAPI(RestClient client) : AthenaRestClient(client)
         if (response == null || response.Length == 0) return null;
 
         string path = Path.Combine(Directories.Mappings.FullName, response[0].FileName);
-        if (!await APIEndpoints.DownloadFileAsync(response[0].Url, path, false)) return null;
+        if (!await APEndpoints.Instance.DownloadFileAsync(response[0].Url, path, false)) return null;
         return path;
     }
 

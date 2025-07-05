@@ -20,8 +20,8 @@ public class Dataminer
 
     public AESKeys? AESKeys = null;
 
-    public StreamedFileProvider Provider = null!;
     public ManifestDownloader Manifest = null!;
+    public StreamedFileProvider Provider = null!;
 
     public readonly List<VfsEntry> AllEntries = [];
     public readonly List<VfsEntry> NewEntries = [];
@@ -29,7 +29,7 @@ public class Dataminer
     public async Task Initialize()
     {
         Manifest = new();
-        Provider = new("", new(EGame.GAME_UE5_LATEST), StringComparer.OrdinalIgnoreCase);
+        Provider = new("", new(UserSettings.Current.EngineVersion), StringComparer.OrdinalIgnoreCase);
 
         Log.Information("Loading required libraries.");
         await InitOodle(); /* lib required by CUE4Parse */
@@ -71,8 +71,7 @@ public class Dataminer
     private async Task LoadEpicManifest()
     {
         var auth = UserSettings.Current.EpicAuth;
-        ManifestInfo? manifest = await APIEndpoints.EpicGames.GetManifestAsync(auth);
-
+        ManifestInfo? manifest = await APEndpoints.Instance.EpicGames.GetManifestAsync(auth);
         if (manifest is null)
         {
             Log.Error("The manifest API response was invalid.");
@@ -81,7 +80,6 @@ public class Dataminer
 
         var start = Stopwatch.StartNew();
         await Manifest.DownloadManifest(manifest!);
-
         Log.Information("Downloaded manifest {id} with version: {version}", Manifest.ManifestId,
             Manifest.GameVersion, start.Elapsed.Seconds, start.ElapsedMilliseconds);
     }
@@ -95,7 +93,7 @@ public class Dataminer
 
     private async Task LoadMappings()
     {
-        var mappings = await APIEndpoints.FortniteCentral
+        var mappings = await APEndpoints.Instance.FortniteCentral
             .GetMappingsAsync() ?? Directories.GetSavedMappings();
 
         if (mappings is null)
@@ -111,7 +109,7 @@ public class Dataminer
 
     private async Task LoadAESKeys()
     {
-        AESKeys = await APIEndpoints.FortniteCentral.GetAESKeysAsync();
+        AESKeys = await APEndpoints.Instance.FortniteCentral.GetAESKeysAsync();
         if (AESKeys is null)
         {
             Log.Warning("AESKeys API response was invalid.");

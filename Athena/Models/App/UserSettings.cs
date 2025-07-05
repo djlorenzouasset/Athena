@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Spectre.Console;
 using Athena.Services;
 using Athena.Models.API.Fortnite;
+using CUE4Parse.UE4.Versions;
+using Athena.Utils;
 
 namespace Athena.Models.App;
 
@@ -22,10 +25,14 @@ public class CatalogSettings
 public class UserSettings
 {
     private static readonly string _file = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Athena", "settingsv2.json"
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), 
+        "Athena", "settingsv2.json"
     );
 
     public static UserSettings Current = null!;
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public EGame EngineVersion { get; set; } = EGame.GAME_UE5_LATEST;
 
     public ProfileSettings Profiles { get; set; } = new();
     public CatalogSettings Catalog { get; set; } = new();
@@ -49,7 +56,7 @@ public class UserSettings
     {
         Current = new UserSettings();
 
-        var profileName = AnsiConsole.Ask<string>(
+        var profileName = FUtils.Ask(
             "What [62]name[/] would you use for the [62]Profile[/]? (type [236]d[/] for use the default one):"
         );
         if (profileName != "d")
@@ -59,7 +66,6 @@ public class UserSettings
 
         Current.AskPath(EModelType.ProfileAthena);
         Current.AskPath(EModelType.ItemShopCatalog);
-
         Current.bUseDiscordRPC = AnsiConsole.Confirm("Do you want to use the Discord Presence?");
 
         SaveSettings(); // save settings for prevent unsaving on application exit
@@ -76,27 +82,28 @@ public class UserSettings
 
     public static async Task<bool> CreateAuth()
     {
-        var auth = await APIEndpoints.EpicGames.CreateAuthAsync();
+        var auth = await APEndpoints.Instance.EpicGames.CreateAuthAsync();
         if (auth is null)
         {
             Log.Error("Failed to create Epic Games Auth code.");
             return false;
         }
 
-        Log.Information("Successfully created Epic Games auth. Expiration {expire_at}", auth.ExpiresAt);
         Current.EpicAuth = auth;
+        Log.Information("Successfully created Epic Games auth. Expiration {expire_at}", auth.ExpiresAt);
         SaveSettings();
         return true;
     }
 
     private void AskPath(EModelType forModel)
     {
-        var modelName = forModel.Equals(EModelType.ProfileAthena)
+        var modelName = 
+            forModel is EModelType.ProfileAthena
             ? "Profiles" : "ItemShop";
 
-        askOnInvalidPath:
+        onInvalidPath:
         {
-            var path = AnsiConsole.Ask<string>(
+            var path = FUtils.Ask(
                 $"Insert the [62]path[/] to use for save the [62]{modelName}[/] (type [236]d[/] for use the default one):"
             );
 
@@ -105,16 +112,17 @@ public class UserSettings
                 if (!Directory.Exists(path))
                 {
                     Log.Error("The directory you inserted doesn't exists.");
-                    goto askOnInvalidPath;
+                    goto onInvalidPath;
                 }
 
-                if (forModel == EModelType.ProfileAthena)
+                switch (forModel)
                 {
-                    Profiles.OutputPath = path;
-                }
-                else
-                {
-                    Catalog.OutputPath = path;
+                    case EModelType.ProfileAthena:
+                        Profiles.OutputPath = path;
+                        break;
+                    case EModelType.ItemShopCatalog:
+                        Catalog.OutputPath = path;
+                        break;
                 }
 
                 Log.Information("{type} path successfully set to {dir}.", modelName, path);

@@ -4,20 +4,30 @@ using Athena.Rest.Endpoints;
 
 namespace Athena.Services;
 
-public static class APIEndpoints
+public class APEndpoints
 {
-    private static readonly RestClient _client = new(new RestClientOptions
+    public static APEndpoints Instance = new();
+
+    public readonly BackupAPI Backups;
+    public readonly AthenaEndpoints Athena;
+    public readonly EpicGamesAPI EpicGames;
+    public readonly FortniteCentralAPI FortniteCentral;
+
+    private readonly RestClient _client = new(new RestClientOptions
     {
         Timeout = TimeSpan.FromMilliseconds(5 * 1000),
         UserAgent = $"Athena/v{Globals.Version}"
     }, configureSerialization: s => s.UseSerializer<JsonNetSerializer>());
 
-    public static readonly BackupAPI Backups = new(_client);
-    public static readonly AthenaEndpoints Athena = new(_client);
-    public static readonly EpicGamesAPI EpicGames = new(_client);
-    public static readonly FortniteCentralAPI FortniteCentral = new(_client);
+    public APEndpoints()
+    {
+        Athena = new(_client);
+        Backups = new(_client);
+        EpicGames = new(_client);
+        FortniteCentral = new(_client);
+    }
 
-    public static async Task<bool> DownloadFileAsync(string url, string path, bool bOverwrite = true)
+    public async Task<bool> DownloadFileAsync(string url, string path, bool bOverwrite = true)
     {
         var request = new RestRequest(url);
         var data = await _client.DownloadDataAsync(request);
