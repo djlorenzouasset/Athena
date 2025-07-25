@@ -153,6 +153,7 @@ public static class Helper
             "spid" => "AthenaDance",
             "emoji" => "AthenaDance",
             "toy" => "AthenaDance",
+            "emoticon" => "AthenaDance",
 
             "glider" => "AthenaGlider",
             "umbrella" => "AthenaGlider",
