@@ -48,7 +48,7 @@ public class Dataminer
         "LSID", "LoadingScreen",
         "Contrail", "Trails",
         "Petcarrier", "Spid",
-        "Toy", "Emoji", "Spray",
+        "Toy", "Emoji", "Emoticon", "Spray",
         "Sparks_", "SparksAura", "SID",
         "ID", "Wheel", "CarBody", "CarSkin", "Body" /* issue #54 */,
         "JBPID_", "JBSID_", // _ is for avoid export errors
