@@ -119,6 +119,10 @@ public static class Helper
 
     public static string GetItemBackendType(string id)
     {
+        if (id.Contains("season", StringComparison.OrdinalIgnoreCase) && 
+            id.EndsWith("pass", StringComparison.OrdinalIgnoreCase))
+            return "TBD";
+
         string prefix;
         if (_defaultCosmetics.TryGetValue(id, out string? value))
         {
