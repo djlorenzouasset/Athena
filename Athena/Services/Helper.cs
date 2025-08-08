@@ -134,7 +134,10 @@ public static class Helper
         }
         else if (id.StartsWith("Sparks_"))
         {
-            prefix = id.SubstringAfter('_').SubstringBefore('_');
+            var parts = id.Split('_');
+            prefix = parts.Last().ToLower() is "mic" or "keytar" or "guitar" or "drum" or "drumkit" or "bass" // some mics ending with _mic
+                ? parts.Last()
+                : parts.Length > 1 ? parts[1] : id;
         }
         else
         {
@@ -178,6 +181,7 @@ public static class Helper
             "keytar" => "SparksKeyboard",
             "guitar" => "SparksGuitar",
             "drum" => "SparksDrums",
+            "drumkit" => "SparksDrums",
             "bass" => "SparksBass",
             "aura" => "SparksAura",
             "sid" => "SparksSong",
