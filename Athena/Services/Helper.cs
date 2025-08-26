@@ -123,6 +123,11 @@ public static class Helper
             id.EndsWith("pass", StringComparison.OrdinalIgnoreCase))
             return "TBD";
 
+        var instruments = new string[] { // +v37.00 (fixed after v37.10 release)
+            "mic", "keytar", "guitar", 
+            "drum", "drumkit", "bass" 
+        };
+
         string prefix;
         if (_defaultCosmetics.TryGetValue(id, out string? value))
         {
@@ -134,7 +139,10 @@ public static class Helper
         }
         else if (id.StartsWith("Sparks_"))
         {
-            prefix = id.SubstringAfter('_').SubstringBefore('_');
+            var parts = id.Split('_');
+            prefix = instruments.Contains(parts.Last().ToLower())
+                ? parts.Last()
+                : parts.Length > 1 ? parts[1] : id;
         }
         else
         {
@@ -178,6 +186,7 @@ public static class Helper
             "keytar" => "SparksKeyboard",
             "guitar" => "SparksGuitar",
             "drum" => "SparksDrums",
+            "drumkit" => "SparksDrums",
             "bass" => "SparksBass",
             "aura" => "SparksAura",
             "sid" => "SparksSong",
