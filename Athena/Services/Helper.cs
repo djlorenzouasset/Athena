@@ -11,13 +11,34 @@ namespace Athena.Services;
 
 public static class Helper
 {
-    private static readonly List<string> _notPrefixedPickaxes = [ // pickaxes without prefix (issue #61)
-        "BoltonPickaxe", "Dev_Test_Pickaxe", "HalloweenScythe",
-        "HappyPickaxe", "SickleBatPickaxe", "SkiIcePickaxe", "SpikyPickaxe"
-    ];
-    private static readonly Dictionary<string, string> _defaultCosmetics = new() { // default items (issue #33)
+    private static readonly Dictionary<string, string> _notPrefixedCosmetics = new() { // cosmetics without prefix (issue #61 & #69)
+        { "BoltonPickaxe", "AthenaPickaxe" },
+        { "Dev_Test_Pickaxe", "AthenaPickaxe" },
+        { "HalloweenScythe", "AthenaPickaxe" },
+        { "HappyPickaxe", "AthenaPickaxe" },
+        { "SickleBatPickaxe", "AthenaPickaxe" },
+        { "SkiIcePickaxe", "AthenaPickaxe" },
+        { "SpikyPickaxe", "AthenaPickaxe" },
+        { "ChillyFabric", "AthenaItemWrap" },
+        { "Duo_Umbrella", "AthenaGlider" },
+        { "FounderGlider", "AthenaGlider" },
+        { "FounderUmbrella", "AthenaGlider" },
+        { "Gadget_AlienSignalDetector", "AthenaBackpack" },
+        { "Gadget_DetectorGadget", "AthenaBackpack" },
+        { "Gadget_DetectorGadget_Ch4S2", "AthenaBackpack" },
+        { "Gadget_HighTechBackpack", "AthenaBackpack" },
+        { "Gadget_RealityBloom", "AthenaBackpack" },
+        { "Gadget_SpiritVessel", "AthenaBackpack" },
+        { "PreSeasonGlider", "AthenaGlider" },
+        { "PreSeasonGlider_Elite", "AthenaGlider" },
+        { "Solo_Umbrella", "AthenaGlider" },
+        { "Solo_Umbrella_MarkII", "AthenaGlider" },
+        { "Squad_Umbrella", "AthenaGlider" }
+    };
+    private static readonly Dictionary<string, string> _defaultCosmetics = new() { // default items (issue #33 & #69)
         { "DefaultPickaxe", "AthenaPickaxe" },
-        { "DefaultGlider", "AthenaGlider" }
+        { "DefaultGlider", "AthenaGlider" },
+        { "DefaultContrail", "AthenaSkyDiveContrail" }
     };
 
     private static readonly string DEFAULT_VARIANT_NAME = "UnknownVariantName"; // default name for variants name
@@ -129,13 +150,10 @@ public static class Helper
         };
 
         string prefix;
-        if (_defaultCosmetics.TryGetValue(id, out string? value))
+        if (_defaultCosmetics.TryGetValue(id, out string? value) ||
+            _notPrefixedCosmetics.TryGetValue(id, out value))
         {
             return value;
-        }
-        else if (_notPrefixedPickaxes.Contains(id))
-        {
-            return "AthenaPickaxe";
         }
         else if (id.StartsWith("Sparks_"))
         {
