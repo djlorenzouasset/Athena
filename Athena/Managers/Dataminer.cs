@@ -47,7 +47,7 @@ public class Dataminer
         "MusicPack", "Umbrella",
         "LSID", "LoadingScreen",
         "Contrail", "Trails",
-        "Petcarrier", "Spid",
+        "PetCarrier", "Spid",
         "Toy", "Emoji", "Emoticon", "Spray",
         "Sparks_", "SparksAura", "SID",
         "ID", "Wheel", "CarBody", "CarSkin", "Body" /* issue #54 */,
@@ -321,6 +321,13 @@ public class Dataminer
         }
         else if (action == Actions.AddArchive)
         {
+            if (APIEndpoints.FNCentral.AesKey.DynamicKeys.Count == 0)
+            {
+                Log.Error("There are no available paks to select.");
+                await ReturnToMenu(true);
+                return;
+            }
+
             var selected = SelectArchive();
 
             _ioStoreNames.Add(selected.Name);
