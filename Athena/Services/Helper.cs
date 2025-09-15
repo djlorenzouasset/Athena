@@ -235,10 +235,6 @@ public static class Helper
         {
             List<string> ownedParts = [];
 
-            var channelTag = style.GetOrDefault<FStructFallback>("VariantChannelTag");
-            if (channelTag is null) continue;
-
-            string channelName = channelTag.GetOrDefault("TagName", new FName(DEFAULT_VARIANT_NAME)).Text;
             var optionsName = style.ExportType switch
             {
                 "FortCosmeticMeshVariant" => "MeshOptions",
@@ -248,6 +244,8 @@ public static class Helper
                 "FortCosmeticRichColorVariant" => "InlineVariant",
                 "FortCosmeticGameplayTagVariant" => "GenericTagOptions",
                 "FortCosmeticCharacterPartVariant" => "PartOptions",
+                "FortCosmeticCIDRedirectorVariant" => "CIDRedirectors",
+                "FortCosmeticLoadoutTagDrivenVariant" => "Variants",
                 "FortCustomizableObjectSprayVariant" => "ActiveSelectionTag",
                 "FortCustomizableObjectParameterVariant" => "ParameterOptions",
                 _ => null
@@ -264,11 +262,12 @@ public static class Helper
                 var tag = activeSectionTag.GetOrDefault("TagName", new FName(DEFAULT_STYLE_NAME)).Text;
                 if (tag is null) continue;
 
-                ownedParts.Add(tag.Split("Property.").Last() + ".X=ffff0000ffffSD="); // ?? idk
+                // idk what this is but everything comes from various game profiles
+                ownedParts.Add(tag.Split("Property.").Last() + ".X=ffff0000ffffSD=");
             }
-            else if (optionsName == "InlineVariant") // ??
+            else if (optionsName == "InlineVariant")
             {
-                // idk (??) need a revision
+                // as for now, InlineVariant is unknown how it works so we skip it
             }
             else
             {
@@ -284,7 +283,8 @@ public static class Helper
                     string tag = customizationVariantTag.GetOrDefault("TagName", new FName(DEFAULT_STYLE_NAME)).Text;
                     if (tag is null) continue;
 
-                    if (tag.Contains("Property.Color") || tag.Contains("Vehicle.Painted") || tag.Contains("Vehicle.Tier") /* <- issue #54 */)
+                    if (tag.Contains("Property.Color") || tag.Contains("Vehicle.Painted") || tag.Contains("Vehicle.Tier") || 
+                        tag.Contains("Outfit.") || tag.Contains("Theme."))
                     {
                         ownedParts.Add(tag.Split("Property.").Last());
                     }
@@ -296,13 +296,30 @@ public static class Helper
             }
 
             string channel;
-            if (channelName.Contains("Slot") || channelName.Contains("Vehicle"))
+
+            var variantChannelTag = style.GetOrDefault<FStructFallback>("VariantChannelTag");
+            if (variantChannelTag is null && optionsName == "Variants")
             {
-                channel = channelName.Split("Channel.").Last();
+                // when a cosmetic uses FortCosmeticLoadoutTagDrivenVariant, the first variant using that type doesn't have
+                // the VariantChannelTag property, so we set it to TagDriven (idk why, but I saw this from a real game profile)
+                channel = "TagDriven";
+            }
+            else if (variantChannelTag is null)
+            {
+                continue;
             }
             else
             {
-                channel = channelName.Split('.').Last();
+                string channelName = variantChannelTag.GetOrDefault("TagName", new FName(DEFAULT_VARIANT_NAME)).Text;
+                if (channelName.Contains("Slot") || channelName.Contains("Vehicle") ||
+                    channelName.Contains("TagDriven") || channelName.Contains("Theme"))
+                {
+                    channel = channelName.Split("Channel.").Last();
+                }
+                else
+                {
+                    channel = channelName.Split('.').Last();
+                }
             }
 
             variants.Add(channel, ownedParts);

@@ -60,7 +60,7 @@ public class Dataminer
         "ChillyFabric", "FounderGlider", "FounderUmbrella", "Gadget_AlienSignalDetector", // more unprefixed cosmetics (issue #69)
         "Gadget_DetectorGadget", "Gadget_DetectorGadget_Ch4S2", "Gadget_HighTechBackpack",
         "Gadget_RealityBloom", "Gadget_SpiritVessel", "PreSeasonGlider", "PreSeasonGlider_Elite",
-        "Solo_Umbrella", "Solo_Umbrella_MarkII", "Squad_Umbrella"
+        "Solo_Umbrella", "Solo_Umbrella_MarkII", "Squad_Umbrella", "Duo_Umbrella"
     ];
     private readonly string[] _classes = [
         // BR
