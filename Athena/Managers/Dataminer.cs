@@ -228,7 +228,7 @@ public class Dataminer
             new SelectionPrompt<string>()
                 .Title("What do you want generate?")
                 .AddChoices(_athenaOptions)
-            );
+        );
 
         Model model = Model.ProfileAthena; // default
         switch (selected)
@@ -457,6 +457,8 @@ public class Dataminer
                 {
 #if DEBUG
                     Log.Error("Skipped entry {name}: {err}.", entry.Name, e.Message);
+#else
+                    Log.ForContext("NoConsole", true).Error("Skipped entry {name}: {err}.", entry.Name, e.Message);
 #endif
                 }
             }
