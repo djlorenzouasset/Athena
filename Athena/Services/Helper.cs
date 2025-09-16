@@ -284,7 +284,7 @@ public static class Helper
                     if (tag is null) continue;
 
                     if (tag.Contains("Property.Color") || tag.Contains("Vehicle.Painted") || tag.Contains("Vehicle.Tier") || 
-                        tag.Contains("Outfit.") || tag.Contains("Theme."))
+                        tag.Contains("Property.Outfit") || tag.Contains("Property.Theme"))
                     {
                         ownedParts.Add(tag.Split("Property.").Last());
                     }
@@ -300,8 +300,9 @@ public static class Helper
             var variantChannelTag = style.GetOrDefault<FStructFallback>("VariantChannelTag");
             if (variantChannelTag is null && optionsName == "Variants")
             {
-                // when a cosmetic uses FortCosmeticLoadoutTagDrivenVariant, the first variant using that type doesn't have
-                // the VariantChannelTag property, so we set it to TagDriven (idk why, but I saw this from a real game profile)
+                // when a cosmetic uses FortCosmeticLoadoutTagDrivenVariant, the first variant of that type
+                // doesnt have the VariantChannelTag property. In this case, we set it to "TagDriven"
+                // (not sure why, but I observed this in a real game profile).
                 channel = "TagDriven";
             }
             else if (variantChannelTag is null)
