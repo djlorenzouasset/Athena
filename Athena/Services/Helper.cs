@@ -11,13 +11,34 @@ namespace Athena.Services;
 
 public static class Helper
 {
-    private static readonly List<string> _notPrefixedPickaxes = [ // pickaxes without prefix (issue #61)
-        "BoltonPickaxe", "Dev_Test_Pickaxe", "HalloweenScythe",
-        "HappyPickaxe", "SickleBatPickaxe", "SkiIcePickaxe", "SpikyPickaxe"
-    ];
-    private static readonly Dictionary<string, string> _defaultCosmetics = new() { // default items (issue #33)
+    private static readonly Dictionary<string, string> _notPrefixedCosmetics = new() { // cosmetics without prefix (issue #61 & #69)
+        { "BoltonPickaxe", "AthenaPickaxe" },
+        { "Dev_Test_Pickaxe", "AthenaPickaxe" },
+        { "HalloweenScythe", "AthenaPickaxe" },
+        { "HappyPickaxe", "AthenaPickaxe" },
+        { "SickleBatPickaxe", "AthenaPickaxe" },
+        { "SkiIcePickaxe", "AthenaPickaxe" },
+        { "SpikyPickaxe", "AthenaPickaxe" },
+        { "ChillyFabric", "AthenaItemWrap" },
+        { "Duo_Umbrella", "AthenaGlider" },
+        { "FounderGlider", "AthenaGlider" },
+        { "FounderUmbrella", "AthenaGlider" },
+        { "Gadget_AlienSignalDetector", "AthenaBackpack" },
+        { "Gadget_DetectorGadget", "AthenaBackpack" },
+        { "Gadget_DetectorGadget_Ch4S2", "AthenaBackpack" },
+        { "Gadget_HighTechBackpack", "AthenaBackpack" },
+        { "Gadget_RealityBloom", "AthenaBackpack" },
+        { "Gadget_SpiritVessel", "AthenaBackpack" },
+        { "PreSeasonGlider", "AthenaGlider" },
+        { "PreSeasonGlider_Elite", "AthenaGlider" },
+        { "Solo_Umbrella", "AthenaGlider" },
+        { "Solo_Umbrella_MarkII", "AthenaGlider" },
+        { "Squad_Umbrella", "AthenaGlider" }
+    };
+    private static readonly Dictionary<string, string> _defaultCosmetics = new() { // default items (issue #33 & #69)
         { "DefaultPickaxe", "AthenaPickaxe" },
-        { "DefaultGlider", "AthenaGlider" }
+        { "DefaultGlider", "AthenaGlider" },
+        { "DefaultContrail", "AthenaSkyDiveContrail" }
     };
 
     private static readonly string DEFAULT_VARIANT_NAME = "UnknownVariantName"; // default name for variants name
@@ -129,13 +150,10 @@ public static class Helper
         };
 
         string prefix;
-        if (_defaultCosmetics.TryGetValue(id, out string? value))
+        if (_defaultCosmetics.TryGetValue(id, out string? value) ||
+            _notPrefixedCosmetics.TryGetValue(id, out value))
         {
             return value;
-        }
-        else if (_notPrefixedPickaxes.Contains(id))
-        {
-            return "AthenaPickaxe";
         }
         else if (id.StartsWith("Sparks_"))
         {
@@ -217,10 +235,6 @@ public static class Helper
         {
             List<string> ownedParts = [];
 
-            var channelTag = style.GetOrDefault<FStructFallback>("VariantChannelTag");
-            if (channelTag is null) continue;
-
-            string channelName = channelTag.GetOrDefault("TagName", new FName(DEFAULT_VARIANT_NAME)).Text;
             var optionsName = style.ExportType switch
             {
                 "FortCosmeticMeshVariant" => "MeshOptions",
@@ -230,6 +244,8 @@ public static class Helper
                 "FortCosmeticRichColorVariant" => "InlineVariant",
                 "FortCosmeticGameplayTagVariant" => "GenericTagOptions",
                 "FortCosmeticCharacterPartVariant" => "PartOptions",
+                "FortCosmeticCIDRedirectorVariant" => "CIDRedirectors",
+                "FortCosmeticLoadoutTagDrivenVariant" => "Variants",
                 "FortCustomizableObjectSprayVariant" => "ActiveSelectionTag",
                 "FortCustomizableObjectParameterVariant" => "ParameterOptions",
                 _ => null
@@ -246,11 +262,12 @@ public static class Helper
                 var tag = activeSectionTag.GetOrDefault("TagName", new FName(DEFAULT_STYLE_NAME)).Text;
                 if (tag is null) continue;
 
-                ownedParts.Add(tag.Split("Property.").Last() + ".X=ffff0000ffffSD="); // ?? idk
+                // idk what this is but everything comes from various game profiles
+                ownedParts.Add(tag.Split("Property.").Last() + ".X=ffff0000ffffSD=");
             }
-            else if (optionsName == "InlineVariant") // ??
+            else if (optionsName == "InlineVariant")
             {
-                // idk (??) need a revision
+                // as for now, InlineVariant is unknown how it works so we skip it
             }
             else
             {
@@ -266,7 +283,8 @@ public static class Helper
                     string tag = customizationVariantTag.GetOrDefault("TagName", new FName(DEFAULT_STYLE_NAME)).Text;
                     if (tag is null) continue;
 
-                    if (tag.Contains("Property.Color") || tag.Contains("Vehicle.Painted") || tag.Contains("Vehicle.Tier") /* <- issue #54 */)
+                    if (tag.Contains("Property.Color") || tag.Contains("Vehicle.Painted") || tag.Contains("Vehicle.Tier") || 
+                        tag.Contains("Property.Outfit") || tag.Contains("Property.Theme"))
                     {
                         ownedParts.Add(tag.Split("Property.").Last());
                     }
@@ -278,13 +296,31 @@ public static class Helper
             }
 
             string channel;
-            if (channelName.Contains("Slot") || channelName.Contains("Vehicle"))
+
+            var variantChannelTag = style.GetOrDefault<FStructFallback>("VariantChannelTag");
+            if (variantChannelTag is null && optionsName == "Variants")
             {
-                channel = channelName.Split("Channel.").Last();
+                // when a cosmetic uses FortCosmeticLoadoutTagDrivenVariant, the first variant of that type
+                // doesnt have the VariantChannelTag property. In this case, we set it to "TagDriven"
+                // (not sure why, but I observed this in a real game profile).
+                channel = "TagDriven";
+            }
+            else if (variantChannelTag is null)
+            {
+                continue;
             }
             else
             {
-                channel = channelName.Split('.').Last();
+                string channelName = variantChannelTag.GetOrDefault("TagName", new FName(DEFAULT_VARIANT_NAME)).Text;
+                if (channelName.Contains("Slot") || channelName.Contains("Vehicle") ||
+                    channelName.Contains("TagDriven") || channelName.Contains("Theme"))
+                {
+                    channel = channelName.Split("Channel.").Last();
+                }
+                else
+                {
+                    channel = channelName.Split('.').Last();
+                }
             }
 
             variants.Add(channel, ownedParts);

@@ -47,7 +47,7 @@ public class Dataminer
         "MusicPack", "Umbrella",
         "LSID", "LoadingScreen",
         "Contrail", "Trails",
-        "Petcarrier", "Spid",
+        "PetCarrier", "Spid",
         "Toy", "Emoji", "Emoticon", "Spray",
         "Sparks_", "SparksAura", "SID",
         "ID", "Wheel", "CarBody", "CarSkin", "Body" /* issue #54 */,
@@ -55,7 +55,12 @@ public class Dataminer
         "DefaultContrail", "DefaultGlider", "DefaultPickaxe", // default items (issue #33)
 
         "BoltonPickaxe", "Dev_Test_Pickaxe", "HalloweenScythe", // pickaxes without prefix (issue #61)
-        "HappyPickaxe", "SickleBatPickaxe", "SkiIcePickaxe", "SpikyPickaxe"
+        "HappyPickaxe", "SickleBatPickaxe", "SkiIcePickaxe", "SpikyPickaxe",
+
+        "ChillyFabric", "FounderGlider", "FounderUmbrella", "Gadget_AlienSignalDetector", // more unprefixed cosmetics (issue #69)
+        "Gadget_DetectorGadget", "Gadget_DetectorGadget_Ch4S2", "Gadget_HighTechBackpack",
+        "Gadget_RealityBloom", "Gadget_SpiritVessel", "PreSeasonGlider", "PreSeasonGlider_Elite",
+        "Solo_Umbrella", "Solo_Umbrella_MarkII", "Squad_Umbrella", "Duo_Umbrella"
     ];
     private readonly string[] _classes = [
         // BR
@@ -223,7 +228,7 @@ public class Dataminer
             new SelectionPrompt<string>()
                 .Title("What do you want generate?")
                 .AddChoices(_athenaOptions)
-            );
+        );
 
         Model model = Model.ProfileAthena; // default
         switch (selected)
@@ -316,6 +321,13 @@ public class Dataminer
         }
         else if (action == Actions.AddArchive)
         {
+            if (APIEndpoints.FNCentral.AesKey.DynamicKeys.Count == 0)
+            {
+                Log.Error("There are no available paks to select.");
+                await ReturnToMenu(true);
+                return;
+            }
+
             var selected = SelectArchive();
 
             _ioStoreNames.Add(selected.Name);
@@ -438,13 +450,15 @@ public class Dataminer
 
                     var variants = Helper.GetAllVariants(export);
                     profile.AddCosmetic(entry.NameWithoutExtension, variants);
-                    Log.Information("Added \"{name}\" with {totVariants} channels variants.", entry.NameWithoutExtension, variants.Count);
+                    Log.Information("Added \"{name}\" ({type}) with {totVariants} channels variants.", entry.NameWithoutExtension, export.ExportType, variants.Count);
                     added++;
                 }
                 catch (Exception e)
                 {
 #if DEBUG
                     Log.Error("Skipped entry {name}: {err}.", entry.Name, e.Message);
+#else
+                    Log.ForContext("NoConsole", true).Error("Skipped entry {name}: {err}.", entry.Name, e.Message);
 #endif
                 }
             }
