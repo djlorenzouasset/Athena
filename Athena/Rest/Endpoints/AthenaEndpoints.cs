@@ -29,7 +29,14 @@ public class AthenaEndpoints(RestClient client) : RestBase(client)
 
     public async Task<Backup[]?> GetBackupAsync()
     {
-        var request = new RestRequest(Globals.BACKUPS, Method.Get);
+        // scuffed way but not final work
+        string endpoint = "";
+        if (Globals.bUseV2Endpoints)
+            endpoint = "https://athena.djlorexzo.dev/api/v1/backups";
+        else
+            endpoint = Globals.BACKUPS;
+
+        var request = new RestRequest(endpoint, Method.Get);
         var response = await _client.ExecuteAsync<Backup[]>(request).ConfigureAwait(false);
         Log.Information("[{Method}] {StatusDescription} ({StatusCode}): {URI}", 
             request.Method, response.StatusDescription, (int)response.StatusCode, request.Resource);

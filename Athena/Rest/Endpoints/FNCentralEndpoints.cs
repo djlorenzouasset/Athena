@@ -11,7 +11,14 @@ public class FNCentralEndpoints(RestClient client) : RestBase(client)
 
     public async Task<string?> GetMappingsAsync()
     {
-        var request = new RestRequest(Globals.MAPPINGS, Method.Get);
+        // scuffed way but not final work
+        string endpoint = "";
+        if (Globals.bUseV2Endpoints)
+            endpoint = "https://athena.djlorexzo.dev/api/v1/mappings";
+        else
+            endpoint = Globals.MAPPINGS;
+
+        var request = new RestRequest(endpoint, Method.Get);
         var response = await _client.ExecuteAsync<Mappings[]>(request).ConfigureAwait(false);
         Log.Information("[{Method}] {StatusDescription} ({StatusCode}): {URI}", 
             request.Method, response.StatusDescription, (int)response.StatusCode, request.Resource);
