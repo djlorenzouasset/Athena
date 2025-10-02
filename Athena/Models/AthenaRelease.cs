@@ -9,6 +9,7 @@ public class AthenaRelease
     public string UpdaterFile { get; set; }
     public List<string> Authors { get; set; }
     public List<string> Notices { get; set; }
+    public bool bUseV2Endpoints { get; set; }
 
     public bool VersionChanged() => !Globals.VERSION.Equals(Version);
 }
