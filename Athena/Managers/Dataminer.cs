@@ -263,7 +263,7 @@ public class Dataminer
 
         var selected = AnsiConsole.Prompt(
         new SelectionPrompt<string>()
-            .Title($"What type of [62]{_currentGenerationType}[/] do want you generate?")
+            .Title($"What type of [1]{_currentGenerationType}[/] do want you generate?")
             .AddChoices(opts)
         );
 
@@ -486,7 +486,7 @@ public class Dataminer
     {
         var selected = AnsiConsole.Prompt(
         new SelectionPrompt<string>()
-            .Title("What [62]Pak[/] do you want generate?")
+            .Title("What [1]Pak[/] do you want generate?")
             .AddChoices(
                 APIEndpoints.FNCentral.AesKey.DynamicKeys.Select(x => $"{x.Name} ({x.Size.Formatted})")
             )
@@ -496,7 +496,7 @@ public class Dataminer
 
     private IEnumerable<DynamicKey> BulkArchives()
     {
-        var paks = AnsiConsole.Ask<string>("Insert the [62]numbers[/] of the [62]Paks[/] you want generate separated by [62];[/] (ex: 1000; 1001):");
+        var paks = AnsiConsole.Ask<string>("Insert the [1]numbers[/] of the [1]Paks[/] you want generate separated by [1];[/] (ex: 1000; 1001):");
         var numbers = paks.Split(";").Select(x => x.Trim());
         return APIEndpoints.FNCentral.AesKey.DynamicKeys.Where(x => numbers.Contains(_pakNameRegex.Match(x.Name).Groups[1].ToString()));
     }
@@ -504,7 +504,7 @@ public class Dataminer
     private IEnumerable<string> RequestSelectedItems(Model model)
     {
         string type = model == Model.ProfileAthena ? "cosmetics ids" : "DAv2s";
-        var names = AnsiConsole.Ask<string>($"Insert the [62]{type}[/] of the [62]items[/] you want generate separated by [62];[/]:");
+        var names = AnsiConsole.Ask<string>($"Insert the [1]{type}[/] of the [1]items[/] you want generate separated by [62];[/]:");
         return names.Split(";").Select(x => x.Trim());
     }
 
