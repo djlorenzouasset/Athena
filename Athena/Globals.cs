@@ -10,7 +10,7 @@ public static class Globals
 
     // endpoints
     public const string MAPPINGS = "https://laylaleaks.de/api/mappings";
-    public const string AESKEYS = "https://fortnitecentral.genxgames.gg/api/v1/aes";
+    public const string AESKEYS = "https://export-service.dillyapis.com/v1/aes";
     public const string BACKUPS = "https://www.laylaleaks.de/api/backups";
     public const string AUTH = "https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token";
     public const string VERIFY = "https://account-public-service-prod.ol.epicgames.com/account/api/oauth/verify";
