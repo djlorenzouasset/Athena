@@ -22,7 +22,7 @@ You can use this program with [Neonite](https://github.com/HybridFNBR/Neonite) b
 
 ### Requirements
 
-- [NET 8.0 Runtime or higher](https://dotnet.microsoft.com/en-us/download/dotnet/8.0/runtime)
+- [NET 9.0 Runtime or higher](https://dotnet.microsoft.com/en-us/download/dotnet/9.0/runtime)
 
 -----------------
 
