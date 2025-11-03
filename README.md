@@ -1,6 +1,6 @@
 # Athena
 
-<img src=".github/AthenaLogoHW.png" height="130" align="right"> 
+<img src=".github/AthenaLogo.png" height="130" align="right"> 
 
 #### Powered by [CUE4Parse](https://github.com/FabianFG/CUE4Parse) and [EpicManifestParser](https://github.com/NotOfficer/EpicManifestParser)
 
@@ -22,7 +22,7 @@ You can use this program with [Neonite](https://github.com/HybridFNBR/Neonite) b
 
 ### Requirements
 
-- [NET 8.0 Runtime or higher](https://dotnet.microsoft.com/en-us/download/dotnet/8.0/runtime)
+- [NET 9.0 Runtime or higher](https://dotnet.microsoft.com/en-us/download/dotnet/9.0/runtime)
 
 -----------------
 
