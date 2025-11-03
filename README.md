@@ -1,6 +1,6 @@
 # Athena
 
-<img src=".github/AthenaLogoHW.png" height="130" align="right"> 
+<img src=".github/AthenaLogo.png" height="130" align="right"> 
 
 #### Powered by [CUE4Parse](https://github.com/FabianFG/CUE4Parse) and [EpicManifestParser](https://github.com/NotOfficer/EpicManifestParser)
 
