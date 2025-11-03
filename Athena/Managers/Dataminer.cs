@@ -48,11 +48,12 @@ public class Dataminer
         "LSID", "LoadingScreen",
         "Contrail", "Trails",
         "PetCarrier", "Spid",
-        "Toy", "Emoji", "Emoticon", "Spray",
+        "Companion_", "Toy", 
+        "Emoji", "Emoticon", "Spray",
         "Sparks_", "SparksAura", "SID",
         "ID", "Wheel", "CarBody", "CarSkin", "Body" /* issue #54 */,
         "JBPID_", "JBSID_", // _ is for avoid export errors
-        "DefaultContrail", "DefaultGlider", "DefaultPickaxe", // default items (issue #33)
+        "DefaultContrail", "DefaultGlider", "DefaultPickaxe", "Mimosa_Random", // default items (issue #33)
 
         "BoltonPickaxe", "Dev_Test_Pickaxe", "HalloweenScythe", // pickaxes without prefix (issue #61)
         "HappyPickaxe", "SickleBatPickaxe", "SkiIcePickaxe", "SpikyPickaxe",
@@ -71,6 +72,7 @@ public class Dataminer
         "AthenaLoadingScreenItemDefinition", "AthenaDanceItemDefinition",
         "AthenaSkyDiveContrailItemDefinition", "AthenaItemWrapDefinition",
         "AthenaMusicPackItemDefinition", "CosmeticShoesItemDefinition",
+        "CosmeticCompanionItemDefinition", "CosmeticCompanionReactFXItemDefinition",
 
         // FORTNITE FESTIVAL
         "SparksGuitarItemDefinition", "SparksBassItemDefinition",
@@ -93,6 +95,7 @@ public class Dataminer
     private readonly Func<VfsEntry, bool> _shopAssetsFilter = x => x.NameWithoutExtension.StartsWith("DAv2") && !x.Name.Contains("MusicPass");
     private readonly Func<VfsEntry, bool> _cosmeticsFilter = (x => (
         x.Path.Contains("Athena/Items/Cosmetics/", StringComparison.OrdinalIgnoreCase) ||
+        x.Path.Contains("GameFeatures/CosmeticCompanions/", StringComparison.OrdinalIgnoreCase) ||
         x.Path.Contains("GameFeatures/MeshCosmetics/", StringComparison.OrdinalIgnoreCase) /* Caper and Alias cosmetics */ ||
         x.Path.Contains("GameFeatures/CosmeticShoes/", StringComparison.OrdinalIgnoreCase) /* Fortnite Shoes */ ||
         
@@ -263,7 +266,7 @@ public class Dataminer
 
         var selected = AnsiConsole.Prompt(
         new SelectionPrompt<string>()
-            .Title($"What type of [1]{_currentGenerationType}[/] do want you generate?")
+            .Title($"What type of [62]{_currentGenerationType}[/] do want you generate?")
             .AddChoices(opts)
         );
 
@@ -445,7 +448,7 @@ public class Dataminer
             {
                 try
                 {
-                    var export = await Provider.LoadPackageObjectAsync(entry.PathWithoutExtension + '.' + entry.NameWithoutExtension);
+                    var export = await Provider.LoadPackageObjectAsync(entry.PathWithoutExtension);
                     if (!_classes.Contains(export.ExportType)) continue; // this will prevent issues trust
 
                     var variants = Helper.GetAllVariants(export);

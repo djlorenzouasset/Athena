@@ -16,7 +16,11 @@ public static class Athena
         Log.Logger = new LoggerConfiguration().WriteTo
             .Logger(consoleLogger => consoleLogger.Filter
             .ByExcluding(logEvent => logEvent.Properties.ContainsKey("NoConsole")).WriteTo
+#if DEBUG
+            .Console(LogEventLevel.Debug, theme: AnsiConsoleTheme.Literate)).WriteTo
+#else
             .Console(LogEventLevel.Information, theme: AnsiConsoleTheme.Literate)).WriteTo
+#endif
             .File(Path.Combine(DirectoryManager.Logs, $"Athena-Log-{DateTime.Now:dd-MM-yyyy}.log"))
             .CreateLogger();
 

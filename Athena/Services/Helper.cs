@@ -38,7 +38,8 @@ public static class Helper
     private static readonly Dictionary<string, string> _defaultCosmetics = new() { // default items (issue #33 & #69)
         { "DefaultPickaxe", "AthenaPickaxe" },
         { "DefaultGlider", "AthenaGlider" },
-        { "DefaultContrail", "AthenaSkyDiveContrail" }
+        { "DefaultContrail", "AthenaSkyDiveContrail" },
+        { "Mimosa_Random", "CosmeticMimosa" }
     };
 
     private static readonly string DEFAULT_VARIANT_NAME = "UnknownVariantName"; // default name for variants name
@@ -162,6 +163,10 @@ public static class Helper
                 ? parts.Last()
                 : parts.Length > 1 ? parts[1] : id;
         }
+        else if (id.StartsWith("Companion_ReactFX"))
+        {
+            prefix = "companion_reactfx";
+        }
         else
         {
             prefix = id.StartsWith("SparksAura")
@@ -177,6 +182,9 @@ public static class Helper
             "bid" => "AthenaBackpack",
             "backpack" => "AthenaBackpack",
             "petcarrier" => "AthenaBackpack",
+
+            "companion" => "CosmeticMimosa",
+            "companion_reactfx" => "CosmeticMimosaC",
 
             "eid" => "AthenaDance",
             "spray" => "AthenaDance",
@@ -237,12 +245,14 @@ public static class Helper
 
             var optionsName = style.ExportType switch
             {
+                "FortCosmeticTextVariant" => "CustomName",
                 "FortCosmeticMeshVariant" => "MeshOptions",
                 "FortCosmeticMaterialVariant" => "MaterialOptions",
                 "FortCosmeticParticleVariant" => "ParticleOptions",
                 "FortCosmeticPropertyVariant" => "GenericPropertyOptions",
                 "FortCosmeticRichColorVariant" => "InlineVariant",
                 "FortCosmeticGameplayTagVariant" => "GenericTagOptions",
+                "FortCosmeticMorphTargetVariant" => "MorphTargetOptions",
                 "FortCosmeticCharacterPartVariant" => "PartOptions",
                 "FortCosmeticCIDRedirectorVariant" => "CIDRedirectors",
                 "FortCosmeticLoadoutTagDrivenVariant" => "Variants",
@@ -251,10 +261,15 @@ public static class Helper
                 _ => null
             };
 
-            if (optionsName is null) 
+            // as for now, InlineVariant is unknown how it works so we skip it
+            if (optionsName is null || optionsName == "InlineVariant") 
                 continue;
 
-            if (optionsName == "ActiveSelectionTag")
+            if (optionsName == "CustomName")
+            {
+                ownedParts.Add("[PH]AthenaCompanionName");
+            }
+            else if (optionsName == "ActiveSelectionTag")
             {
                 var activeSectionTag = style.Get<FStructFallback>(optionsName);
                 if (activeSectionTag is null) continue;
@@ -264,10 +279,6 @@ public static class Helper
 
                 // idk what this is but everything comes from various game profiles
                 ownedParts.Add(tag.Split("Property.").Last() + ".X=ffff0000ffffSD=");
-            }
-            else if (optionsName == "InlineVariant")
-            {
-                // as for now, InlineVariant is unknown how it works so we skip it
             }
             else
             {
@@ -313,7 +324,7 @@ public static class Helper
             {
                 string channelName = variantChannelTag.GetOrDefault("TagName", new FName(DEFAULT_VARIANT_NAME)).Text;
                 if (channelName.Contains("Slot") || channelName.Contains("Vehicle") ||
-                    channelName.Contains("TagDriven") || channelName.Contains("Theme"))
+                    channelName.Contains("TagDriven") || channelName.Contains("Theme") || channelName.Contains("Immutable"))
                 {
                     channel = channelName.Split("Channel.").Last();
                 }
