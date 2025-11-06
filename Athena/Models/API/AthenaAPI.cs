@@ -30,12 +30,12 @@ public class AthenaEndpoints(RestClient client) : AthenaRestClient(client)
         if (response == null) return null;
 
         string path = Path.Combine(Directories.Mappings.FullName, response.FileName);
-        if (!await APEndpoints.Instance.DownloadFileAsync(response.Url, path, false)) return null;
+        if (!await APIEndpoints.Instance.DownloadFileAsync(response.Url, path, false)) return null;
         return path;
     }
 
-    public async Task<Requirement?> GetRequirementsAsync()
+    public async Task<Requirement[]?> GetRequirementsAsync()
     {
-        return await ExecuteAsync<Requirement>(REQUIREMENTS_ENDPOINT);
+        return await ExecuteAsync<Requirement[]>(REQUIREMENTS_ENDPOINT);
     }
 }

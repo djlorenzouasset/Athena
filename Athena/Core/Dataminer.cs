@@ -69,7 +69,7 @@ public class Dataminer
     private async Task LoadEpicManifest()
     {
         var auth = UserSettings.Current.EpicAuth;
-        ManifestInfo? manifest = await APEndpoints.Instance.EpicGames.GetManifestAsync(auth);
+        ManifestInfo? manifest = await APIEndpoints.Instance.EpicGames.GetManifestAsync(auth);
         if (manifest is null)
         {
             Log.Error("The manifest response was invalid.");
@@ -111,7 +111,7 @@ public class Dataminer
         }
         else
         {
-            var mappings = await APEndpoints.Instance.Athena
+            var mappings = await APIEndpoints.Instance.Athena
                 .GetMappingAsync() ?? Directories.GetSavedMappings();
 
             if (mappings is null)
@@ -129,7 +129,7 @@ public class Dataminer
 
     private async Task LoadAESKeys()
     {
-        AESKeys = await APEndpoints.Instance.Dilly.GetAESKeysAsync();
+        AESKeys = await APIEndpoints.Instance.Dilly.GetAESKeysAsync();
         if (AESKeys is null)
         {
             Log.Warning("AES Keys response was invalid.");

@@ -16,7 +16,7 @@ public class Updater
 
     public async Task CheckForUpdate()
     {
-        var release = await APEndpoints.Instance.Athena.GetReleaseInfoAsync();
+        var release = await APIEndpoints.Instance.Athena.GetReleaseInfoAsync();
         if (release is null)
         {
             Log.Warning("Failed to request Athena release informations.");
@@ -53,7 +53,7 @@ public class Updater
         Log.Information("Downloading Athena {0} (Size: {1}, Release Date: {2})", 
             Release.Version.DisplayName, Release.UpdateSize, Release.ReleaseDate);
 
-        if (!await APEndpoints.Instance.DownloadFileAsync(Release.DownloadUrl, _tmpReleaseFile))
+        if (!await APIEndpoints.Instance.DownloadFileAsync(Release.DownloadUrl, _tmpReleaseFile))
         {
             Log.Fatal("Failed to update Athena. Please contact the staff or download the update manually from github.");
             return false;

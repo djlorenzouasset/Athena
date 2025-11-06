@@ -85,7 +85,7 @@ public class UserSettings
 
     public static async Task<bool> CreateAuth()
     {
-        var auth = await APEndpoints.Instance.EpicGames.CreateAuthAsync();
+        var auth = await APIEndpoints.Instance.EpicGames.CreateAuthAsync();
         if (auth is null)
         {
             Log.Error("Failed to create Epic Games Auth code.");

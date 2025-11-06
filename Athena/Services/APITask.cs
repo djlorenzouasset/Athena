@@ -19,7 +19,7 @@ public class APITask
             Log.Information("Checking for new AES keys.");
             await Task.Delay(TASK_COOLDOWN); // waits TASK_COOLDOWN milliseconds
 
-            var res = await APEndpoints.Instance.Dilly.GetAESKeysAsync(false);
+            var res = await APIEndpoints.Instance.Dilly.GetAESKeysAsync(false);
             if (res is null || res.DynamicKeys.Count == 0) continue;
 
             newKeys = [..res.DynamicKeys.Where(key => 

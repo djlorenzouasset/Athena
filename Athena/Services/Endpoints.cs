@@ -5,9 +5,9 @@ using Athena.Models.API;
 
 namespace Athena.Services;
 
-public class APEndpoints
+public class APIEndpoints
 {
-    public static APEndpoints Instance = new();
+    public static APIEndpoints Instance = new();
 
     public readonly AthenaEndpoints Athena;
     public readonly EpicGamesAPI EpicGames;
@@ -19,7 +19,7 @@ public class APEndpoints
         UserAgent = $"Athena/v{Globals.Version}"
     }, configureSerialization: s => s.UseSerializer<JsonNetSerializer>());
 
-    public APEndpoints()
+    public APIEndpoints()
     {
         Athena = new(_client);
         EpicGames = new(_client);

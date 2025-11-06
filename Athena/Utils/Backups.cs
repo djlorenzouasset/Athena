@@ -13,7 +13,7 @@ public static class FBackup
     
     public static async Task<FileInfo?> Download()
     {
-        var backups = await APEndpoints.Instance.Athena.GetBackupsAsync();
+        var backups = await APIEndpoints.Instance.Athena.GetBackupsAsync();
         if (backups is null || backups.Length == 0)
         {
             return null;
@@ -22,7 +22,7 @@ public static class FBackup
         var backup = backups.Last();
         var file = new FileInfo(Path.Combine(Directories.Backups.FullName, backup.FileName));
 
-        if (await APEndpoints.Instance.DownloadFileAsync(backup.DownloadUrl, file.FullName))
+        if (await APIEndpoints.Instance.DownloadFileAsync(backup.DownloadUrl, file.FullName))
         {
             return file; // directly return the previous instance of FileInfo
         }
