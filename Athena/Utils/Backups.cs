@@ -13,7 +13,7 @@ public static class FBackup
     
     public static async Task<FileInfo?> Download()
     {
-        var backups = await APEndpoints.Instance.Backups.GetBackupsAsync();
+        var backups = await APEndpoints.Instance.Athena.GetBackupsAsync();
         if (backups is null || backups.Length == 0)
         {
             return null;
@@ -66,7 +66,7 @@ public static class FBackup
             entries.Add(fullPath);
         }
 
-        Log.Information("Parsed backup {bkp} in {tot}s ({ms}ms). Version: {ver}.", backupPath.Name, 
+        Log.Information("Parsed backup {0} version {1} in {2}s ({3}ms).", backupPath.Name, 
             Math.Round(start.Elapsed.TotalSeconds, 2), Math.Round(start.Elapsed.TotalMilliseconds), version);
 
         return entries;

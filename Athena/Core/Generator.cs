@@ -6,7 +6,7 @@ using CUE4Parse.UE4.Objects.Core.Misc;
 using Athena.Utils;
 using Athena.Services;
 using Athena.Extensions;
-using Athena.Models.API.Fortnite;
+using Athena.Models.API.Responses;
 
 namespace Athena.Core;
 
@@ -83,8 +83,8 @@ public class Generator
         Console.Clear(); // clear the previous logs from the console
 
         string gameVersion = Dataminer.Instance.Manifest.GameVersion;
-        Console.Title = $"Athena {Globals.Version.DisplayName} - FortniteGame {gameVersion}";
-        DiscordRichPresence.Update($"In Menu - FortniteGame {gameVersion}");
+        Console.Title = $"Athena {Globals.Version.DisplayName} - FortniteGame v{gameVersion}";
+        DiscordRichPresence.Update($"In Menu - FortniteGame v{gameVersion}");
 
         // TODO: add the application permanent text
 
@@ -135,7 +135,7 @@ public class Generator
         if (!await GenerateModel(model, generationType))
             return; // this is already handled in the function
 
-        Log.Information("All tasks finished in {sec}s ({ms}ms).", 
+        Log.Information("All tasks finished in {0}s ({0}ms).", 
             Math.Round(start.Elapsed.TotalSeconds, 2),
             Math.Round(start.Elapsed.TotalMilliseconds));
 
@@ -160,19 +160,19 @@ public class Generator
             switch (generationType)
             {
                 case EGenerationType.AllCosmetics:
-                    Log.Error("No {name} have been found.", itemType);
+                    Log.Error("No {0} have been found.", itemType);
                     break;
                 case EGenerationType.NewCosmetics:
                 case EGenerationType.NewCosmeticsAndArchives:
-                    Log.Error("No new {name} have been found.", itemType);
+                    Log.Error("No new {0} have been found.", itemType);
                     break;
                 case EGenerationType.ArchiveCosmetics:
                 case EGenerationType.WaitForArchivesUpdate:
-                    Log.Error("No new {name} have been found in the following paks: {list}.", 
+                    Log.Error("No new {0} have been found in the following paks: {1}.", 
                         itemType, string.Join(',', _customCosmeticsOrPaks));
                     break;
                 case EGenerationType.SelectedCosmeticsOnly:
-                    Log.Error("The selected {name} could not be found.", itemType);
+                    Log.Error("The selected {0} could not be found.", itemType);
                     break;
             }
             await ReturnToMenu(bFromError: true);
@@ -214,7 +214,6 @@ public class Generator
     }
 
     #region SELECTORS
-
     private EModelType SelectModel()
     {
         return AnsiConsole.Prompt(
@@ -250,13 +249,12 @@ public class Generator
     {
         var type = model == EModelType.ProfileAthena ? "cosmetics ids" : "DAv2s";
         var selected = FUtils.Ask($"Insert the [62]{type}[/] you want to add separated by [62];[/]:");
-        return selected.Split(';').Select(x => x.Trim()).ToList();
+        return [.. selected.Split(';').Select(x => x.Trim())];
     }
 
     #endregion
 
     #region HANDLERS
-
     private async Task HandleNewCosmetics(bool includeArchives = false)
     {
         var oldFiles = await LoadBackup();
@@ -303,7 +301,7 @@ public class Generator
         Dataminer.Instance.LoadEntries(
             ar => ar.EncryptionKeyGuid.Equals(Globals.ZERO_GUID) ||
                   (Dataminer.Instance.AESKeys?.GuidsList.Contains(ar.EncryptionKeyGuid) ?? false),
-            _customCosmeticsOrPaks.ToHashSet(),
+            [.. _customCosmeticsOrPaks],
             bIsCustom: true
         );
     }

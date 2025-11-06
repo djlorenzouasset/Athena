@@ -31,7 +31,7 @@ public class Directories
         if (!folder.Exists)
         {
             folder.Create();
-            Log.Information("Created directory {dir}", folder.FullName);
+            Log.Information("Created directory {0}", folder.FullName);
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using RestSharp;
 using RestSharp.Serializers.NewtonsoftJson;
 using Athena.Rest.Endpoints;
+using Athena.Models.API;
 
 namespace Athena.Services;
 
@@ -8,10 +9,9 @@ public class APEndpoints
 {
     public static APEndpoints Instance = new();
 
-    public readonly BackupAPI Backups;
     public readonly AthenaEndpoints Athena;
     public readonly EpicGamesAPI EpicGames;
-    public readonly FortniteCentralAPI FortniteCentral;
+    public readonly DillyAPI Dilly;
 
     private readonly RestClient _client = new(new RestClientOptions
     {
@@ -22,9 +22,8 @@ public class APEndpoints
     public APEndpoints()
     {
         Athena = new(_client);
-        Backups = new(_client);
         EpicGames = new(_client);
-        FortniteCentral = new(_client);
+        Dilly = new(_client);
     }
 
     public async Task<bool> DownloadFileAsync(string url, string path, bool bOverwrite = true)

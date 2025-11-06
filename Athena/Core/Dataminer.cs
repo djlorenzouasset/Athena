@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using EpicManifestParser.Api;
-using CUE4Parse.UE4.Versions;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.VirtualFileSystem;
 using CUE4Parse.Compression;
@@ -10,7 +9,7 @@ using CUE4Parse.MappingsProvider;
 using Athena.Utils;
 using Athena.Services;
 using Athena.Models.App;
-using Athena.Models.API.Fortnite;
+using Athena.Models.API.Responses;
 
 namespace Athena.Core;
 
@@ -31,7 +30,6 @@ public class Dataminer
         Manifest = new();
         Provider = new("", new(UserSettings.Current.EngineVersion), StringComparer.OrdinalIgnoreCase);
 
-        Log.Information("Loading required libraries.");
         await InitOodle(); /* lib required by CUE4Parse */
         await InitZlib(); /* lib required by EpicManifestParser */
 
@@ -40,7 +38,7 @@ public class Dataminer
             if (sender is not IAesVfsReader reader)
                 return;
 
-            Log.Information("Loaded {name} ({archives} archives)", reader.Name, num);
+            Log.Information("Loaded {0} ({1} archives)", reader.Name, num);
         };
 
         await LoadEpicManifest();
@@ -74,46 +72,67 @@ public class Dataminer
         ManifestInfo? manifest = await APEndpoints.Instance.EpicGames.GetManifestAsync(auth);
         if (manifest is null)
         {
-            Log.Error("The manifest API response was invalid.");
+            Log.Error("The manifest response was invalid.");
             FUtils.ExitThread(1);
         }
 
         var start = Stopwatch.StartNew();
         await Manifest.DownloadManifest(manifest!);
-        Log.Information("Downloaded manifest {id} with version: {version}", Manifest.ManifestId,
-            Manifest.GameVersion, start.Elapsed.Seconds, start.ElapsedMilliseconds);
+        Log.Information("Downloaded manifest for version {0} (Id: {1}) in {2}s ({3}ms)", 
+            Manifest.GameVersion, Manifest.ManifestId, 
+            Math.Round(start.Elapsed.TotalSeconds, 2), 
+            Math.Round(start.Elapsed.TotalMilliseconds));
     }
 
     private async Task MountArchives()
     {
-        Log.Information("Downloading archives for {version}", Manifest.GameBuild);
+        Log.Information("Downloading archives for {0}", Manifest.GameBuild);
         Manifest.LoadManifestArchives();
         await Provider.MountAsync();
     }
 
     private async Task LoadMappings()
     {
-        var mappings = await APEndpoints.Instance.FortniteCentral
-            .GetMappingsAsync() ?? Directories.GetSavedMappings();
-
-        if (mappings is null)
+        string mapping;
+        if (UserSettings.Current.bUseCustomMappingFile)
         {
-            Log.Warning("Mappings API response was invalid and no local mappings have been found.");
-            Log.Warning("The program may not work as expected.");
-            return;
+            if (string.IsNullOrEmpty(UserSettings.Current.CustomMappingFile))
+            {
+                Log.Warning("Custom mapping file is enabled but no mapping path is set.");
+                return;
+            }
+            else if (!File.Exists(UserSettings.Current.CustomMappingFile))
+            {
+                Log.Warning("Custom mapping file is enabled but mapping {0} doesn't exist.", UserSettings.Current.CustomMappingFile);
+                return;
+            }
+
+            mapping = UserSettings.Current.CustomMappingFile;
+        }
+        else
+        {
+            var mappings = await APEndpoints.Instance.Athena
+                .GetMappingAsync() ?? Directories.GetSavedMappings();
+
+            if (mappings is null)
+            {
+                Log.Warning("Mappings API response was invalid and no local mappings have been found.");
+                return;
+            }
+
+            mapping = mappings;
         }
 
-        Provider.MappingsContainer = new FileUsmapTypeMappingsProvider(mappings);
-        Log.Information("Usmap file loaded from {path}", mappings);
+        Provider.MappingsContainer = new FileUsmapTypeMappingsProvider(mapping);
+        Log.Information("Usmap file loaded from {0}", mapping);
     }
 
     private async Task LoadAESKeys()
     {
-        AESKeys = await APEndpoints.Instance.FortniteCentral.GetAESKeysAsync();
+        AESKeys = await APEndpoints.Instance.Dilly.GetAESKeysAsync();
         if (AESKeys is null)
         {
-            Log.Warning("AESKeys API response was invalid.");
-            Log.Warning("The program may not work as expected.");
+            Log.Warning("AES Keys response was invalid.");
             return;
         }
 
@@ -171,7 +190,7 @@ public class Dataminer
         }
         else
         {
-            Log.Information("Loaded {num} VFs in {tot}s ({ms}ms)", loadedEntries,
+            Log.Information("Loaded {0} VFs in {1}s ({2}ms)", loadedEntries,
                 Math.Round(start.Elapsed.TotalSeconds, 2),
                 Math.Round(start.Elapsed.TotalMilliseconds));
         }

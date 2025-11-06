@@ -1,5 +1,5 @@
 ﻿using Athena.Core;
-using Athena.Models.API.Fortnite;
+using Athena.Models.API.Responses;
 using CUE4Parse.UE4.Objects.Core.Misc;
 
 namespace Athena.Services;
@@ -11,7 +11,7 @@ public class APITask
     public static async Task<List<DynamicKey>> GetNewDynamicKeys()
     {
         Log.ForContext("NoConsole", true).Information(
-            "APITask->GetNewDynamicKeys(): Starting. Cooldown set to {cd}ms", TASK_COOLDOWN);
+            "GetNewDynamicKeys(): Starting. Cooldown set to {cd}ms", TASK_COOLDOWN);
 
         List<DynamicKey> newKeys;
         while (true)
@@ -19,12 +19,11 @@ public class APITask
             Log.Information("Checking for new AES keys.");
             await Task.Delay(TASK_COOLDOWN); // waits TASK_COOLDOWN milliseconds
 
-            var res = await APEndpoints.Instance.FortniteCentral.GetAESKeysAsync(false);
+            var res = await APEndpoints.Instance.Dilly.GetAESKeysAsync(false);
             if (res is null || res.DynamicKeys.Count == 0) continue;
 
-            newKeys = res.DynamicKeys
-                .Where(key => !Dataminer.Instance.AESKeys?.GuidsList.Contains(new FGuid(key.Guid)) ?? true)
-                .ToList();
+            newKeys = [..res.DynamicKeys.Where(key => 
+                !Dataminer.Instance.AESKeys?.GuidsList.Contains(new FGuid(key.Guid)) ?? true)];
 
             if (newKeys.Count == 0)
                 continue;

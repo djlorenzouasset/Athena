@@ -22,14 +22,14 @@ public class AthenaCore
 
         #region DEBUG LOGS
         Log.ForContext("NoConsole", true).Information("      --------------------------------------      ");
-        Log.ForContext("NoConsole", true).Information("Log file opened: {date}", DateTime.Now);
-        Log.ForContext("NoConsole", true).Information("Athena version: {ver}", Globals.Version);
-        Log.ForContext("NoConsole", true).Information("Current folder: {path}", Environment.CurrentDirectory);
-        Log.ForContext("NoConsole", true).Information("NET version: {runtimeVer}", RuntimeInformation.FrameworkDescription);
+        Log.ForContext("NoConsole", true).Information("Log file opened: {0}", DateTime.Now);
+        Log.ForContext("NoConsole", true).Information("Athena version: {0}", Globals.Version);
+        Log.ForContext("NoConsole", true).Information("Current folder: {0}", Environment.CurrentDirectory);
+        Log.ForContext("NoConsole", true).Information("NET version: {0}", RuntimeInformation.FrameworkDescription);
 #if DEBUG
-        Log.ForContext("NoConsole", true).Information("bIsDebug: {bDebug}", true); // funny
+        Log.ForContext("NoConsole", true).Information("bIsDebug: {0}", true); // funny
 #else
-        Log.ForContext("NoConsole", true).Information("bIsDebug: {bDebug}", false);
+        Log.ForContext("NoConsole", true).Information("bIsDebug: {0}", false);
 #endif
         #endregion
 
