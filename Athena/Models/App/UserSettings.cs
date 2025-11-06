@@ -2,9 +2,9 @@
 using Newtonsoft.Json.Converters;
 using Spectre.Console;
 using Athena.Services;
-using Athena.Models.API.Fortnite;
 using CUE4Parse.UE4.Versions;
 using Athena.Utils;
+using Athena.Models.API.Responses;
 
 namespace Athena.Models.App;
 
@@ -39,6 +39,9 @@ public class UserSettings
     public EpicAuth EpicAuth { get; set; } = null!;
     public bool bUseDiscordRPC { get; set; } = true;
     public bool bShowChangelog { get; set; } = false;
+    public bool bUseCustomMappingFile { get; set; } = false;
+    public string? CustomMappingFile { get; set; } = null;
+    public DateTime? LastDonationPopup { get; set; } = null;
 
     public static void LoadSettings()
     {
