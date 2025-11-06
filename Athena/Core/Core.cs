@@ -48,6 +48,7 @@ public class AthenaCore
         await Updater.Instance.CheckForUpdate();
 #endif
 
+        await DownloadRequirements(); // download app requirements
         UserSettings.LoadSettings();
         Console.Clear(); // clear the console after settings creation/load
 
@@ -70,5 +71,29 @@ public class AthenaCore
         // initialize main menu (errors are handled inside of that class)
         var generator = new Generator();
         await generator.ShowMenu();
+    }
+
+    private static async Task DownloadRequirements()
+    {
+        var requirements = await APIEndpoints.Instance.Athena.GetRequirementsAsync();
+        if (requirements is null)
+        {
+            Log.Error("Failed to download app requirements!");
+            return;
+        }
+
+        foreach (var req in requirements)
+        {
+            var path = Path.Combine(Directories.Data.FullName, req.Filename);
+
+            if (req.Required && !File.Exists(path))
+            {
+                Log.Information("Downloading required file: {0}", req.Filename);
+                if (!await APIEndpoints.Instance.DownloadFileAsync(req.DownloadUrl, path))
+                {
+                    Log.Error("Failed to download required file: {0}", req.Filename);
+                }
+            }
+        }
     }
 }
