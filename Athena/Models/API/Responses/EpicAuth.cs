@@ -1,6 +1,6 @@
 ﻿using J = Newtonsoft.Json.JsonPropertyAttribute;
 
-namespace Athena.Models.API.Fortnite;
+namespace Athena.Models.API.Responses;
 
 public class EpicAuth
 {
@@ -9,9 +9,9 @@ public class EpicAuth
 
     public bool IsValid()
     {
-        return (
+        return 
             !string.IsNullOrEmpty(AccessToken) &&
             ExpiresAt > DateTime.UtcNow
-        );
+        ;
     }
 }

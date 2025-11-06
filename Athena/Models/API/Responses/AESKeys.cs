@@ -1,6 +1,6 @@
 ﻿using CUE4Parse.UE4.Objects.Core.Misc;
 
-namespace Athena.Models.API.Fortnite;
+namespace Athena.Models.API.Responses;
 
 public class AESKeys
 {

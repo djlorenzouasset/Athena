@@ -1,4 +1,4 @@
-﻿namespace Athena.Models.API.Fortnite;
+﻿namespace Athena.Models.API.Responses;
 
 public class Backup
 {

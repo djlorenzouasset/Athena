@@ -1,6 +1,7 @@
 ﻿using RestSharp;
 using EpicManifestParser.Api;
-using Athena.Models.API.Fortnite;
+using Athena.Models.API.Responses;
+using Athena.Models.API.Base;
 
 namespace Athena.Rest.Endpoints;
 
