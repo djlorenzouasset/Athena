@@ -1,6 +1,6 @@
 ﻿namespace Athena.Models.API.Responses;
 
-public class Requirement
+public class Dependency
 {
     public string Filename;
     public bool Required;

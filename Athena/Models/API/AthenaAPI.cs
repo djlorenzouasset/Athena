@@ -34,8 +34,8 @@ public class AthenaEndpoints(RestClient client) : AthenaRestClient(client)
         return path;
     }
 
-    public async Task<Requirement[]?> GetRequirementsAsync()
+    public async Task<Dependency[]?> GetRequirementsAsync()
     {
-        return await ExecuteAsync<Requirement[]>(REQUIREMENTS_ENDPOINT);
+        return await ExecuteAsync<Dependency[]>(REQUIREMENTS_ENDPOINT);
     }
 }
