@@ -3,7 +3,6 @@ using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using Athena.Utils;
 using Athena.Services;
-using Athena.Models.App;
 
 namespace Athena.Core;
 
@@ -40,7 +39,7 @@ public class AthenaCore
                 Message.MB_ICONERROR | Message.MB_OK
             );
 
-            FUtils.ExitThread(1);
+            AthenaUtils.ExitThread(1);
         }
 
         Directories.CreateDefaultFolders();
@@ -48,20 +47,23 @@ public class AthenaCore
         await Updater.Instance.CheckForUpdate();
 #endif
 
-        await DownloadRequirements(); // download app requirements
-        UserSettings.LoadSettings();
+        SettingsService.LoadSettings();
+        SettingsService.ValidateSettings();
+
         Console.Clear(); // clear the console after settings creation/load
 
-        if (UserSettings.Current.bUseDiscordRPC)
+        await DependencyService.EnsureDependencies(); // download app requirements
+
+        if (SettingsService.Current.bUseDiscordRPC)
         {
             DiscordRichPresence.Initialize();
         }
 
-        if (UserSettings.Current.EpicAuth is null || !UserSettings.Current.EpicAuth.IsValid())
+        if (SettingsService.Current.EpicAuth is null || !SettingsService.Current.EpicAuth.IsValid())
         {
-            if (!await UserSettings.CreateAuth())
+            if (!await SettingsService.CreateAuth())
             {
-                FUtils.ExitThread(1);
+                AthenaUtils.ExitThread(1);
             }
         }
 
@@ -71,29 +73,5 @@ public class AthenaCore
         // initialize main menu (errors are handled inside of that class)
         var generator = new Generator();
         await generator.ShowMenu();
-    }
-
-    private static async Task DownloadRequirements()
-    {
-        var requirements = await APIEndpoints.Instance.Athena.GetRequirementsAsync();
-        if (requirements is null)
-        {
-            Log.Error("Failed to download app requirements!");
-            return;
-        }
-
-        foreach (var req in requirements)
-        {
-            var path = Path.Combine(Directories.Data.FullName, req.Filename);
-
-            if (req.Required && !File.Exists(path))
-            {
-                Log.Information("Downloading required file: {0}", req.Filename);
-                if (!await APIEndpoints.Instance.DownloadFileAsync(req.DownloadUrl, path))
-                {
-                    Log.Error("Failed to download required file: {0}", req.Filename);
-                }
-            }
-        }
     }
 }
