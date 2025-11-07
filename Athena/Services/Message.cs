@@ -10,10 +10,12 @@ public static class Message
     public static readonly uint MB_DEFBUTTON1 = 0x00000000;
 
     // selected buttons
+    public static readonly int BT_OK = 0x1;
     public static readonly int BT_YES = 0x6;
 
     // icons
     public static readonly uint MB_ICONERROR = 0x00000010;
+    public static readonly uint MB_ICONWARNING = 0x00000030;
     public static readonly uint MB_ICONINFORMATION = 0x00000040;
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
