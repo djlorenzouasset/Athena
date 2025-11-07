@@ -1,4 +1,6 @@
-﻿namespace Athena.Models.App;
+﻿using Athena.Services;
+
+namespace Athena.Models.App;
 
 public class ShopModel
 {
@@ -96,18 +98,18 @@ public class Price
 {
     public string CurrencyType = "MtxCurrency";
     public string CurrencySubType = string.Empty;
-    public int RegularPrice = UserSettings.Current.Catalog.ItemPrice;
-    public int DynamicRegularPrice = UserSettings.Current.Catalog.ItemPrice;
-    public int FinalPrice = UserSettings.Current.Catalog.ItemPrice;
+    public int RegularPrice = SettingsService.Current.Catalog.ItemPrice;
+    public int DynamicRegularPrice = SettingsService.Current.Catalog.ItemPrice;
+    public int FinalPrice = SettingsService.Current.Catalog.ItemPrice;
     public DateTime SaleExpiration = new(9999, 12, 31, 23, 59, 59);
-    public int BasePrice = UserSettings.Current.Catalog.ItemPrice;
+    public int BasePrice = SettingsService.Current.Catalog.ItemPrice;
 }
 
 public class DynamicBundleInfo
 {
-    public int DiscountedBasePrice = UserSettings.Current.Catalog.BundlePrice;
-    public int RegularBasePrice = UserSettings.Current.Catalog.BundlePrice;
-    public int FloorPrice = UserSettings.Current.Catalog.BundlePrice;
+    public int DiscountedBasePrice = SettingsService.Current.Catalog.BundlePrice;
+    public int RegularBasePrice = SettingsService.Current.Catalog.BundlePrice;
+    public int FloorPrice = SettingsService.Current.Catalog.BundlePrice;
     public string CurrencyType = "MtxCurrency";
     public string CurrencySubType = string.Empty;
     public string DisplayType  = "AmountOff";
@@ -131,9 +133,9 @@ public class Meta
 public class BundleRequirement
 {
     public bool bCanOwnMultiple = true;
-    public int RegularPrice = UserSettings.Current.Catalog.ItemPrice;
-    public int DiscountedPrice = UserSettings.Current.Catalog.ItemPrice;
-    public int AlreadyOwnedPriceReduction = UserSettings.Current.Catalog.ItemPrice;
+    public int RegularPrice = SettingsService.Current.Catalog.ItemPrice;
+    public int DiscountedPrice = SettingsService.Current.Catalog.ItemPrice;
+    public int AlreadyOwnedPriceReduction = SettingsService.Current.Catalog.ItemPrice;
     public Item Item = new() { TemplateId = "AthenaCharacter:CID_349_Athena_Commando_M_Banana", Quantity = 1 };
 }
 

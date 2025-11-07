@@ -46,6 +46,7 @@ public class Generator
         "AthenaLoadingScreenItemDefinition", "AthenaDanceItemDefinition",
         "AthenaSkyDiveContrailItemDefinition", "AthenaItemWrapDefinition",
         "AthenaMusicPackItemDefinition", "CosmeticShoesItemDefinition",
+        "CosmeticCompanionItemDefinition", "CosmeticCompanionReactFXItemDefinition",
         // FORTNITE FESTIVAL
         "SparksGuitarItemDefinition", "SparksBassItemDefinition",
         "SparksKeyboardItemDefinition", "SparksDrumItemDefinition",
@@ -63,6 +64,7 @@ public class Generator
     ];
     private static readonly List<string> _acceptedPaths = [
         "Athena/Items/Cosmetics/",
+        "GameFeatures/CosmeticCompanions/",
         "GameFeatures/MeshCosmetics/",
         "GameFeatures/CosmeticShoes/",
         "GameFeatures/SparksCosmetics/",
@@ -241,14 +243,14 @@ public class Generator
             new MultiSelectionPrompt<DynamicKey>()
             .Title("What [62]Paks[/] do you want generate?")
             .Required()
-            .AddChoices(Dataminer.Instance.AESKeys!.DynamicKeys)
+            .AddChoices(Dataminer.Instance.AESKeys!.DynamicKeys.Where(x => x.Name.EndsWith("utoc")))
             .UseConverter(e => $"{e.Name} ({e.Size.Formatted}, {e.FileCount} files)"));
     }
 
     private List<string> GetCustomCosmetics(EModelType model)
     {
         var type = model == EModelType.ProfileAthena ? "cosmetics ids" : "DAv2s";
-        var selected = FUtils.Ask($"Insert the [62]{type}[/] you want to add separated by [62];[/]:");
+        var selected = AthenaUtils.Ask($"Insert the [62]{type}[/] you want to add separated by [62];[/]:");
         return [.. selected.Split(';').Select(x => x.Trim())];
     }
 
@@ -281,7 +283,7 @@ public class Generator
 
     private async Task HandleWaitForArchivesUpdate()
     {
-        var newKeys = await APITask.GetNewDynamicKeys();
+        var newKeys = await APIWatcher.GetNewDynamicKeys();
 
         _customCosmeticsOrPaks.AddRange(newKeys.Select(
             p => p.Name.Split("pakchunk").Last().Split('-').First()

@@ -8,7 +8,6 @@ using CUE4Parse.Encryption.Aes;
 using CUE4Parse.MappingsProvider;
 using Athena.Utils;
 using Athena.Services;
-using Athena.Models.App;
 using Athena.Models.API.Responses;
 
 namespace Athena.Core;
@@ -28,7 +27,7 @@ public class Dataminer
     public async Task Initialize()
     {
         Manifest = new();
-        Provider = new("", new(UserSettings.Current.EngineVersion), StringComparer.OrdinalIgnoreCase);
+        Provider = new("", new(SettingsService.Current.EngineVersion), StringComparer.OrdinalIgnoreCase);
 
         await InitOodle(); /* lib required by CUE4Parse */
         await InitZlib(); /* lib required by EpicManifestParser */
@@ -68,12 +67,12 @@ public class Dataminer
 
     private async Task LoadEpicManifest()
     {
-        var auth = UserSettings.Current.EpicAuth;
+        var auth = SettingsService.Current.EpicAuth;
         ManifestInfo? manifest = await APIEndpoints.Instance.EpicGames.GetManifestAsync(auth);
         if (manifest is null)
         {
             Log.Error("The manifest response was invalid.");
-            FUtils.ExitThread(1);
+            AthenaUtils.ExitThread(1);
         }
 
         var start = Stopwatch.StartNew();
@@ -94,20 +93,20 @@ public class Dataminer
     private async Task LoadMappings()
     {
         string mapping;
-        if (UserSettings.Current.bUseCustomMappingFile)
+        if (SettingsService.Current.bUseCustomMappingFile)
         {
-            if (string.IsNullOrEmpty(UserSettings.Current.CustomMappingFile))
+            if (string.IsNullOrEmpty(SettingsService.Current.CustomMappingFile))
             {
-                Log.Warning("Custom mapping file is enabled but no mapping path is set.");
+                Log.Error("Custom mapping file is enabled but no mapping path is set.");
                 return;
             }
-            else if (!File.Exists(UserSettings.Current.CustomMappingFile))
+            else if (!File.Exists(SettingsService.Current.CustomMappingFile))
             {
-                Log.Warning("Custom mapping file is enabled but mapping {0} doesn't exist.", UserSettings.Current.CustomMappingFile);
+                Log.Error("Custom mapping file is enabled but mapping {0} doesn't exist.", SettingsService.Current.CustomMappingFile);
                 return;
             }
 
-            mapping = UserSettings.Current.CustomMappingFile;
+            mapping = SettingsService.Current.CustomMappingFile;
         }
         else
         {
@@ -116,7 +115,7 @@ public class Dataminer
 
             if (mappings is null)
             {
-                Log.Warning("Mappings API response was invalid and no local mappings have been found.");
+                Log.Warning("Mappings response was invalid and no local mappings have been found.");
                 return;
             }
 
@@ -124,7 +123,7 @@ public class Dataminer
         }
 
         Provider.MappingsContainer = new FileUsmapTypeMappingsProvider(mapping);
-        Log.Information("Usmap file loaded from {0}", mapping);
+        Log.Information("Usmap file loaded: {0}", mapping);
     }
 
     private async Task LoadAESKeys()

@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Athena.Utils;
 using Athena.Models.API.Responses;
-using Athena.Models.App;
 
 namespace Athena.Services;
 
@@ -85,9 +84,9 @@ public class Updater
             Log.Fatal("Failed to update Athena: {0}", e.Message);
         }
 
-        UserSettings.Current.bShowChangelog = true;
-        UserSettings.SaveSettings();
+        SettingsService.Current.bShowChangelog = true;
+        SettingsService.SaveSettings();
 
-        FUtils.ExitThread();
+        AthenaUtils.ExitThread();
     }
 }

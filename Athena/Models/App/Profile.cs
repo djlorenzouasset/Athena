@@ -1,4 +1,4 @@
-﻿using Athena.Models.App;
+﻿using Athena.Services;
 
 public class Cosmetic
 {
@@ -6,7 +6,7 @@ public class Cosmetic
     public Attributes Attributes = new();
     public int Quantity = 1;
 
-    public Cosmetic(string cosmeticId, string backendType, Dictionary<string, List<string>>? variants = null)
+    public Cosmetic(string cosmeticId, string backendType, List<ProfileAthena.Variant>? variants = null)
     {
         TemplateId = $"{backendType}:{cosmeticId}";
         Attributes.Favorite = false;
@@ -14,15 +14,7 @@ public class Cosmetic
 
         if (variants != null && variants.Count > 0)
         {
-            foreach (var (channel, ownedParts) in variants)
-            {
-                Attributes.Variants.Add(new()
-                {
-                    Channel = channel,
-                    Active = ownedParts.Count > 0 ? ownedParts[0] : "", // scuffed thing for FortCosmeticRichColorVariant
-                    Owned = ownedParts
-                });
-            }
+            Attributes.Variants.AddRange(variants);
         }
     }
 }
@@ -47,7 +39,7 @@ public class ProfileAthena
     public DateTime Updated = DateTime.UtcNow;
     public int Rvn = 100;
     public int WipeNumber = 1;
-    public string AccountId = UserSettings.Current.Profiles.ProfileId;
+    public string AccountId = SettingsService.Current.Profiles.ProfileId;
     public string ProfileId = "athena";
     public string Version = "";
     public ProfileItems Items = new();
@@ -71,7 +63,7 @@ public class ProfileAthena
         public LockerSlotsData LockerSlotsData = new();
         public int UseCount = 1;
         public string BannerIconTemplate = "BRS11_Prestige5";
-        public string LockerName = UserSettings.Current.Profiles.ProfileId;
+        public string LockerName = SettingsService.Current.Profiles.ProfileId;
         public string BannerColorTemplate = "DefaultColor40";
         public bool ItemSeen = false;
         public bool Favorite = false;
@@ -181,11 +173,11 @@ public class ProfileAthena
         public string PartyAssistQuest = string.Empty;
         public List<object> PurchasedBattlePassTierOffers = [];
         public float RestedXpExchange = -1f;
-        public int Level = UserSettings.Current.Profiles.BattlepassLevel;
+        public int Level = SettingsService.Current.Profiles.BattlepassLevel;
         public long XpOverflow = -1;
         public int RestedXp = -1;
         public float RestedXpMult = -1f;
-        public int AccountLevel = UserSettings.Current.Profiles.BattlepassLevel;
+        public int AccountLevel = SettingsService.Current.Profiles.BattlepassLevel;
         public CompetitiveIdentity CompetitiveIdentity = new();
         public int InventoryLimitBonus = 0;
         public string LastAppliedLoadout = "sandbox_loadout";

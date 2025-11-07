@@ -2,7 +2,7 @@
 
 namespace Athena.Utils;
 
-public static class FUtils
+public static class AthenaUtils
 {
     public static void ExitThread(int exitCode = 0)
     {
@@ -20,6 +20,10 @@ public static class FUtils
     public static void ClearConsoleLines(int numberOfLines)
     {
         int startLine = Console.CursorTop - numberOfLines;
+        if (startLine < 0)
+        {
+            startLine = 0;
+        }
 
         for (int i = 0; i < numberOfLines; i++)
         {
@@ -31,18 +35,18 @@ public static class FUtils
 
     // this function is used because AnsiConsole.Ask<T>() doesn't handle
     // text changes (like moving the arrows keys backwards/forwards
-    public static string Ask(string prompt)
+    public static string Ask(string prompt, int clearLines = 1)
     {
         invalid:
         AnsiConsole.Markup(prompt + " ");
         var textRead = Console.ReadLine();
         if (string.IsNullOrEmpty(textRead))
         {
-            ClearConsoleLines(1);
+            ClearConsoleLines(clearLines);
             goto invalid;
         }
 
-        ClearConsoleLines(1);
+        ClearConsoleLines(clearLines);
         return textRead;
     }
 }
