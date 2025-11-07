@@ -4,7 +4,7 @@ using CUE4Parse.UE4.Objects.Core.Misc;
 
 namespace Athena.Services;
 
-public class APITask
+public class APIWatcher
 {
     private const int TASK_COOLDOWN = 5 * 1000;
 
@@ -17,7 +17,7 @@ public class APITask
         while (true)
         {
             Log.Information("Checking for new AES keys.");
-            await Task.Delay(TASK_COOLDOWN); // waits TASK_COOLDOWN milliseconds
+            await Task.Delay(TASK_COOLDOWN);
 
             var res = await APIEndpoints.Instance.Dilly.GetAESKeysAsync(false);
             if (res is null || res.DynamicKeys.Count == 0) continue;
