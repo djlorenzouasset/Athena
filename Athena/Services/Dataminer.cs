@@ -7,10 +7,10 @@ using CUE4Parse.FileProvider;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.MappingsProvider;
 using Athena.Utils;
-using Athena.Services;
 using Athena.Models.API.Responses;
+using Athena.Core;
 
-namespace Athena.Core;
+namespace Athena.Services;
 
 public class Dataminer
 {
@@ -167,7 +167,7 @@ public class Dataminer
             foreach (var (path, file) in reader.Files)
             {
                 // entry.IsUePackage so we load only .uasset files
-                if (file is not VfsEntry entry || !entry.IsUePackage)
+                if (file is not VfsEntry entry || !entry.IsUePackage || entry.NameWithoutExtension.EndsWith(".o"))
                     continue;
 
                 // filter only new files (used when customItemsOrOldPaths contains backup files aka old files)
@@ -175,7 +175,7 @@ public class Dataminer
                     continue;
 
                 // this filter is used when the user wants only selected items (by ID)
-                if (bIsCustom && (!customItemsOrOldPaths!.Contains(entry.NameWithoutExtension.ToLower())))
+                if (bIsCustom && !customItemsOrOldPaths!.Contains(entry.NameWithoutExtension.ToLower()))
                     continue;
 
                 (bNew || bIsCustom ? NewEntries : AllEntries).Add(entry);

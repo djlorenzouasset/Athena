@@ -17,6 +17,7 @@ public class CatalogSettings
 {
     public int BundlePrice { get; set; } = -999999;
     public int ItemPrice { get; set; } = -999999;
+    public string ShopName { get; set; } = "shopv3.json"; // current shop name used by neonite
     public string OutputPath { get; set; } = Directories.Output.FullName;
     public List<MetaInfo> CardGradients { get; set; } = [
         new MetaInfo { Key = "color1", Value = "#424242" },
@@ -28,7 +29,7 @@ public class CatalogSettings
 public class UserSettings
 {
     [JsonConverter(typeof(StringEnumConverter))]
-    public EGame EngineVersion { get; set; } = EGame.GAME_UE5_LATEST;
+    public EGame EngineVersion { get; set; } = EGame.GAME_UE5_7;
 
     public ProfileSettings Profiles { get; set; } = new();
     public CatalogSettings Catalog { get; set; } = new();

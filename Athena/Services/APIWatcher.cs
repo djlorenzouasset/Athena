@@ -1,5 +1,4 @@
-﻿using Athena.Core;
-using Athena.Models.API.Responses;
+﻿using Athena.Models.API.Responses;
 using CUE4Parse.UE4.Objects.Core.Misc;
 
 namespace Athena.Services;

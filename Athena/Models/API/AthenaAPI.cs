@@ -1,13 +1,14 @@
 ﻿using Athena.Models.API.Base;
 using Athena.Models.API.Responses;
 using Athena.Services;
+using Newtonsoft.Json;
 using RestSharp;
 
 namespace Athena.Models.API;
 
 public class AthenaEndpoints(RestClient client) : AthenaRestClient(client)
 {
-    protected override string BaseURL => "https://prod.athena.dev:8000";
+    protected override string BaseURL => "http://prod.athena.dev:8000";
 
     private const string RELEASE_ENDPOINT = "api/v1/version";
     private const string BACKUPS_ENDPOINT = "api/v1/backups";

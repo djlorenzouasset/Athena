@@ -113,7 +113,7 @@ public class SettingsService
         onInvalidPath:
         {
             var path = AthenaUtils.Ask(
-                $"Insert the [62]path[/] to use for save the [62]{forModel.GetDescription()}[/] (type [236]d[/] for use the default one):",
+                $"Insert the [62]path[/] to use for save the [62]{forModel.DisplayName()}[/] (type [236]d[/] for use the default one):",
                 errored ? 2 : 1
             );
 
@@ -138,7 +138,7 @@ public class SettingsService
                 }
 
                 AthenaUtils.ClearConsoleLines(1);
-                Log.Information("{type} path successfully set to {dir}.", forModel, path);
+                Log.Information("{type} path successfully set to {dir}.", forModel.DisplayName(), path);
             }
         }
     }

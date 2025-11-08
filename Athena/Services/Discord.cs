@@ -34,6 +34,6 @@ public static class DiscordRichPresence
 
     public static void Update(EModelType model)
     {
-        _client?.UpdateState($"Generating {model.GetDescription()}");
+        _client?.UpdateState($"Generating {model.DisplayName()}");
     }
 }

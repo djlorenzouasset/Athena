@@ -1,9 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using CUE4Parse.Utils;
 using Athena.Models.App;
+using Athena.Utils;
 
 namespace Athena.Services;
 
-public class ShopBuilder
+public class ShopBuilder : BaseBuilder
 {
     private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // characters for the offerId
 
@@ -15,10 +16,10 @@ public class ShopBuilder
     private int _dailyRowIndex = 1;
     private int _featuredRowIndex = 1;
 
-    public string Build()
+    public override string Build()
     {
         _shop.Storefronts.Add(new() { Name = "BRWeeklyStorefront", CatalogEntries = _catalogEntries });
-        return JsonConvert.SerializeObject(_shop, Formatting.Indented);
+        return Serialize(_shop);
     }
 
     public void AddCatalogEntry(string entry)
@@ -46,7 +47,7 @@ public class ShopBuilder
                 LayoutId = layoutId
             };
             List<MetaInfo> metaInfo = [
-                new() { Key = "NewDisplayAssetPath", Value =$"{objectPath}.{objectName}" },
+                new() { Key = "NewDisplayAssetPath", Value = $"{objectPath}.{objectName}" },
                 new() { Key = "SectionId", Value = "Featured" },
                 new() { Key = "TileSize", Value = "Size_2_x_2" },
                 new() { Key = "LayoutId", Value = layoutId },
@@ -69,7 +70,14 @@ public class ShopBuilder
             if (_dailyCount % 5 == 0 && _dailyCount != 0)
                 _dailyRowIndex++;
 
+            if (assetName.StartsWith("Featured") || assetName.StartsWith("BuildingProp"))
+            {
+                assetName = assetName.SubstringAfter('_');
+            }
+
             string layoutId = $"Daily.{_dailyRowIndex}";
+            string backendType = AthenaUtils.GetBackendTypeByItemId(assetName);
+            string itemId = $"{backendType}:{assetName}";
 
             Meta meta = new()
             {
@@ -79,7 +87,7 @@ public class ShopBuilder
                 LayoutId = layoutId
             };
             List<MetaInfo> metaInfo = [
-                new() { Key = "NewDisplayAssetPath", Value =$"{objectPath}.{objectName}" },
+                new() { Key = "NewDisplayAssetPath", Value = $"{objectPath}.{objectName}" },
                 new() { Key = "SectionId", Value = "Daily" },
                 new() { Key = "TileSize", Value = "Size_1_x_2" },
                 new() { Key = "LayoutId", Value = layoutId },
@@ -91,7 +99,13 @@ public class ShopBuilder
                 OfferId = offerId,
                 DisplayAssetPath = DAv2ToDA(objectName, true),
                 Meta = meta,
-                MetaInfo = metaInfo
+                MetaInfo = metaInfo,
+                Requirements = [
+                    new() { RequiredId = "DenyOnOwnership" }
+                ],
+                ItemGrants = [
+                    new() { TemplateId = itemId }
+                ]
             };
 
             _catalogEntries.Add(itemEntry);

@@ -1,17 +1,18 @@
 ﻿using Athena.Services;
 
-public class Cosmetic
+namespace Athena.Models.App;
+
+public interface IProfileItem;
+
+public class Cosmetic : IProfileItem
 {
-    public string TemplateId { get; set; }
+    public string TemplateId { get; private set; }
     public Attributes Attributes = new();
     public int Quantity = 1;
 
     public Cosmetic(string cosmeticId, string backendType, List<ProfileAthena.Variant>? variants = null)
     {
         TemplateId = $"{backendType}:{cosmeticId}";
-        Attributes.Favorite = false;
-        Attributes.Archived = false;
-
         if (variants != null && variants.Count > 0)
         {
             Attributes.Variants.AddRange(variants);
@@ -21,7 +22,7 @@ public class Cosmetic
 
 public class Attributes
 {
-    // public DateTime CreationTime = DateTime.UtcNow; this causes no variants on >18.00 (???)
+    // public DateTime CreationTime = DateTime.UtcNow; this causes no variants on > 18.00 (???)
     public int MaxLevelBonus = 0;
     public int Level = 1;
     public bool ItemSeen = true;
@@ -42,14 +43,11 @@ public class ProfileAthena
     public string AccountId = SettingsService.Current.Profiles.ProfileId;
     public string ProfileId = "athena";
     public string Version = "";
-    public ProfileItems Items = new();
+    public Dictionary<string, IProfileItem> Items = new() {
+        { "sandbox_loadout", new Attributes() }
+    };
     public ProfileStats Stats = new();
     public int CommandRevision = 100;
-
-    public class ProfileItems
-    {
-        public Loadout SandboxLoadout = new();
-    }
 
     public class Loadout
     {
@@ -58,7 +56,7 @@ public class ProfileAthena
         public int Quantity = 1;
     }
 
-    public class Attributes
+    public class Attributes : IProfileItem
     {
         public LockerSlotsData LockerSlotsData = new();
         public int UseCount = 1;

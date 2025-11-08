@@ -16,30 +16,7 @@ public class Storefront
     public List<ICatalogEntry> CatalogEntries { get; set; } = [];
 }
 
-public interface ICatalogEntry
-{
-    string DevName { get; set; }
-    string OfferId { get; set; }
-    List<object> FulfillmentIds { get; set; }
-    int DailyLimit { get; set; }
-    int WeeklyLimit { get; set; }
-    int MonthlyLimit { get; set; }
-    List<string> Categories { get; set; }
-    List<Price> Prices { get; set; }
-    Meta Meta { get; set; }
-    string MatchFilter { get; set; }
-    double FilterWeight { get; set; }
-    List<string> AppStoreId { get; set; }
-    string OfferType { get; set; }
-    GiftInfo GiftInfo { get; set; }
-    bool Refundable { get; set; }
-    List<MetaInfo> MetaInfo { get; set; }
-    string DisplayAssetPath { get; set; }
-    List<ItemGrant> ItemGrants { get; set; }
-    List<object> AdditionalGrants { get; set; }
-    int SortPriority { get; set; }
-    int CatalogGroupPriority { get; set; }
-}
+public interface ICatalogEntry;
 
 public class BundleCatalogEntry : ICatalogEntry
 {
