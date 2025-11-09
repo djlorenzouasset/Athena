@@ -7,6 +7,7 @@ using Athena.Utils;
 using Athena.Services;
 using Athena.Extensions;
 using Athena.Models.API.Responses;
+using CUE4Parse.UE4.VirtualFileSystem;
 
 namespace Athena.Core;
 
@@ -37,7 +38,7 @@ public class Generator
         { EModelType.ItemShopCatalog, _shopOptions },
     };
 
-    private readonly List<string> _acceptedClasses = [
+    private readonly HashSet<string> _acceptedClasses = [
         // BR
         "AthenaCharacterItemDefinition", "AthenaBackpackItemDefinition",
         "AthenaPickaxeItemDefinition", "AthenaGliderItemDefinition",
@@ -75,8 +76,8 @@ public class Generator
         "GameFeatures/Juno/"
     ];
 
-    public static readonly Func<GameFile, bool> ShopAssetsFilter = (x => x.Name.StartsWith("DAv2"));
-    public static readonly Func<GameFile, bool> CosmeticsFilter = (x => _acceptedPaths.Any(
+    public static readonly Func<VfsEntry, bool> ShopAssetsFilter = (x => x.Name.StartsWith("DAv2", StringComparison.OrdinalIgnoreCase));
+    public static readonly Func<VfsEntry, bool> CosmeticsFilter = (x => _acceptedPaths.Any(
         p => x.Path.Contains(p, StringComparison.OrdinalIgnoreCase))
     );
 
@@ -107,17 +108,15 @@ public class Generator
         Log.ForContext("NoConsole", true).Information("User selected {model} - {type}", model, generationType);
         DiscordRichPresence.Update(model);
 
+        bool bForceReturnToMenu = false; // use this for backups failures
         switch (generationType)
         {
-            case EGenerationType.AllCosmetics:
-                break;
-
             case EGenerationType.NewCosmetics:
-                await HandleNewCosmetics();
+                bForceReturnToMenu = await HandleNewCosmetics();
                 break;
 
             case EGenerationType.NewCosmeticsAndArchives:
-                await HandleNewCosmetics(true);
+                bForceReturnToMenu = await HandleNewCosmetics(true);
                 break;
 
             case EGenerationType.ArchiveCosmetics:
@@ -133,11 +132,17 @@ public class Generator
                 break;
         }
 
+        if (bForceReturnToMenu)
+        {
+            await ReturnToMenu();
+            return;
+        }
+
         var start = Stopwatch.StartNew();
         if (!await GenerateModel(model, generationType))
             return; // this is already handled in the function
 
-        Log.Information("All tasks finished in {0}s ({0}ms).", 
+        Log.Information("All tasks finished in {0}s ({1}ms).", 
             Math.Round(start.Elapsed.TotalSeconds, 2),
             Math.Round(start.Elapsed.TotalMilliseconds));
 
@@ -152,7 +157,7 @@ public class Generator
         bool bIsProfile = model is EModelType.ProfileAthena;
         bool bUseAllEntries = generationType is EGenerationType.AllCosmetics;
 
-        string itemType = bIsProfile ? "cosmetics" : "shop assets";
+        string itemsType = bIsProfile ? "cosmetics" : "shop assets";
         var filter = (bIsProfile ? CosmeticsFilter : ShopAssetsFilter);
         var entries = (bUseAllEntries ? dataminer.AllEntries : dataminer.NewEntries);
 
@@ -162,40 +167,92 @@ public class Generator
             switch (generationType)
             {
                 case EGenerationType.AllCosmetics:
-                    Log.Error("No {0} have been found.", itemType);
+                    Log.Error("No {0} have been found.", itemsType);
                     break;
                 case EGenerationType.NewCosmetics:
                 case EGenerationType.NewCosmeticsAndArchives:
-                    Log.Error("No new {0} have been found.", itemType);
+                    Log.Error("No new {0} have been found using backup {1}.", itemsType, _backupName);
                     break;
                 case EGenerationType.ArchiveCosmetics:
                 case EGenerationType.WaitForArchivesUpdate:
                     Log.Error("No new {0} have been found in the following paks: {1}.", 
-                        itemType, string.Join(',', _customCosmeticsOrPaks));
+                        itemsType, string.Join(',', _customCosmeticsOrPaks));
                     break;
                 case EGenerationType.SelectedCosmeticsOnly:
-                    Log.Error("The selected {0} could not be found.", itemType);
+                    Log.Error("The selected {0} could not be found.", itemsType);
                     break;
             }
             await ReturnToMenu(bFromError: true);
             return false;
         }
 
+        IBuilder builder = bIsProfile ? new ProfileBuilder() : new ShopBuilder();
+        string savePath = bIsProfile 
+            ? Path.Combine(SettingsService.Current.Profiles.OutputPath, "profile_athena.json")
+            : Path.Combine(SettingsService.Current.Catalog.OutputPath, SettingsService.Current.Catalog.ShopName);
+
         int added = 0;
         if (bIsProfile)
         {
-            foreach (var entry in filtered)
+            var profile = (ProfileBuilder)builder;
+            // we use parallel here to speed up the process as we do a lot of operations
+            await Parallel.ForEachAsync(filtered, new ParallelOptions { MaxDegreeOfParallelism = 8 }, async (item, token) =>
             {
-                // TODO: implement logic
-            }
+                try
+                {
+                    var export = await dataminer.Provider.SafeLoadPackageObjectAsync(item.PathWithoutExtension);
+                    if (export == null || !_acceptedClasses.Contains(export.ExportType))
+                        return;
+
+                    var variants = AthenaUtils.GetCosmeticVariants(export);
+                    string backendType = AthenaUtils.GetBackendType(export.ExportType);
+
+                    lock (profile)
+                    {
+                        profile.AddCosmetic(item.NameWithoutExtension, backendType, variants);
+                    }
+
+                    Interlocked.Increment(ref added);
+                    Log.Information("Added \"{0}\" (Type: {1}, Variants: {2})",
+                        item.NameWithoutExtension, export.ExportType, variants.Count);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Failed add item {0}: {1}", item.NameWithoutExtension, e.Message);
+                    return;
+                }
+            });
         }
         else
         {
+            var shop = (ShopBuilder)builder;
             foreach (var entry in filtered)
             {
-                // TODO: implement logic
+                try
+                {
+                    shop.AddCatalogEntry(entry.PathWithoutExtension);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Failed add shop item {0}: {1}", entry.NameWithoutExtension, e.Message);
+                    continue;
+                }
+
+                added++;
+                Log.Information("Added shop asset \"{0}\"", entry.NameWithoutExtension);
             }
         }
+
+        if (!Directory.Exists(Path.GetDirectoryName(savePath)))
+        {
+            Log.Warning("The output directory you did set does not exist! The default one will be used");
+            savePath = Path.Combine(Directories.Output.FullName, bIsProfile
+                ? "profile_athena.json" : SettingsService.Current.Catalog.ShopName);
+        }
+
+        Log.Information("Building {0} with {1} {2}", model.DisplayName(), added, itemsType);
+        await File.WriteAllTextAsync(savePath, builder.Build());
+        Log.Information("Saved {0} in output directory {1}", model.DisplayName(), savePath);
 
         return true;
     }
@@ -222,7 +279,7 @@ public class Generator
             new SelectionPrompt<EModelType>()
             .Title("What do you want to generate?")
             .AddChoices(_menuOptions)
-            .UseConverter(e => e.GetDescription())
+            .UseConverter(e => e.DisplayName())
         );
     }
 
@@ -231,9 +288,9 @@ public class Generator
         _modelsOptions.TryGetValue(model, out var optionsToShow);
         return AnsiConsole.Prompt(
             new SelectionPrompt<EGenerationType>()
-            .Title($"What do you want to use to generate this [62]{model.GetDescription()}[/]?")
+            .Title($"What do you want to use to generate this [62]{model.DisplayName()}[/]?")
             .AddChoices(optionsToShow!)
-            .UseConverter(e => e.GetDescription())
+            .UseConverter(e => e.DisplayName())
         );
     }
 
@@ -257,15 +314,21 @@ public class Generator
     #endregion
 
     #region HANDLERS
-    private async Task HandleNewCosmetics(bool includeArchives = false)
+    private async Task<bool> HandleNewCosmetics(bool includeArchives = false)
     {
         var oldFiles = await LoadBackup();
+        if (oldFiles is null)
+        {
+            return true;
+        }
+
         Dataminer.Instance.LoadEntries(
             ar => ar.EncryptionKeyGuid.Equals(Globals.ZERO_GUID) || (includeArchives && 
             (Dataminer.Instance.AESKeys?.GuidsList.Contains(ar.EncryptionKeyGuid) ?? false)),
             oldFiles,
             bNew: true
         );
+        return false;
     }
 
     private void HandleArchiveCosmetics()
@@ -310,13 +373,13 @@ public class Generator
 
     #endregion
 
-    private async Task<HashSet<string>> LoadBackup()
+    private async Task<HashSet<string>?> LoadBackup()
     {
         var backupFile = await FBackup.Download();
         if (backupFile is null)
         {
             Log.Error("Backup response was invalid!");
-            return [];
+            return null;
         }
 
         _backupName = backupFile.Name.SubstringBeforeLast('.');
