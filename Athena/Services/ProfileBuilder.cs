@@ -25,7 +25,7 @@ public class ProfileBuilder
 
         foreach (var cosmetic in _cosmetics)
         {
-            items[cosmetic.templateId] = JObject.FromObject(cosmetic);
+            items[Guid.NewGuid().ToString()] = JObject.FromObject(cosmetic);
         }
 
         return profileJson.ToString(Formatting.Indented);
