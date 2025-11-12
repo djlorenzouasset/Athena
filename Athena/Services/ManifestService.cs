@@ -5,11 +5,10 @@ using EpicManifestParser.Api;
 using EpicManifestParser.ZlibngDotNetDecompressor;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.Compression;
-using Athena.Services;
 
-namespace Athena.Core;
+namespace Athena.Services;
 
-public partial class ManifestDownloader
+public partial class ManifestService
 {
     public FBuildPatchAppManifest Manifest = null!;
 
@@ -26,8 +25,8 @@ public partial class ManifestDownloader
             ChunkBaseUrl = CHUNKS_ENDPOINT,
             Decompressor = ManifestZlibngDotNetDecompressor.Decompress,
             DecompressorState = ZlibHelper.Instance,
-            ChunkCacheDirectory = Directories.Data.FullName,
-            ManifestCacheDirectory = Directories.Data.FullName,
+            ChunkCacheDirectory = Directories.Data,
+            ManifestCacheDirectory = Directories.Data,
         };
 
         (Manifest, _) = await manifest.DownloadAndParseAsync(options,
@@ -61,9 +60,8 @@ public partial class ManifestDownloader
 
     private void LoadFileManifest(FFileManifest file)
     {
-        var versions = Dataminer.Instance.Provider.Versions;
-
-        Dataminer.Instance.Provider.RegisterVfs(file.FileName, [file.GetStream()], 
+        var versions = UEParser.Provider.Versions;
+        UEParser.Provider.RegisterVfs(file.FileName, [file.GetStream()], 
             it => new FRandomAccessStreamArchive(it, GetStream(it), versions));
     }
 

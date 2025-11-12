@@ -1,19 +1,18 @@
-﻿using Athena.Models.API.Base;
+﻿using RestSharp;
+using Athena.Models.API.Base;
 using Athena.Models.API.Responses;
-using Athena.Services;
-using Newtonsoft.Json;
-using RestSharp;
 
 namespace Athena.Models.API;
 
 public class AthenaEndpoints(RestClient client) : AthenaRestClient(client)
 {
-    protected override string BaseURL => "http://prod.athena.dev:8000";
-
-    private const string RELEASE_ENDPOINT = "api/v1/version";
-    private const string BACKUPS_ENDPOINT = "api/v1/backups";
-    private const string MAPPINGS_ENDPOINT = "api/v1/mappings";
-    private const string REQUIREMENTS_ENDPOINT = "api/v1/requirements";
+    //protected override string BaseURL => "http://prod.athena.dev:8000";
+    
+    // TODO: make these endpoints available on my localhost (ignore this stupid comment)
+    private const string RELEASE_ENDPOINT = "http://prod.athena.dev:8000/api/v1/version";
+    private const string BACKUPS_ENDPOINT = "http://prod.athena.dev:8000/api/v1/backups";
+    private const string MAPPINGS_ENDPOINT = "https://laylaleaks.de/api/mappings";
+    private const string REQUIREMENTS_ENDPOINT = "http://prod.athena.dev:8000/api/v1/requirements";
 
     public async Task<AthenaRelease?> GetReleaseInfoAsync()
     {
@@ -25,14 +24,11 @@ public class AthenaEndpoints(RestClient client) : AthenaRestClient(client)
         return await ExecuteAsync<Backup[]>(BACKUPS_ENDPOINT);
     }
 
-    public async Task<string?> GetMappingAsync()
+    public async Task<Mappings?> GetMappingAsync()
     {
-        var response = await ExecuteAsync<Mappings>(MAPPINGS_ENDPOINT);
-        if (response == null) return null;
-
-        string path = Path.Combine(Directories.Mappings.FullName, response.FileName);
-        if (!await APIEndpoints.Instance.DownloadFileAsync(response.Url, path, false)) return null;
-        return path;
+        // this is very shit I know but is temporarily
+        var req = await ExecuteAsync<Mappings[]>(MAPPINGS_ENDPOINT);
+        return req?.FirstOrDefault();
     }
 
     public async Task<Dependency[]?> GetRequirementsAsync()

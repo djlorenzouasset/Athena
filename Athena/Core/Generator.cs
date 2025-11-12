@@ -1,27 +1,22 @@
 ﻿using System.Diagnostics;
 using Spectre.Console;
-using CUE4Parse.Utils;
-using CUE4Parse.FileProvider.Objects;
 using CUE4Parse.UE4.Objects.Core.Misc;
+using CUE4Parse.UE4.VirtualFileSystem;
 using Athena.Utils;
-using Athena.Services;
+using Athena.Builders;
 using Athena.Extensions;
 using Athena.Models.API.Responses;
-using CUE4Parse.UE4.VirtualFileSystem;
 
 namespace Athena.Core;
 
 public class Generator
 {
-    private string _backupName = "";
-    private readonly List<string> _customCosmeticsOrPaks = [];
-
-    private readonly List<EModelType> _menuOptions = [
-        EModelType.ProfileAthena, 
+    private readonly List<EModelType> _models = [
+        EModelType.ProfileAthena,
         EModelType.ItemShopCatalog
     ];
-
-    private static readonly List<EGenerationType> _shopOptions = [
+    private readonly List<EGenerationType> _generationTypes = [
+        EGenerationType.AllCosmetics,
         EGenerationType.NewCosmetics,
         EGenerationType.NewCosmeticsAndArchives,
         EGenerationType.ArchiveCosmetics,
@@ -29,41 +24,8 @@ public class Generator
         EGenerationType.SelectedCosmeticsOnly,
         EGenerationType.ReturnToMenu
     ];
-    private static readonly List<EGenerationType> _profileOptions = [
-        EGenerationType.AllCosmetics, .._shopOptions
-    ];
-    private readonly Dictionary<EModelType, List<EGenerationType>> _modelsOptions = new()
-    {
-        { EModelType.ProfileAthena, _profileOptions },
-        { EModelType.ItemShopCatalog, _shopOptions },
-    };
 
-    private readonly HashSet<string> _acceptedClasses = [
-        // BR
-        "AthenaCharacterItemDefinition", "AthenaBackpackItemDefinition",
-        "AthenaPickaxeItemDefinition", "AthenaGliderItemDefinition",
-        "AthenaPetCarrierItemDefinition", "AthenaToyItemDefinition",
-        "AthenaEmojiItemDefinition", "AthenaSprayItemDefinition",
-        "AthenaLoadingScreenItemDefinition", "AthenaDanceItemDefinition",
-        "AthenaSkyDiveContrailItemDefinition", "AthenaItemWrapDefinition",
-        "AthenaMusicPackItemDefinition", "CosmeticShoesItemDefinition",
-        "CosmeticCompanionItemDefinition", "CosmeticCompanionReactFXItemDefinition",
-        // FORTNITE FESTIVAL
-        "SparksGuitarItemDefinition", "SparksBassItemDefinition",
-        "SparksKeyboardItemDefinition", "SparksDrumItemDefinition",
-        "SparksMicItemDefinition", "SparksAuraItemDefinition",
-        "SparksSongItemDefinition",
-        // ROCKET RACING
-        "FortVehicleCosmeticsItemDefinition_Skin",
-        "FortVehicleCosmeticsItemDefinition_Body",
-        "FortVehicleCosmeticsItemDefinition_Booster",
-        "FortVehicleCosmeticsItemDefinition_Wheel",
-        "FortVehicleCosmeticsItemDefinition_DriftTrail",
-        // LEGO
-        "JunoBuildingPropAccountItemDefinition",
-        "JunoBuildingSetAccountItemDefinition"
-    ];
-    private static readonly List<string> _acceptedPaths = [
+    private static readonly HashSet<string> _directoriesToFilter = [
         "Athena/Items/Cosmetics/",
         "GameFeatures/CosmeticCompanions/",
         "GameFeatures/MeshCosmetics/",
@@ -76,20 +38,25 @@ public class Generator
         "GameFeatures/Juno/"
     ];
 
-    public static readonly Func<VfsEntry, bool> ShopAssetsFilter = (x => x.Name.StartsWith("DAv2", StringComparison.OrdinalIgnoreCase));
-    public static readonly Func<VfsEntry, bool> CosmeticsFilter = (x => _acceptedPaths.Any(
-        p => x.Path.Contains(p, StringComparison.OrdinalIgnoreCase))
+    private readonly Func<VfsEntry, bool> ShopAssetsFilter = (x => x.Name.StartsWith("DAv2", StringComparison.OrdinalIgnoreCase));
+    private readonly Func<VfsEntry, bool> CosmeticsFilter = (x => _directoriesToFilter.Any(
+        p => x.Path.Contains(p, StringComparison.OrdinalIgnoreCase) && 
+        (Assets.IsValidItemId(x.NameWithoutExtension) || Assets.IsValidPrefix(x.NameWithoutExtension)))
     );
+
+    private string _backupName = string.Empty;
+    private HashSet<string> _customCosmeticsOrPaks = [];
 
     public async Task ShowMenu()
     {
-        Console.Clear(); // clear the previous logs from the console
+        Console.Clear(); // clear console from parser logs
 
-        string gameVersion = Dataminer.Instance.Manifest.GameVersion;
-        Console.Title = $"Athena {Globals.Version.DisplayName} - FortniteGame v{gameVersion}";
-        DiscordRichPresence.Update($"In Menu - FortniteGame v{gameVersion}");
+        Console.Title = $"Athena {Globals.Version.DisplayName} - FortniteGame v{UEParser.Manifest.GameVersion}";
+        Discord.Update($"In Menu - FortniteGame v{UEParser.Manifest.GameVersion}");
 
-        // TODO: add the application permanent text
+        // TODO:
+        // - Add permanent text
+        // - Add changelog
 
         var model = SelectModel();
         var generationType = SelectGenerationType(model);
@@ -106,7 +73,7 @@ public class Generator
     private async Task HandleRequest(EModelType model, EGenerationType generationType)
     {
         Log.ForContext("NoConsole", true).Information("User selected {model} - {type}", model, generationType);
-        DiscordRichPresence.Update(model);
+        Discord.Update(model);
 
         bool bForceReturnToMenu = false; // use this for backups failures
         switch (generationType)
@@ -120,6 +87,13 @@ public class Generator
                 break;
 
             case EGenerationType.ArchiveCosmetics:
+                if (UEParser.AESKeys is null || UEParser.AESKeys.DynamicKeys is { Count: 0 })
+                {
+                    Log.Error("No paks are available at the moment.");
+                    await ReturnToMenu();
+                    return;
+                }
+
                 HandleArchiveCosmetics();
                 break;
 
@@ -142,7 +116,7 @@ public class Generator
         if (!await GenerateModel(model, generationType))
             return; // this is already handled in the function
 
-        Log.Information("All tasks finished in {0}s ({1}ms).", 
+        Log.Information("All tasks finished in {sec}s ({ms}ms).",
             Math.Round(start.Elapsed.TotalSeconds, 2),
             Math.Round(start.Elapsed.TotalMilliseconds));
 
@@ -152,14 +126,12 @@ public class Generator
 
     private async Task<bool> GenerateModel(EModelType model, EGenerationType generationType)
     {
-        var dataminer = Dataminer.Instance;
-
+        string itemType = model.ItemTypeName().ToLower();
         bool bIsProfile = model is EModelType.ProfileAthena;
         bool bUseAllEntries = generationType is EGenerationType.AllCosmetics;
 
-        string itemsType = bIsProfile ? "cosmetics" : "shop assets";
         var filter = (bIsProfile ? CosmeticsFilter : ShopAssetsFilter);
-        var entries = (bUseAllEntries ? dataminer.AllEntries : dataminer.NewEntries);
+        var entries = (bUseAllEntries ? UEParser.AllEntries : UEParser.NewEntries);
 
         var filtered = entries.Where(filter).ToHashSet();
         if (filtered.Count == 0)
@@ -167,45 +139,44 @@ public class Generator
             switch (generationType)
             {
                 case EGenerationType.AllCosmetics:
-                    Log.Error("No {0} have been found.", itemsType);
+                    Log.Error("No {type} have been found.", itemType);
                     break;
                 case EGenerationType.NewCosmetics:
                 case EGenerationType.NewCosmeticsAndArchives:
-                    Log.Error("No new {0} have been found using backup {1}.", itemsType, _backupName);
+                    Log.Error("No new {type} have been found using backup {backup}.", itemType, _backupName);
                     break;
                 case EGenerationType.ArchiveCosmetics:
                 case EGenerationType.WaitForArchivesUpdate:
-                    Log.Error("No new {0} have been found in the following paks: {1}.", 
-                        itemsType, string.Join(',', _customCosmeticsOrPaks));
+                    Log.Error("No new {type} have been found in the following paks: {paks}.",
+                        itemType, string.Join(',', _customCosmeticsOrPaks));
                     break;
                 case EGenerationType.SelectedCosmeticsOnly:
-                    Log.Error("The selected {0} could not be found.", itemsType);
+                    Log.Error("The selected {type} could not be found.", itemType);
                     break;
             }
             await ReturnToMenu(bFromError: true);
             return false;
         }
 
-        IBuilder builder = bIsProfile ? new ProfileBuilder() : new ShopBuilder();
-        string savePath = bIsProfile 
-            ? Path.Combine(SettingsService.Current.Profiles.OutputPath, "profile_athena.json")
-            : Path.Combine(SettingsService.Current.Catalog.OutputPath, SettingsService.Current.Catalog.ShopName);
+        string savePath = bIsProfile
+            ? Path.Combine(Settings.Current.Profiles.OutputPath, "profile_athena.json")
+            : Path.Combine(Settings.Current.Catalog.OutputPath, Settings.Current.Catalog.ShopName);
 
         int added = 0;
+        IBuilder builder = bIsProfile ? new ProfileBuilder() : new ShopBuilder();
         if (bIsProfile)
         {
             var profile = (ProfileBuilder)builder;
-            // we use parallel here to speed up the process as we do a lot of operations
-            await Parallel.ForEachAsync(filtered, new ParallelOptions { MaxDegreeOfParallelism = 8 }, async (item, token) =>
+            await Parallel.ForEachAsync(filtered, async (item, _) =>
             {
                 try
                 {
-                    var export = await dataminer.Provider.SafeLoadPackageObjectAsync(item.PathWithoutExtension);
-                    if (export == null || !_acceptedClasses.Contains(export.ExportType))
+                    var export = await UEParser.Provider.SafeLoadPackageObjectAsync(item.PathWithoutExtension);
+                    if (export == null || !Assets.IsValidClass(export.ExportType))
                         return;
 
                     var variants = AthenaUtils.GetCosmeticVariants(export);
-                    string backendType = AthenaUtils.GetBackendType(export.ExportType);
+                    string backendType = Assets.GetBackendTypeByClass(export.ExportType);
 
                     lock (profile)
                     {
@@ -225,73 +196,70 @@ public class Generator
         }
         else
         {
-            var shop = (ShopBuilder)builder;
+            var itemShop = (ShopBuilder)builder;
             foreach (var entry in filtered)
             {
                 try
                 {
-                    shop.AddCatalogEntry(entry.PathWithoutExtension);
+                    itemShop.AddCatalogEntry(entry.PathWithoutExtension);
+
+                    added++;
+                    Log.Information("Added shop asset \"{0}\"", entry.NameWithoutExtension);
                 }
                 catch (Exception e)
                 {
                     Log.Error("Failed add shop item {0}: {1}", entry.NameWithoutExtension, e.Message);
                     continue;
                 }
-
-                added++;
-                Log.Information("Added shop asset \"{0}\"", entry.NameWithoutExtension);
             }
         }
 
         if (!Directory.Exists(Path.GetDirectoryName(savePath)))
         {
+            savePath = Path.Combine(Directories.Output, Path.GetFileName(savePath));
             Log.Warning("The output directory you did set does not exist! The default one will be used");
-            savePath = Path.Combine(Directories.Output.FullName, bIsProfile
-                ? "profile_athena.json" : SettingsService.Current.Catalog.ShopName);
         }
 
-        Log.Information("Building {0} with {1} {2}", model.DisplayName(), added, itemsType);
+        Log.Information("Building {model} with {addedCount} {itemType}", model.DisplayName(), added, itemType);
         await File.WriteAllTextAsync(savePath, builder.Build());
-        Log.Information("Saved {0} in output directory {1}", model.DisplayName(), savePath);
+        Log.Information("Saved {model} in output directory {savePath}", model.DisplayName(), savePath);
 
         return true;
+    }
+
+    private EModelType SelectModel()
+    {
+        return AnsiConsole.Prompt(
+            new SelectionPrompt<EModelType>()
+            .Title("What do you want to generate?")
+            .AddChoices(_models)
+            .UseConverter(model => model.DisplayName())
+        );
+    }
+
+    private EGenerationType SelectGenerationType(EModelType selectedOption)
+    {
+        return AnsiConsole.Prompt(
+            new SelectionPrompt<EGenerationType>()
+            .Title($"What do you want to use to generate this [62]{selectedOption.DisplayName()}[/]?")
+            .AddChoices(_generationTypes.Where(gt => !gt.DisabledFor(selectedOption)))
+            .UseConverter(e => e.DisplayName())
+        );
     }
 
     private async Task ReturnToMenu(bool bSkipRequest = false, bool bFromError = false)
     {
         if (!bSkipRequest)
         {
-            string prompt = bFromError ? "\nDo you want to try again?" : "\nDo you want to go back to menu?";
+            string prompt = bFromError ? "\n\nDo you want to try again?" : "\n\nDo you want to go back to menu?";
             if (!AnsiConsole.Confirm(prompt)) return;
         }
 
         _backupName = "";
         _customCosmeticsOrPaks.Clear();
-        Dataminer.Instance.NewEntries.Clear();
+        UEParser.NewEntries.Clear();
 
         await ShowMenu();
-    }
-
-    #region SELECTORS
-    private EModelType SelectModel()
-    {
-        return AnsiConsole.Prompt(
-            new SelectionPrompt<EModelType>()
-            .Title("What do you want to generate?")
-            .AddChoices(_menuOptions)
-            .UseConverter(e => e.DisplayName())
-        );
-    }
-
-    private EGenerationType SelectGenerationType(EModelType model)
-    {
-        _modelsOptions.TryGetValue(model, out var optionsToShow);
-        return AnsiConsole.Prompt(
-            new SelectionPrompt<EGenerationType>()
-            .Title($"What do you want to use to generate this [62]{model.DisplayName()}[/]?")
-            .AddChoices(optionsToShow!)
-            .UseConverter(e => e.DisplayName())
-        );
     }
 
     private List<DynamicKey> SelectArchives()
@@ -300,31 +268,29 @@ public class Generator
             new MultiSelectionPrompt<DynamicKey>()
             .Title("What [62]Paks[/] do you want generate?")
             .Required()
-            .AddChoices(Dataminer.Instance.AESKeys!.DynamicKeys.Where(x => x.Name.EndsWith("utoc")))
-            .UseConverter(e => $"{e.Name} ({e.Size.Formatted}, {e.FileCount} files)"));
+            .AddChoices(UEParser.AESKeys!.DynamicKeys.Where(x => x.Name.EndsWith("utoc")))
+            .UseConverter(e => $"{e.Name} ({e.Size.Formatted}, {e.FileCount} files)")
+        );
     }
 
     private List<string> GetCustomCosmetics(EModelType model)
     {
         var type = model == EModelType.ProfileAthena ? "cosmetics ids" : "DAv2s";
-        var selected = AthenaUtils.Ask($"Insert the [62]{type}[/] you want to add separated by [62];[/]:");
-        return [.. selected.Split(';').Select(x => x.Trim())];
+        var selected = App.Ask($"Insert the [62]{type}[/] you want to add separated by [62];[/]:");
+        return [..selected.Split(';').Select(x => x.Trim())];
     }
 
-    #endregion
-
-    #region HANDLERS
     private async Task<bool> HandleNewCosmetics(bool includeArchives = false)
     {
-        var oldFiles = await LoadBackup();
-        if (oldFiles is null)
+        var oldFiles = await GetBackupEntries();
+        if (oldFiles is { Count: 0 })
         {
-            return true;
+            return true; // forceReturnToMenu
         }
 
-        Dataminer.Instance.LoadEntries(
-            ar => ar.EncryptionKeyGuid.Equals(Globals.ZERO_GUID) || (includeArchives && 
-            (Dataminer.Instance.AESKeys?.GuidsList.Contains(ar.EncryptionKeyGuid) ?? false)),
+        UEParser.LoadEntries(
+            ar => ar.EncryptionKeyGuid.Equals(Globals.ZERO_GUID) || 
+            (includeArchives && (UEParser.AESKeys?.GuidsList.Contains(ar.EncryptionKeyGuid) ?? false)),
             oldFiles,
             bNew: true
         );
@@ -334,11 +300,11 @@ public class Generator
     private void HandleArchiveCosmetics()
     {
         var dynamicKeys = SelectArchives();
-        _customCosmeticsOrPaks.AddRange(dynamicKeys.Select(
+        _customCosmeticsOrPaks.UnionWith(dynamicKeys.Select(
             p => p.Name.Split("pakchunk").Last().Split('-').First()
         ));
 
-        Dataminer.Instance.LoadEntries(
+        UEParser.LoadEntries(
             ar => dynamicKeys.Select(k => new FGuid(k.Guid)).Contains(ar.EncryptionKeyGuid),
             bNew: true
         );
@@ -346,13 +312,14 @@ public class Generator
 
     private async Task HandleWaitForArchivesUpdate()
     {
-        var newKeys = await APIWatcher.GetNewDynamicKeys();
+        var newKeys = await WatchForDynamicKeys();
 
-        _customCosmeticsOrPaks.AddRange(newKeys.Select(
+        _customCosmeticsOrPaks.UnionWith(newKeys.Select(
             p => p.Name.Split("pakchunk").Last().Split('-').First()
         ));
-        Dataminer.Instance.LoadKeys(newKeys);
-        Dataminer.Instance.LoadEntries(
+
+        UEParser.LoadKeysList(newKeys);
+        UEParser.LoadEntries(
             ar => newKeys.Select(k => new FGuid(k.Guid)).Contains(ar.EncryptionKeyGuid),
             bNew: true
         );
@@ -361,28 +328,65 @@ public class Generator
     private void HandleSelectedCosmetics(EModelType model)
     {
         var customIds = GetCustomCosmetics(model);
-        _customCosmeticsOrPaks.AddRange(customIds);
+        _customCosmeticsOrPaks.UnionWith(customIds);
 
-        Dataminer.Instance.LoadEntries(
+        UEParser.LoadEntries(
             ar => ar.EncryptionKeyGuid.Equals(Globals.ZERO_GUID) ||
-                  (Dataminer.Instance.AESKeys?.GuidsList.Contains(ar.EncryptionKeyGuid) ?? false),
+            (UEParser.AESKeys?.GuidsList.Contains(ar.EncryptionKeyGuid) ?? false),
             [.. _customCosmeticsOrPaks],
             bIsCustom: true
         );
     }
 
-    #endregion
-
-    private async Task<HashSet<string>?> LoadBackup()
+    private async Task<HashSet<string>> GetBackupEntries()
     {
-        var backupFile = await FBackup.Download();
-        if (backupFile is null)
+        var backup = await GetLatestBackup();
+        if (backup is null) return [];
+
+        _backupName = backup.FileName;
+        var file = new FileInfo(Path.Combine(Directories.Backups, backup.FileName));
+        return await BackupParser.Parse(file);
+    }
+
+    private async Task<Backup?> GetLatestBackup()
+    {
+        var backups = await Api.Athena.GetBackupsAsync();
+        if (backups is null || backups is { Length: 0 })
         {
-            Log.Error("Backup response was invalid!");
+            Log.Error("Failed to get backups!");
             return null;
         }
+        return backups.LastOrDefault();
+    }
 
-        _backupName = backupFile.Name.SubstringBeforeLast('.');
-        return await FBackup.Parse(backupFile);
+    private const int TASK_COOLDOWN = 5 * 1000;
+    private async Task<List<DynamicKey>> WatchForDynamicKeys()
+    {
+        Log.ForContext("NoConsole", true).Information(
+            "WatchForDynamicKeys(): Starting. Cooldown set to {cd}ms", TASK_COOLDOWN);
+
+        List<DynamicKey> newKeys;
+        while (true)
+        {
+            Log.Information("Checking for new AES keys.");
+            await Task.Delay(TASK_COOLDOWN);
+
+            var res = await Api.Dilly.GetAESKeysAsync(false);
+            if (res is null || res.DynamicKeys.Count == 0) continue;
+
+            newKeys = [..res.DynamicKeys.Where(key =>
+                !UEParser.AESKeys?.GuidsList.Contains(new FGuid(key.Guid)) ?? true)];
+
+            if (newKeys.Count == 0)
+                continue;
+
+            Log.Information("Detected {tot} new Dynamic Keys!", newKeys.Count);
+
+            UEParser.AESKeys = res;
+            Settings.Current.LocalKeys = res;
+            Settings.SaveSettings();
+
+            return newKeys;
+        }
     }
 }

@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using System.Text;
+﻿using System.Text;
+using Newtonsoft.Json;
 
-namespace Athena.Models.App;
+namespace Athena.Models;
 
 public class AthenaVersion : IComparable<AthenaVersion>
 {

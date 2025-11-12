@@ -1,6 +1,6 @@
-﻿using Athena.Models.App;
+﻿using Athena.Models.Profiles;
 
-namespace Athena.Services;
+namespace Athena.Builders;
 
 public class ProfileBuilder : BaseBuilder
 {
@@ -11,13 +11,14 @@ public class ProfileBuilder : BaseBuilder
     {
         foreach (var cosmetic in _cosmetics)
         {
+            // use a UUID or the game doesn't load companions variants for some reason
             _profile.Items.Add(Guid.NewGuid().ToString(), cosmetic);
         }
 
         return Serialize(_profile);
     }
 
-    public void AddCosmetic(string id, string backendType, List<ProfileAthena.Variant> variants)
+    public void AddCosmetic(string id, string backendType, List<Variant> variants)
     {
         _cosmetics.Add(new(id, backendType, variants));
     }

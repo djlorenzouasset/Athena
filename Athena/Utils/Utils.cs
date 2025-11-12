@@ -1,250 +1,13 @@
-﻿using Athena.Models.App;
+﻿using Spectre.Console;
 using CUE4Parse.UE4.Assets.Exports;
 using CUE4Parse.UE4.Assets.Objects;
 using CUE4Parse.UE4.Objects.UObject;
-using Spectre.Console;
+using Athena.Models.Profiles;
 
 namespace Athena.Utils;
 
 public static class AthenaUtils
 {
-    public static readonly List<CosmeticType> CosmeticTypes = [
-        new CosmeticType
-        {
-            BackendType = "AthenaCharacter",
-            ExportTypes = ["AthenaCharacterItemDefinition"],
-            ItemsPrefixes = ["CID", "Character"]
-        },
-        new CosmeticType
-        {
-            BackendType = "AthenaBackpack",
-            ExportTypes = [
-                "AthenaBackpackItemDefinition",
-                "AthenaPetCarrierItemDefinition"
-            ],
-            ItemsPrefixes = [
-                "BID", 
-                "Backpack", 
-                "PetCarrier"
-            ],
-            UnprefixedItems = [
-                "Gadget_AlienSignalDetector",
-                "Gadget_DetectorGadget",
-                "Gadget_DetectorGadget_Ch4S2",
-                "Gadget_HighTechBackpack",
-                "Gadget_RealityBloom",
-                "Gadget_SpiritVessel"
-            ]
-        },
-        new CosmeticType
-        {
-            BackendType = "AthenaPickaxe",
-            ExportTypes = ["AthenaPickaxeItemDefinition"],
-            ItemsPrefixes = ["Pickaxe"],
-            UnprefixedItems = [
-                "DefaultPickaxe",
-                "BoltonPickaxe",
-                "Dev_Test_Pickaxe",
-                "HalloweenScythe",
-                "HappyPickaxe",
-                "SickleBatPickaxe",
-                "SkiIcePickaxe",
-                "SpikyPickaxe"
-            ]
-        },
-        new CosmeticType
-        {
-            BackendType = "AthenaDance",
-            ExportTypes = [
-                "AthenaDanceItemDefinition",
-                "AthenaToyItemDefinition",
-                "AthenaEmojiItemDefinition"
-            ],
-            ItemsPrefixes = [
-                "EID",
-                "Spray",
-                "Spid",
-                "Toy", 
-                "Emoji",
-                "Emoticon"
-            ]
-        },
-        new CosmeticType
-        {
-            BackendType = "AthenaGlider",
-            ExportTypes = ["AthenaGliderItemDefinition"],
-            ItemsPrefixes  = [
-                "Glider", 
-                "Umbrella"
-            ],
-            UnprefixedItems = [
-                "DefaultGlider",
-                "Duo_Umbrella",
-                "FounderGlider",
-                "FounderUmbrella",
-                "PreSeasonGlider",
-                "PreSeasonGlider_Elite",
-                "Solo_Umbrella",
-                "Solo_Umbrella_MarkII",
-                "Squad_Umbrella"
-            ]
-        },
-        new CosmeticType
-        {
-            BackendType = "AthenaItemWrap",
-            ExportTypes = ["AthenaItemWrapDefinition"],
-            ItemsPrefixes = ["Wrap"],
-            UnprefixedItems = ["ChillyFabric"]
-        },
-        new CosmeticType
-        {
-            BackendType = "AthenaSkyDiveContrail",
-            ExportTypes = ["AthenaSkyDiveContrailItemDefinition"],
-            ItemsPrefixes = [
-                "Contrail", 
-                "Trails"
-            ],
-            UnprefixedItems = ["DefaultContrail"]
-        },
-        new CosmeticType
-        {
-            BackendType = "AthenaMusicPack",
-            ExportTypes = ["AthenaMusicPackItemDefinition"],
-            ItemsPrefixes = ["MusicPack"]
-        },
-        new CosmeticType
-        {
-            BackendType = "AthenaLoadingScreen",
-            ExportTypes = ["AthenaLoadingScreenItemDefinition"],
-            ItemsPrefixes = [
-                "LoadingScreen",
-                "LSID"
-            ]
-        },
-        new CosmeticType
-        {
-            BackendType = "CosmeticShoes",
-            ExportTypes = ["CosmeticShoesItemDefinition"],
-            ItemsPrefixes = ["Shoes"]
-        },
-        new CosmeticType
-        {
-            BackendType = "CosmeticMimosa",
-            ExportTypes = ["CosmeticCompanionItemDefinition"],
-            ItemsPrefixes = ["Companion"],
-            UnprefixedItems = ["Mimosa_Random"]
-        },
-        new CosmeticType
-        {
-            BackendType = "CosmeticMimosaC",
-            ExportTypes = ["CosmeticCompanionReactFXItemDefinition"],
-            ItemsPrefixes = ["Companion_ReactFx"]
-        },
-        new CosmeticType
-        { 
-            BackendType = "SparksMicrophone",
-            ExportTypes = ["SparksMicItemDefinition"],
-            ItemsPrefixes = ["Mic"]
-        },
-        new CosmeticType
-        { 
-            BackendType = "SparksKeyboard",
-            ExportTypes = ["SparksKeyboardItemDefinition"],
-            ItemsPrefixes = ["Keytar"]
-        },
-        new CosmeticType
-        { 
-            BackendType = "SparksGuitar",
-            ExportTypes = ["SparksGuitarItemDefinition"],
-            ItemsPrefixes = ["Guitar"]
-        },
-        new CosmeticType
-        { 
-            BackendType = "SparksDrums",
-            ExportTypes = ["SparksDrumItemDefinition"],
-            ItemsPrefixes = [
-                "Drum",
-                "DrumKit"
-            ]
-        },
-        new CosmeticType
-        { 
-            BackendType = "SparksBass",
-            ExportTypes = ["SparksBassItemDefinition"],
-            ItemsPrefixes = ["Bass"]
-        },
-        new CosmeticType 
-        { 
-            BackendType = "SparksAura",
-            ExportTypes = ["SparksAuraItemDefinition"],
-            ItemsPrefixes = ["Aura"]
-        },
-        new CosmeticType
-        {
-            BackendType = "SparksSong",
-            ExportTypes = ["SparksSongItemDefinition"],
-            ItemsPrefixes = ["Sid"]
-        },        
-        new CosmeticType
-        {
-            BackendType = "VehicleCosmetics_Body",
-            ExportTypes = ["FortVehicleCosmeticsItemDefinition_Body"],
-            ItemsPrefixes = [
-                "Body",
-                "CarBody"
-            ]
-        },
-        new CosmeticType
-        {
-            BackendType = "VehicleCosmetics_Skin",
-            ExportTypes = ["FortVehicleCosmeticsItemDefinition_Skin"],
-            ItemsPrefixes = ["CarSkin"]
-        },
-        new CosmeticType
-        {
-            BackendType = "VehicleCosmetics_Booster",
-            ExportTypes = ["FortVehicleCosmeticsItemDefinition_Booster"],
-            ItemsPrefixes = ["Booster"]
-        },
-        new CosmeticType
-        {
-            BackendType = "VehicleCosmetics_Wheel",
-            ExportTypes = ["FortVehicleCosmeticsItemDefinition_Wheel"],
-            ItemsPrefixes = ["Wheel"]
-        },
-        new CosmeticType
-        {
-            BackendType = "FortVehicleCosmeticsItemDefinition_DriftTrail",
-            ExportTypes = ["SparksSongItemDefinition"],
-            ItemsPrefixes = ["DriftTrail"]
-        },
-        new CosmeticType
-        {
-            BackendType = "JunoBuildingProp",
-            ExportTypes = ["JunoBuildingPropAccountItemDefinition"],
-            ItemsPrefixes = ["JBPID"]
-        },
-        new CosmeticType
-        {
-            BackendType = "JunoBuildingSet",
-            ExportTypes = ["JunoBuildingSetAccountItemDefinition"],
-            ItemsPrefixes = ["JBSID"]
-        }
-    ];
-
-    public static void ExitThread(int exitCode = 0)
-    {
-        Log.Information("Press the enter key to close the application");
-
-        ConsoleKeyInfo keyInfo;
-        do { keyInfo = Console.ReadKey(true); }
-        while (keyInfo.Key != ConsoleKey.Enter);
-
-        Log.ForContext("NoConsole", true).Information(" --------------- Application Closed --------------- ");
-        Log.CloseAndFlush();
-        Environment.Exit(exitCode);
-    }
-
     public static void ClearConsoleLines(int numberOfLines)
     {
         int startLine = Console.CursorTop - numberOfLines;
@@ -261,38 +24,11 @@ public static class AthenaUtils
         Console.SetCursorPosition(0, startLine);
     }
 
-    // this function is used because AnsiConsole.Ask<T>() doesn't handle
-    // text changes (like moving the arrows keys backwards/forwards
-    public static string Ask(string prompt, int clearLines = 1)
-    {
-        invalid:
-        AnsiConsole.Markup(prompt + " ");
-        var textRead = Console.ReadLine();
-        if (string.IsNullOrEmpty(textRead))
-        {
-            ClearConsoleLines(clearLines);
-            goto invalid;
-        }
-
-        ClearConsoleLines(clearLines);
-        return textRead;
-    }
-
-    public static string GetBackendType(string exportType)
-    {
-        return CosmeticTypes
-            .FirstOrDefault(ct => ct.ExportTypes.Contains(exportType))
-            ?.BackendType ?? "TBD";
-    }
-
     public static string GetBackendTypeByItemId(string itemId)
     {
-        if (CosmeticTypes
-            .Any(ct => ct.UnprefixedItems != null && ct.UnprefixedItems.Contains(itemId)))
+        if (Assets.IsValidItemId(itemId))
         {
-            var upItem = CosmeticTypes
-                .First(ct => ct.UnprefixedItems != null && ct.UnprefixedItems.Contains(itemId));
-            return upItem.BackendType;
+            return Assets.GetBackendTypeByIncludedName(itemId);
         }
 
         var instruments = new string[] {
@@ -330,16 +66,12 @@ public static class AthenaUtils
         if (prefix.Equals("ID", StringComparison.OrdinalIgnoreCase))
             prefix = itemId.Split('_')[1];
 
-        var item = CosmeticTypes
-            .FirstOrDefault(ct => ct.ItemsPrefixes.Any(p =>
-                p.Equals(prefix, StringComparison.OrdinalIgnoreCase)));
-
-        return item?.BackendType ?? "TBD";
+        return Assets.GetBackendTypeByPrefix(prefix);
     }
 
-    public static List<ProfileAthena.Variant> GetCosmeticVariants(UObject obj)
+    public static List<Variant> GetCosmeticVariants(UObject obj)
     {
-        var cosmeticVariants = new List<ProfileAthena.Variant>();
+        var cosmeticVariants = new List<Variant>();
 
         var variants = obj.GetOrDefault("ItemVariants", Array.Empty<UObject>());
         foreach (var variant in variants)
@@ -435,13 +167,13 @@ public static class AthenaUtils
                     ? channelName.Split("Channel.").Last()
                     : channelName.Split('.').Last();
             }
-            
+
             if (string.IsNullOrEmpty(channel))
             {
                 continue;
             }
 
-            cosmeticVariants.Add(new ProfileAthena.Variant
+            cosmeticVariants.Add(new Variant
             {
                 Channel = channel,
                 Active = ownedParts.FirstOrDefault() ?? "",

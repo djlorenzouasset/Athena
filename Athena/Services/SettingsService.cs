@@ -1,0 +1,139 @@
+﻿using Newtonsoft.Json;
+using Spectre.Console;
+using Athena.Utils;
+using Athena.Models;
+using Athena.Extensions;
+
+namespace Athena.Services;
+
+public class SettingsService
+{
+    public UserSettings Current = null!;
+
+    private readonly string _file = Path.Combine(Environment.GetFolderPath(
+        Environment.SpecialFolder.ApplicationData), "settingsV2.json");
+
+    public void LoadSettings()
+    {
+        if (!File.Exists(_file))
+        {
+            CreateSettings();
+            return;
+        }
+
+        var raw = File.ReadAllText(_file);
+        Current = JsonConvert.DeserializeObject<UserSettings>(raw)!;
+    }
+
+    public void SaveSettings()
+    {
+        var json = CustomJsonSerializer.SerializeObject(Current!);
+        File.WriteAllText(_file, json);
+    }
+
+    public void ValidateSettings()
+    {
+        bool save = false;
+
+        if (string.IsNullOrEmpty(Current.Profiles.OutputPath) || !Directory.Exists(Current.Profiles.OutputPath))
+        {
+            save = true;
+            Current.Profiles.OutputPath = Directories.Output;
+            Log.Warning("Profiles output path is invalid. It has now been set to the default one: {path}.", Current.Profiles.OutputPath);
+        }
+        if (string.IsNullOrEmpty(Current.Catalog.OutputPath) || !Directory.Exists(Current.Catalog.OutputPath))
+        {
+            save = true;
+            Current.Catalog.OutputPath = Directories.Output;
+            Log.Warning("ItemShop Catalog output path is invalid. It has now been set to the default one: {path}.", Current.Catalog.OutputPath);
+        }
+        if (Current.UseCustomMappingFile && string.IsNullOrEmpty(Current.CustomMappingFile))
+        {
+            Current.UseCustomMappingFile = false; // temporarily disable custom mapping for the current run
+            Log.Warning("Custom mapping file is enabled but the mapping path is invalid. It has been set to 'false' for this run.");
+#if !DEBUG
+            Message.Show("Invalid Settings",
+                "Custom mapping file is enabled but no valid mapping path is set.\n\n" +
+                "In order to fix this issue, set the property 'bUseCustomMappingFile' to 'false' in the settings file or set a valid mapping path.",
+                Message.MB_OK | Message.MB_ICONWARNING
+            );
+#endif
+        }
+
+        if (save)
+        {
+            SaveSettings();
+        }
+    }
+
+    public async Task<bool> CreateAuth()
+    {
+        var auth = await Api.EpicGames.CreateAuthAsync();
+        if (auth is null)
+        {
+            Log.Error("Failed to create Epic Games Auth code.");
+            return false;
+        }
+
+        Current!.EpicAuth = auth;
+        Log.Information("Successfully created Epic Games auth. Expiration {expiration}", auth.ExpiresAt);
+        SaveSettings();
+        return true;
+    }
+
+    private void CreateSettings()
+    {
+        Current ??= new UserSettings();
+
+        var profileName = App.Ask(
+            "What [62]name[/] would you use for the [62]Profile[/]? (type [236]d[/] for use the default one):"
+        );
+        if (profileName != "d")
+        {
+            Current.Profiles.ProfileId = profileName;
+        }
+
+        AskPath(EModelType.ProfileAthena);
+        AskPath(EModelType.ItemShopCatalog);
+        Current.UseDiscordRPC = AnsiConsole.Confirm("Do you want to use the Discord Presence?");
+
+        SaveSettings(); // save settings for prevent unsaving on application exit
+    }
+
+    private void AskPath(EModelType forModel)
+    {
+        bool errored = false;
+
+        onInvalidPath:
+        {
+            var path = App.Ask(
+                $"Insert the [62]path[/] to use for save the [62]{forModel.DisplayName()}[/] (type [236]d[/] for use the default one):",
+                errored ? 2 : 1
+            );
+
+            if (path != "d")
+            {
+                path = path.Replace("\"", "").Trim();
+                if (!Directory.Exists(path))
+                {
+                    errored = true;
+                    Log.Error("The directory inserted doesn't exists.");
+                    goto onInvalidPath;
+                }
+
+                switch (forModel)
+                {
+                    case EModelType.ProfileAthena:
+                        Current!.Profiles.OutputPath = path;
+                        break;
+                    case EModelType.ItemShopCatalog:
+                        Current!.Catalog.OutputPath = path;
+                        break;
+                }
+
+                AthenaUtils.ClearConsoleLines(1);
+                Log.Information("{type} path successfully set to {dir}.", forModel.DisplayName(), path);
+            }
+        }
+    }
+}

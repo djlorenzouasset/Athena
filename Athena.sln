@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.14.36623.8 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Athena", "Athena\Athena.csproj", "{EE35658B-FDFE-4C64-922C-A61B2F50B5A2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Athena", "Athena\Athena.csproj", "{4485A066-C3C8-4151-8942-3025B9F6775F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUE4Parse", "CUE4Parse\CUE4Parse\CUE4Parse.csproj", "{7E119EE9-527A-4BC5-B510-C8B8DD6935DA}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUE4Parse-Conversion", "CUE4Parse\CUE4Parse-Conversion\CUE4Parse-Conversion.csproj", "{608AD7A5-E77A-4433-804F-26FB9539BA97}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUE4Parse", "Dependencies\CUE4Parse\CUE4Parse\CUE4Parse.csproj", "{23433E27-2A66-7449-C9D6-051110729E0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EpicManifestParser", "EpicManifestParser\src\EpicManifestParser\EpicManifestParser.csproj", "{AF75D722-D943-480F-86E4-0689EA7323E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUE4Parse-Conversion", "Dependencies\CUE4Parse\CUE4Parse-Conversion\CUE4Parse-Conversion.csproj", "{CE4AB483-EA9C-0A55-BF0B-2A51D1A85DB1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,24 +17,27 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EE35658B-FDFE-4C64-922C-A61B2F50B5A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EE35658B-FDFE-4C64-922C-A61B2F50B5A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EE35658B-FDFE-4C64-922C-A61B2F50B5A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EE35658B-FDFE-4C64-922C-A61B2F50B5A2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7E119EE9-527A-4BC5-B510-C8B8DD6935DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7E119EE9-527A-4BC5-B510-C8B8DD6935DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7E119EE9-527A-4BC5-B510-C8B8DD6935DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7E119EE9-527A-4BC5-B510-C8B8DD6935DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{608AD7A5-E77A-4433-804F-26FB9539BA97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{608AD7A5-E77A-4433-804F-26FB9539BA97}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{608AD7A5-E77A-4433-804F-26FB9539BA97}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{608AD7A5-E77A-4433-804F-26FB9539BA97}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AF75D722-D943-480F-86E4-0689EA7323E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AF75D722-D943-480F-86E4-0689EA7323E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AF75D722-D943-480F-86E4-0689EA7323E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AF75D722-D943-480F-86E4-0689EA7323E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4485A066-C3C8-4151-8942-3025B9F6775F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4485A066-C3C8-4151-8942-3025B9F6775F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4485A066-C3C8-4151-8942-3025B9F6775F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4485A066-C3C8-4151-8942-3025B9F6775F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23433E27-2A66-7449-C9D6-051110729E0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23433E27-2A66-7449-C9D6-051110729E0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23433E27-2A66-7449-C9D6-051110729E0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23433E27-2A66-7449-C9D6-051110729E0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE4AB483-EA9C-0A55-BF0B-2A51D1A85DB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE4AB483-EA9C-0A55-BF0B-2A51D1A85DB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE4AB483-EA9C-0A55-BF0B-2A51D1A85DB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE4AB483-EA9C-0A55-BF0B-2A51D1A85DB1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{23433E27-2A66-7449-C9D6-051110729E0C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{CE4AB483-EA9C-0A55-BF0B-2A51D1A85DB1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6DCDA84D-28E2-4D95-A60C-86490965AC8F}
 	EndGlobalSection
 EndGlobal

@@ -1,9 +1,9 @@
 ﻿using RestSharp;
 using EpicManifestParser.Api;
-using Athena.Models.API.Responses;
 using Athena.Models.API.Base;
+using Athena.Models.API.Responses;
 
-namespace Athena.Rest.Endpoints;
+namespace Athena.Models.API;
 
 public class EpicGamesAPI(RestClient client) : AthenaRestClient(client)
 {

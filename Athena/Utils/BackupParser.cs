@@ -2,38 +2,18 @@
 using K4os.Compression.LZ4.Streams;
 using CommunityToolkit.HighPerformance;
 using CUE4Parse.UE4.Readers;
-using Athena.Services;
 
 namespace Athena.Utils;
 
-public static class FBackup
+public class BackupParser
 {
     private const uint _LZ4Magic = 0x184D2204u;
     private const uint _backupMagic = 0x504B4246;
-    
-    public static async Task<FileInfo?> Download()
-    {
-        var backups = await APIEndpoints.Instance.Athena.GetBackupsAsync();
-        if (backups is null || backups.Length == 0)
-        {
-            return null;
-        }
-
-        var backup = backups.Last();
-        var file = new FileInfo(Path.Combine(Directories.Backups.FullName, backup.FileName));
-
-        if (await APIEndpoints.Instance.DownloadFileAsync(backup.DownloadUrl, file.FullName))
-        {
-            return file; // directly return the previous instance of FileInfo
-        }
-
-        return null;
-    }
 
     public static async Task<HashSet<string>> Parse(FileInfo backupPath)
     {
         var entries = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        
+
         await using var memoryStream = new MemoryStream();
         await using var backupStream = new FileStream(backupPath.FullName, FileMode.Open);
 
@@ -66,7 +46,7 @@ public static class FBackup
             entries.Add(fullPath);
         }
 
-        Log.Information("Parsed backup {0} version {1} in {2}s ({3}ms).", backupPath.Name, 
+        Log.Information("Parsed backup {name} version {version} in {sec}s ({ms}ms).", backupPath.Name,
             Math.Round(start.Elapsed.TotalSeconds, 2), Math.Round(start.Elapsed.TotalMilliseconds), version);
 
         return entries;

@@ -1,13 +1,11 @@
 ﻿using CUE4Parse.Utils;
-using Athena.Models.App;
 using Athena.Utils;
+using Athena.Models.Catalog;
 
-namespace Athena.Services;
+namespace Athena.Builders;
 
 public class ShopBuilder : BaseBuilder
 {
-    private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"; // characters for the offerId
-
     private readonly ShopModel _shop = new();
     private readonly List<ICatalogEntry> _catalogEntries = [];
 
@@ -51,7 +49,7 @@ public class ShopBuilder : BaseBuilder
                 new() { Key = "SectionId", Value = "Featured" },
                 new() { Key = "TileSize", Value = "Size_2_x_2" },
                 new() { Key = "LayoutId", Value = layoutId },
-                ..SettingsService.Current.Catalog.CardGradients
+                ..Settings.Current.Catalog.CardGradients
             ];
 
             var bundleEntry = new BundleCatalogEntry
@@ -91,7 +89,7 @@ public class ShopBuilder : BaseBuilder
                 new() { Key = "SectionId", Value = "Daily" },
                 new() { Key = "TileSize", Value = "Size_1_x_2" },
                 new() { Key = "LayoutId", Value = layoutId },
-                ..SettingsService.Current.Catalog.CardGradients
+                ..Settings.Current.Catalog.CardGradients
             ];
 
             var itemEntry = new CosmeticCatalogEntry
@@ -113,6 +111,7 @@ public class ShopBuilder : BaseBuilder
         }
     }
 
+    private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private string GenerateRandomOfferId(int total = 45)
     {
         var chars = new char[total];
@@ -124,7 +123,8 @@ public class ShopBuilder : BaseBuilder
         return new(chars);
     }
 
-    private string DAv2ToDA(string DAv2, bool bundle = false) // format the DAv2 to a DA shop asset 
+    // format the DAv2 to a DA shop asset 
+    private string DAv2ToDA(string DAv2, bool bundle = false)
     {
         string id;
         string assetName;

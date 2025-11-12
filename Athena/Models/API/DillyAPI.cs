@@ -1,7 +1,6 @@
 ﻿using RestSharp;
-using Athena.Services;
-using Athena.Models.API.Responses;
 using Athena.Models.API.Base;
+using Athena.Models.API.Responses;
 
 namespace Athena.Models.API;
 

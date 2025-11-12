@@ -1,3 +1,3 @@
 ﻿using Athena.Core;
 
-AthenaCore.Init().GetAwaiter().GetResult();
+await new AthenaCore().Initialize();

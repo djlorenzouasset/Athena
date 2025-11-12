@@ -3,22 +3,30 @@ using Athena.Extensions;
 
 namespace Athena.Services;
 
-public static class DiscordRichPresence
+public class DiscordService
 {
     private const string APP_ID = "1142239120471634042";
 
-    private static DiscordRpcClient _client = null!; 
+    private DiscordRpcClient? _client;
     private static readonly RichPresence _defaultPresence = new()
     {
-        Timestamps = new() { Start = DateTime.UtcNow },
-        Assets = new() { LargeImageKey = "logo", LargeImageText = $"Athena v{Globals.Version}" },
-        Buttons = [
+        Timestamps = new()
+        { 
+            Start = DateTime.UtcNow 
+        },
+        Assets = new() 
+        { 
+            LargeImageKey = "logo",
+            LargeImageText = $"Athena {Globals.Version.DisplayName}" 
+        },
+        Buttons = 
+        [
             new() { Label = "Download", Url = Globals.GITHUB_URL },
             new() { Label = "Join Athena", Url = Globals.DISCORD_URL }
         ]
     };
 
-    public static void Initialize()
+    public void Initialize()
     {
         _client = new DiscordRpcClient(APP_ID);
         _client.OnReady += (_, args) => Log.Information("Discord Presence started for {username}", args.User.Username);
@@ -27,12 +35,12 @@ public static class DiscordRichPresence
         _client.SetPresence(_defaultPresence);
     }
 
-    public static void Update(string text)
+    public void Update(string text)
     {
         _client?.UpdateState(text);
     }
 
-    public static void Update(EModelType model)
+    public void Update(EModelType model)
     {
         _client?.UpdateState($"Generating {model.DisplayName()}");
     }

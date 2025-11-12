@@ -5,18 +5,18 @@ namespace Athena.Services;
 public static class Message
 {
     // buttons
-    public static readonly uint MB_OK = 0x00000000;
-    public static readonly uint MB_YESNO = 0x00000004;
-    public static readonly uint MB_DEFBUTTON1 = 0x00000000;
+    public const uint MB_OK = 0x00000000;
+    public const uint MB_YESNO = 0x00000004;
+    public const uint MB_DEFBUTTON1 = 0x00000000;
 
     // selected buttons
-    public static readonly int BT_OK = 0x1;
-    public static readonly int BT_YES = 0x6;
+    public const uint BT_OK = 0x1;
+    public const uint BT_YES = 0x6;
 
     // icons
-    public static readonly uint MB_ICONERROR = 0x00000010;
-    public static readonly uint MB_ICONWARNING = 0x00000030;
-    public static readonly uint MB_ICONINFORMATION = 0x00000040;
+    public const uint MB_ICONERROR = 0x00000010;
+    public const uint MB_ICONWARNING = 0x00000030;
+    public const uint MB_ICONINFORMATION = 0x00000040;
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     private static extern int MessageBox(IntPtr hInstance, string lpText, string lpCaption, uint type);

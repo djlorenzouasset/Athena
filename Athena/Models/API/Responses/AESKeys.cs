@@ -1,4 +1,5 @@
 ﻿using CUE4Parse.UE4.Objects.Core.Misc;
+using Newtonsoft.Json;
 
 namespace Athena.Models.API.Responses;
 
@@ -7,7 +8,7 @@ public class AESKeys
     public string MainKey;
     public List<DynamicKey> DynamicKeys;
 
-    public List<FGuid> GuidsList => [..DynamicKeys.Select(x => new FGuid(x.Guid))];
+    [JsonIgnore] public IReadOnlyList<FGuid> GuidsList => [..DynamicKeys.Select(x => new FGuid(x.Guid))];
 }
 
 public class DynamicKey
