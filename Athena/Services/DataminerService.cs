@@ -130,15 +130,16 @@ public class DataminerService
 
     private async Task LoadKeys()
     {
-        AESKeys = await Api.Dilly.GetAESKeysAsync();
-        if (AESKeys is null)
+        var keysReponse = await Api.Dilly.GetAESKeysAsync();
+        if (keysReponse is null)
         {
             Log.Warning("AES Keys response was invalid. Trying to load local keys.");
             LoadLocalKeys();
             return;
         }
 
-        Settings.Current.LocalKeys = AESKeys;
+        AESKeys = keysReponse;
+        Settings.Current.LocalKeys = keysReponse;
         Settings.SaveSettings();
 
         LoadKey(Globals.ZERO_GUID, new(AESKeys.MainKey));

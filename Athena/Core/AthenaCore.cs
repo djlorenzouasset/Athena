@@ -1,4 +1,6 @@
-﻿namespace Athena.Core;
+﻿using Athena.Models;
+
+namespace Athena.Core;
 
 public class AthenaCore
 {
@@ -38,7 +40,7 @@ public class AthenaCore
 
         await UEParser.Initialize(); // init the parser
 
-        if (Settings.Current.LastDonationPopup.AddDays(7) <= DateTime.UtcNow)
+        if (Settings.Current.LastDonationPopup.AddDays(7) < DateTime.UtcNow)
         {
             Settings.Current.LastDonationPopup = DateTime.UtcNow;
             Settings.SaveSettings();

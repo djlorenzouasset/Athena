@@ -1,4 +1,6 @@
-﻿namespace Athena.Models.Catalog;
+﻿using Newtonsoft.Json;
+
+namespace Athena.Models.Catalog;
 
 public class ShopModel
 {
@@ -22,9 +24,11 @@ public class Meta
     public string TileSize = string.Empty;
     public string AnalyticOfferGroupId = "AnalyticOfferGroupId";
     public string FirstSeen = "31/12/9999";
-    public string Color1 = "#424242";
-    public string Color2 = "#212121";
-    public string Color3 = "#121212";
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public string ViolatorTag = null!;
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public string ViolatorIntensity = null!;
 }
 
 public class Requirement
@@ -44,14 +48,14 @@ public class GiftInfo
 
 public class MetaInfo
 {
-    public string Key = string.Empty;
-    public string Value = string.Empty;
+    public string Key { get; set; } = string.Empty;
+    public string Value { get; set; } = string.Empty;
 }
 
 public class ItemGrant
 {
     public string TemplateId = string.Empty;
-    public int Quantity = 10;
+    public int Quantity = 1;
 }
 
 public class Item

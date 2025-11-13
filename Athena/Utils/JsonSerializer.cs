@@ -5,18 +5,13 @@ namespace Athena.Utils;
 
 public static class CustomJsonSerializer
 {
-    private static readonly JsonSerializerSettings _jsonSettings = new()
+    private static readonly JsonSerializerSettings _serializerSettings = new()
     {
-        ContractResolver = new DefaultContractResolver
-        {
-            NamingStrategy = new CamelCaseNamingStrategy
-            {
-                OverrideSpecifiedNames = true
-            }
-        },
-        Formatting = Formatting.Indented
+        Formatting = Formatting.Indented,
+        ObjectCreationHandling = ObjectCreationHandling.Replace,
+        ContractResolver = new CamelCasePropertyNamesContractResolver(),
     };
 
-    public static string SerializeObject(object obj)
-        => JsonConvert.SerializeObject(obj, _jsonSettings);
+    public static string Serialize(object obj) => JsonConvert.SerializeObject(obj, _serializerSettings);
+    public static T? Deserialize<T>(string str) => JsonConvert.DeserializeObject<T>(str, _serializerSettings);
 }

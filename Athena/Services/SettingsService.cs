@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Spectre.Console;
+﻿using Spectre.Console;
 using Athena.Utils;
 using Athena.Models;
 using Athena.Extensions;
@@ -10,8 +9,10 @@ public class SettingsService
 {
     public UserSettings Current = null!;
 
-    private readonly string _file = Path.Combine(Environment.GetFolderPath(
-        Environment.SpecialFolder.ApplicationData), "settingsV2.json");
+    private readonly string _file = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), 
+        "settingsV2.json"
+    );
 
     public void LoadSettings()
     {
@@ -22,12 +23,12 @@ public class SettingsService
         }
 
         var raw = File.ReadAllText(_file);
-        Current = JsonConvert.DeserializeObject<UserSettings>(raw)!;
+        Current = CustomJsonSerializer.Deserialize<UserSettings>(raw)!;
     }
 
     public void SaveSettings()
     {
-        var json = CustomJsonSerializer.SerializeObject(Current!);
+        var json = CustomJsonSerializer.Serialize(Current!);
         File.WriteAllText(_file, json);
     }
 
