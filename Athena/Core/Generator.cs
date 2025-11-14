@@ -159,8 +159,8 @@ public class Generator
         }
 
         string savePath = bIsProfile
-            ? Path.Combine(Settings.Current.Profiles.OutputPath, "profile_athena.json")
-            : Path.Combine(Settings.Current.Catalog.OutputPath, Settings.Current.Catalog.ShopName);
+            ? Path.Combine(Settings.Current.ProfilesSettings.OutputPath, "profile_athena.json")
+            : Path.Combine(Settings.Current.CatalogSettings.OutputPath, Settings.Current.CatalogSettings.ShopName);
 
         int added = 0;
         IBuilder builder = bIsProfile ? new ProfileBuilder() : new ShopBuilder();

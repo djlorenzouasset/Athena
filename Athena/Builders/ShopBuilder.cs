@@ -49,7 +49,6 @@ public class ShopBuilder : BaseBuilder
                 new() { Key = "SectionId", Value = "Featured" },
                 new() { Key = "TileSize", Value = "Size_2_x_2" },
                 new() { Key = "LayoutId", Value = layoutId },
-                ..Settings.Current.Catalog.CardGradients
             ];
 
             var bundleEntry = new BundleCatalogEntry
@@ -89,7 +88,6 @@ public class ShopBuilder : BaseBuilder
                 new() { Key = "SectionId", Value = "Daily" },
                 new() { Key = "TileSize", Value = "Size_1_x_2" },
                 new() { Key = "LayoutId", Value = layoutId },
-                ..Settings.Current.Catalog.CardGradients
             ];
 
             var itemEntry = new CosmeticCatalogEntry

@@ -21,14 +21,19 @@ public class Meta
     public string NewDisplayAssetPath = string.Empty;
     public string SectionId = string.Empty;
     public string LayoutId = string.Empty;
+    public string TemplateId = string.Empty;
     public string TileSize = string.Empty;
     public string AnalyticOfferGroupId = "AnalyticOfferGroupId";
     public string FirstSeen = "31/12/9999";
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string ViolatorTag = null!;
+
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string ViolatorIntensity = null!;
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public string TileBackgroundMaterial = null!;
 }
 
 public class Requirement

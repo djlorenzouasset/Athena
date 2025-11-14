@@ -36,17 +36,17 @@ public class SettingsService
     {
         bool save = false;
 
-        if (string.IsNullOrEmpty(Current.Profiles.OutputPath) || !Directory.Exists(Current.Profiles.OutputPath))
+        if (string.IsNullOrEmpty(Current.ProfilesSettings.OutputPath) || !Directory.Exists(Current.ProfilesSettings.OutputPath))
         {
             save = true;
-            Current.Profiles.OutputPath = Directories.Output;
-            Log.Warning("Profiles output path is invalid. It has now been set to the default one: {path}.", Current.Profiles.OutputPath);
+            Current.ProfilesSettings.OutputPath = Directories.Output;
+            Log.Warning("Profiles output path is invalid. It has now been set to the default one: {path}.", Current.ProfilesSettings.OutputPath);
         }
-        if (string.IsNullOrEmpty(Current.Catalog.OutputPath) || !Directory.Exists(Current.Catalog.OutputPath))
+        if (string.IsNullOrEmpty(Current.CatalogSettings.OutputPath) || !Directory.Exists(Current.CatalogSettings.OutputPath))
         {
             save = true;
-            Current.Catalog.OutputPath = Directories.Output;
-            Log.Warning("ItemShop Catalog output path is invalid. It has now been set to the default one: {path}.", Current.Catalog.OutputPath);
+            Current.CatalogSettings.OutputPath = Directories.Output;
+            Log.Warning("ItemShop Catalog output path is invalid. It has now been set to the default one: {path}.", Current.CatalogSettings.OutputPath);
         }
         if (Current.UseCustomMappingFile && string.IsNullOrEmpty(Current.CustomMappingFile))
         {
@@ -91,7 +91,7 @@ public class SettingsService
         );
         if (profileName != "d")
         {
-            Current.Profiles.ProfileId = profileName;
+            Current.ProfilesSettings.ProfileId = profileName;
         }
 
         AskPath(EModelType.ProfileAthena);
@@ -125,10 +125,10 @@ public class SettingsService
                 switch (forModel)
                 {
                     case EModelType.ProfileAthena:
-                        Current!.Profiles.OutputPath = path;
+                        Current!.ProfilesSettings.OutputPath = path;
                         break;
                     case EModelType.ItemShopCatalog:
-                        Current!.Catalog.OutputPath = path;
+                        Current!.CatalogSettings.OutputPath = path;
                         break;
                 }
 

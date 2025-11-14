@@ -21,10 +21,7 @@ public class BundleCatalogEntry : ICatalogEntry
     public bool Refundable = true;
     public List<MetaInfo> MetaInfo = [];
     public string DisplayAssetPath = string.Empty;
-    public List<ItemGrant> ItemGrants = 
-    [
-        new() { TemplateId = "AthenaCharacter:CID_349_Athena_Commando_M_Banana" }
-    ];
+    public List<ItemGrant> ItemGrants = [];
     public List<object> AdditionalGrants = [];
     public int SortPriority = -1;
     public int CatalogGroupPriority = 0;
@@ -32,24 +29,20 @@ public class BundleCatalogEntry : ICatalogEntry
 
 public class DynamicBundleInfo
 {
-    public int DiscountedBasePrice = Settings.Current.Catalog.BundlePrice;
-    public int RegularBasePrice = Settings.Current.Catalog.BundlePrice;
-    public int FloorPrice = Settings.Current.Catalog.BundlePrice;
+    public int DiscountedBasePrice = -1;
+    public int RegularBasePrice = -1;
+    public int FloorPrice = -1;
     public string CurrencyType = "MtxCurrency";
     public string CurrencySubType = string.Empty;
     public string DisplayType = "AmountOff";
-    public List<BundleRequirement> BundleItems = [new() /* we add an empty one (??) */];
+    public List<BundleRequirement> BundleItems = [];
 }
 
 public class BundleRequirement
 {
     public bool bCanOwnMultiple = true;
-    public int RegularPrice = Settings.Current.Catalog.ItemPrice;
-    public int DiscountedPrice = Settings.Current.Catalog.ItemPrice;
-    public int AlreadyOwnedPriceReduction = Settings.Current.Catalog.ItemPrice;
-    public Item Item = new()
-    { 
-        TemplateId = "AthenaCharacter:CID_349_Athena_Commando_M_Banana", 
-        Quantity = 1 
-    };
+    public int RegularPrice = -1;
+    public int DiscountedPrice = -1;
+    public int AlreadyOwnedPriceReduction = -1;
+    public Item Item = new();
 }
