@@ -33,7 +33,7 @@ public static class AthenaUtils
 
         var instruments = new string[] {
             "Mic", "Keytar", "Guitar",
-            "Drum", "Drumkit", "Bass"
+            "Drum", "DrumKit", "Bass"
         };
 
         string prefix;
@@ -49,7 +49,7 @@ public static class AthenaUtils
         {
             var parts = itemId.Split('_');
             var last = parts[^1];
-            if (instruments.Contains(last))
+            if (instruments.Contains(last, StringComparer.OrdinalIgnoreCase))
             {
                 prefix = last;
             }
