@@ -139,6 +139,12 @@ public class AssetsService
         },
         new ItemEntry
         {
+            BackendType = "CosmeticVariantToken",
+            ClassNames = [],
+            Prefixes = ["VTID"]
+        },
+        new ItemEntry
+        {
             BackendType = "SparksMicrophone",
             ClassNames = ["SparksMicItemDefinition"],
             Prefixes = ["Mic"]
