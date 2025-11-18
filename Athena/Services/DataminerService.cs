@@ -195,11 +195,11 @@ public class DataminerService
                     continue;
 
                 // filter only new files (used when customItemsOrOldPaths contains backup files aka old files)
-                if (bNew && (customItemsOrOldPaths?.Contains(path) ?? false))
+                if (bNew && (customItemsOrOldPaths?.Contains(path, StringComparer.OrdinalIgnoreCase) ?? false))
                     continue;
 
                 // this filter is used when the user wants only selected items (by ID)
-                if (bIsCustom && !customItemsOrOldPaths!.Contains(entry.NameWithoutExtension.ToLower()))
+                if (bIsCustom && !customItemsOrOldPaths!.Contains(entry.NameWithoutExtension, StringComparer.OrdinalIgnoreCase))
                     continue;
 
                 (bNew || bIsCustom ? NewEntries : AllEntries).Add(entry);

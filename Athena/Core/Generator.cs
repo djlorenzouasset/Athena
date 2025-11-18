@@ -276,7 +276,7 @@ public class Generator
     private List<string> GetCustomCosmetics(EModelType model)
     {
         var type = model == EModelType.ProfileAthena ? "cosmetics ids" : "DAv2s";
-        var selected = App.Ask($"Insert the [62]{type}[/] you want to add separated by [62];[/]:");
+        var selected = App.Ask($"Insert the [62]{type}[/] you want to add separated by [62];[/]:", 2);
         return [..selected.Split(';').Select(x => x.Trim())];
     }
 
