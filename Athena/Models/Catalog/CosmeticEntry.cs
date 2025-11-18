@@ -30,9 +30,9 @@ public class Price
 {
     public string CurrencyType = "MtxCurrency";
     public string CurrencySubType = string.Empty;
-    public int RegularPrice = -1;
-    public int DynamicRegularPrice = -1;
-    public int FinalPrice = -1;
+    public int RegularPrice = 0;
+    public int DynamicRegularPrice = 0;
+    public int FinalPrice = 0;
     public DateTime SaleExpiration = new(9999, 12, 31, 23, 59, 59);
-    public int BasePrice = -1;
+    public int BasePrice = 0;
 }

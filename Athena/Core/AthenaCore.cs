@@ -17,22 +17,22 @@ public class AthenaCore
         await Updater.CheckForUpdates();
 #endif
 
-        Settings.LoadSettings();
-        Settings.ValidateSettings();
+        AppSettings.LoadSettings();
+        AppSettings.ValidateSettings();
         Console.Clear(); // clear the console after settings loading and validation
 
         // TODO: understand if this is really needed (??)
         await Dependencies.EnsureDependencies();
 
-        if (Settings.Current.UseDiscordRPC)
+        if (AppSettings.Default.UseDiscordRPC)
         {
             Discord.Initialize();
         }
 
-        var epicAuth = Settings.Current.EpicAuth;
+        var epicAuth = AppSettings.Default.EpicAuth;
         if (epicAuth is null || !epicAuth.IsValid())
         {
-            if (!await Settings.CreateAuth())
+            if (!await AppSettings.CreateAuth())
             {
                 App.ExitThread(-1);
             }
@@ -40,10 +40,10 @@ public class AthenaCore
 
         await UEParser.Initialize(); // init the parser
 
-        if (Settings.Current.LastDonationPopup.AddDays(7) < DateTime.UtcNow)
+        if (AppSettings.Default.LastDonationPopup.AddDays(7) < DateTime.UtcNow)
         {
-            Settings.Current.LastDonationPopup = DateTime.UtcNow;
-            Settings.SaveSettings();
+            AppSettings.Default.LastDonationPopup = DateTime.UtcNow;
+            AppSettings.SaveSettings();
 
             // TODO: show popup and handle buttons
         }

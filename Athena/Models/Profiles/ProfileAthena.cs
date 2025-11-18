@@ -5,7 +5,7 @@ public class SandboxLoadout : IProfileItem
     public LockerSlotsData LockerSlotsData = new();
     public int UseCount = 1;
     public string BannerIconTemplate = "BRS11_Prestige5";
-    public string LockerName = Settings.Current.ProfilesSettings.ProfileId;
+    public string LockerName = AppSettings.Default.ProfilesSettings.ProfileId;
     public string BannerColorTemplate = "DefaultColor40";
     public bool ItemSeen = false;
     public bool Favorite = false;
@@ -18,7 +18,7 @@ public class ProfileAthena
     public DateTime Updated = DateTime.UtcNow;
     public int Rvn = 100;
     public int WipeNumber = 1;
-    public string AccountId = Settings.Current.ProfilesSettings.ProfileId;
+    public string AccountId = AppSettings.Default.ProfilesSettings.ProfileId;
     public string ProfileId = "athena";
     public string Version = "";
     public Dictionary<string, IProfileItem> Items = new() {
@@ -132,11 +132,11 @@ public class StatAttributes
     public string PartyAssistQuest = string.Empty;
     public List<object> PurchasedBattlePassTierOffers = [];
     public float RestedXpExchange = -1f;
-    public int Level = Settings.Current.ProfilesSettings.BattlePassLevel;
+    public int Level = AppSettings.Default.ProfilesSettings.BattlePassLevel;
     public long XpOverflow = -1;
     public int RestedXp = -1;
     public float RestedXpMult = -1f;
-    public int AccountLevel = Settings.Current.ProfilesSettings.BattlePassLevel;
+    public int AccountLevel = AppSettings.Default.ProfilesSettings.BattlePassLevel;
     public CompetitiveIdentity CompetitiveIdentity = new();
     public int InventoryLimitBonus = 0;
     public string LastAppliedLoadout = "sandbox_loadout";

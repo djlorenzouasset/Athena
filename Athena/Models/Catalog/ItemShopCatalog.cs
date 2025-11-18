@@ -27,6 +27,18 @@ public class Meta
     public string FirstSeen = "31/12/9999";
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public string Color1 = null!;
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public string Color2 = null!;
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public string Color3 = null!;
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public string TextBackgroundColor = null!;
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string ViolatorTag = null!;
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

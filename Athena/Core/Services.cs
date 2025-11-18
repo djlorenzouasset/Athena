@@ -10,7 +10,7 @@ public static class AthenaServices
     public static readonly DirectoriesService Directories = new();
 
     public static readonly UpdaterService Updater = new();
-    public static readonly SettingsService Settings = new();
+    public static readonly SettingsService AppSettings = new();
     public static readonly DependencyService Dependencies = new();
 
     public static readonly AssetsService Assets = new();

@@ -159,8 +159,8 @@ public class Generator
         }
 
         string savePath = bIsProfile
-            ? Path.Combine(Settings.Current.ProfilesSettings.OutputPath, "profile_athena.json")
-            : Path.Combine(Settings.Current.CatalogSettings.OutputPath, Settings.Current.CatalogSettings.ShopName);
+            ? Path.Combine(AppSettings.Default.ProfilesSettings.OutputPath, "profile_athena.json")
+            : Path.Combine(AppSettings.Default.CatalogSettings.OutputPath, AppSettings.Default.CatalogSettings.ShopName);
 
         int added = 0;
         IBuilder builder = bIsProfile ? new ProfileBuilder() : new ShopBuilder();
@@ -383,8 +383,8 @@ public class Generator
             Log.Information("Detected {tot} new Dynamic Keys!", newKeys.Count);
 
             UEParser.AESKeys = res;
-            Settings.Current.LocalKeys = res;
-            Settings.SaveSettings();
+            AppSettings.Default.LocalKeys = res;
+            AppSettings.SaveSettings();
 
             return newKeys;
         }

@@ -22,10 +22,10 @@ public class DataminerService
 
     public async Task Initialize()
     {
-        Log.ForContext("NoConsole", true).Information("UE version: {version}", Settings.Current.EngineVersion);
+        Log.ForContext("NoConsole", true).Information("UE version: {version}", AppSettings.Default.EngineVersion);
 
         Manifest = new();
-        Provider = new("", new(Settings.Current.EngineVersion), StringComparer.OrdinalIgnoreCase);
+        Provider = new("", new(AppSettings.Default.EngineVersion), StringComparer.OrdinalIgnoreCase);
 
         await InitOodle();
         await InitZlib();
@@ -69,7 +69,7 @@ public class DataminerService
 
     private async Task LoadEpicManifest()
     {
-        var auth = Settings.Current.EpicAuth;
+        var auth = AppSettings.Default.EpicAuth;
         ManifestInfo? manifest = await Api.EpicGames.GetManifestAsync(auth);
         if (manifest is null)
         {
@@ -95,14 +95,14 @@ public class DataminerService
     private async Task LoadMappings()
     {
         string? mapping;
-        if (Settings.Current.UseCustomMappingFile)
+        if (AppSettings.Default.UseCustomMappingFile)
         {
-            if (!File.Exists(Settings.Current.CustomMappingFile))
+            if (!File.Exists(AppSettings.Default.CustomMappingFile))
             {
-                Log.Error("Custom mapping file is enabled but no mapping has been found for {mapping}.", Settings.Current.CustomMappingFile);
+                Log.Error("Custom mapping file is enabled but no mapping has been found for {mapping}.", AppSettings.Default.CustomMappingFile);
                 return;
             }
-            mapping = Settings.Current.CustomMappingFile;
+            mapping = AppSettings.Default.CustomMappingFile;
         }
         else
         {
@@ -139,8 +139,8 @@ public class DataminerService
         }
 
         AESKeys = keysReponse;
-        Settings.Current.LocalKeys = keysReponse;
-        Settings.SaveSettings();
+        AppSettings.Default.LocalKeys = keysReponse;
+        AppSettings.SaveSettings();
 
         LoadKey(Globals.ZERO_GUID, new(AESKeys.MainKey));
         LoadKeysList(AESKeys.DynamicKeys);
@@ -149,15 +149,15 @@ public class DataminerService
 
     private void LoadLocalKeys()
     {
-        if (Settings.Current.LocalKeys is null)
+        if (AppSettings.Default.LocalKeys is null)
         {
             Log.Warning("No local keys found. Athena might not work as expected.");
             return;
         }
 
-        LoadKey(Globals.ZERO_GUID, new FAesKey(Settings.Current.LocalKeys.MainKey));
-        LoadKeysList(Settings.Current.LocalKeys.DynamicKeys);
-        Log.Information("Loaded {total} local Dynamic Keys.", Settings.Current.LocalKeys.DynamicKeys.Count);
+        LoadKey(Globals.ZERO_GUID, new FAesKey(AppSettings.Default.LocalKeys.MainKey));
+        LoadKeysList(AppSettings.Default.LocalKeys.DynamicKeys);
+        Log.Information("Loaded {total} local Dynamic Keys.", AppSettings.Default.LocalKeys.DynamicKeys.Count);
     }
 
     private void TestMainKey()

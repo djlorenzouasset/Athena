@@ -29,9 +29,9 @@ public class BundleCatalogEntry : ICatalogEntry
 
 public class DynamicBundleInfo
 {
-    public int DiscountedBasePrice = -1;
-    public int RegularBasePrice = -1;
-    public int FloorPrice = -1;
+    public int DiscountedBasePrice = 0;
+    public int RegularBasePrice = 0;
+    public int FloorPrice = 0;
     public string CurrencyType = "MtxCurrency";
     public string CurrencySubType = string.Empty;
     public string DisplayType = "AmountOff";
@@ -41,8 +41,8 @@ public class DynamicBundleInfo
 public class BundleRequirement
 {
     public bool bCanOwnMultiple = true;
-    public int RegularPrice = -1;
-    public int DiscountedPrice = -1;
-    public int AlreadyOwnedPriceReduction = -1;
+    public int RegularPrice = 0;
+    public int DiscountedPrice = 0;
+    public int AlreadyOwnedPriceReduction = 0;
     public Item Item = new();
 }
