@@ -1,6 +1,4 @@
-﻿using Athena.Models;
-
-namespace Athena.Core;
+﻿namespace Athena.Core;
 
 public class AthenaCore
 {

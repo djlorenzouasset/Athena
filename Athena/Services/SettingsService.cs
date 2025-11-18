@@ -96,7 +96,7 @@ public class SettingsService
 
         AskPath(EModelType.ProfileAthena);
         AskPath(EModelType.ItemShopCatalog);
-        Default.UseDiscordRPC = AnsiConsole.Confirm("Do you want to use the Discord Presence?");
+        Default.UseDiscordRPC = AnsiConsole.Confirm("Do you want to use the [62]Discord Presence[/]?");
 
         SaveSettings(); // save settings for prevent unsaving on application exit
     }
