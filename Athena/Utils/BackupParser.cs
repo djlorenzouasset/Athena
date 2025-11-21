@@ -47,7 +47,7 @@ public class BackupParser
         }
 
         Log.Information("Parsed backup {name} version {version} in {sec}s ({ms}ms).", backupPath.Name,
-            Math.Round(start.Elapsed.TotalSeconds, 2), Math.Round(start.Elapsed.TotalMilliseconds), version);
+            version, Math.Round(start.Elapsed.TotalSeconds, 2), Math.Round(start.Elapsed.TotalMilliseconds));
 
         return entries;
     }
