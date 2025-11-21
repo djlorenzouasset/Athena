@@ -19,9 +19,6 @@ public class AthenaCore
         AppSettings.ValidateSettings();
         Console.Clear(); // clear the console after settings loading and validation
 
-        // TODO: understand if this is really needed (??)
-        await Dependencies.EnsureDependencies();
-
         if (AppSettings.Default.UseDiscordRPC)
         {
             Discord.Initialize();
