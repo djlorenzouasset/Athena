@@ -6,12 +6,12 @@ namespace Athena.Models.API;
 
 public class AthenaEndpoints(RestClient client) : AthenaRestClient(client)
 {
-    protected override string BaseURL => "http://prod.athena.dev:8000";
+    //protected override string BaseURL => "http://prod.athena.dev:8000";
 
     // TODO: make these endpoints available on my localhost (ignore this stupid comment)
-    private const string NEWS_ENDPOINT = "api/v1/news";
-    private const string RELEASE_ENDPOINT = "api/v1/version";
-    private const string BACKUPS_ENDPOINT = "api/v1/backups";
+    private const string NEWS_ENDPOINT = "http://prod.athena.dev:8000/api/v1/news";
+    private const string RELEASE_ENDPOINT = "http://prod.athena.dev:8000/api/v1/version";
+    private const string BACKUPS_ENDPOINT = "https://laylaleaks.de/api/backups";
     //private const string MAPPINGS_ENDPOINT = "https://laylaleaks.de/api/mappings";
 
     public async Task<AthenaRelease?> GetReleaseInfoAsync()
