@@ -120,7 +120,7 @@ public class DataminerService
 
     private async Task<string?> GetMappings()
     {
-        var mapping = await Api.Athena.GetMappingAsync();
+        var mapping = await Api.Dilly.GetMappingAsync();
         if (mapping is null) return null;
 
         var path = Path.Combine(Directories.Mappings, mapping.FileName);

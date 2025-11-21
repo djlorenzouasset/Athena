@@ -6,10 +6,20 @@ namespace Athena.Models.API;
 
 public class DillyAPI(RestClient client) : AthenaRestClient(client)
 {
-    private const string AESKEYS_ENDPOINT = "https://export-service.dillyapis.com/v1/aes";
+    protected override string BaseURL => "https://export-service.dillyapis.com";
+
+    private const string AESKEYS_ENDPOINT = "v1/aes";
+    private const string MAPPINGS_ENDPOINT = "v1/mappings";
 
     public async Task<AESKeys?> GetAESKeysAsync(bool bLog = true)
     {
         return await ExecuteAsync<AESKeys>(AESKEYS_ENDPOINT, Method.Get, bLog);
+    }
+
+    public async Task<Mappings?> GetMappingAsync()
+    {
+        // this is very shit I know but is temporarily
+        var req = await ExecuteAsync<Mappings[]>(MAPPINGS_ENDPOINT);
+        return req?.FirstOrDefault();
     }
 }
