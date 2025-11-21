@@ -23,13 +23,13 @@ public class UpdaterService
 
         if (_releaseInfos.Version > Globals.Version)
         {
-            uint msgFlag = _releaseInfos.Required ? Message.MB_OK : Message.MB_YESNO | Message.MB_DEFBUTTON1;
+            uint msgFlag = _releaseInfos.Required ? MessageService.MB_OK : MessageService.MB_YESNO | MessageService.MB_DEFBUTTON1;
             string msgText = _releaseInfos.Required
                 ? $"Athena {_releaseInfos.Version.DisplayName} is now available. Install it in order to use the program."
                 : $"Athena {_releaseInfos.Version.DisplayName} is now available. Do you want to install it?";
 
-            int bUpdate = Message.Show("Update Available", msgText, msgFlag | Message.MB_ICONINFORMATION);
-            if ((_releaseInfos.Required || bUpdate == Message.BT_YES) && await DownloadUpdate())
+            int bUpdate = MessageService.Show("Update Available", msgText, msgFlag | MessageService.MB_ICONINFORMATION);
+            if ((_releaseInfos.Required || bUpdate == MessageService.BT_YES) && await DownloadUpdate())
             {
                 RunUpdater();
             }

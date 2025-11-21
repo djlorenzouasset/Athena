@@ -2,7 +2,7 @@
 
 namespace Athena.Services;
 
-public static class Message
+public static class MessageService
 {
     // buttons
     public const uint MB_OK = 0x00000000;
