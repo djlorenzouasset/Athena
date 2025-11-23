@@ -3,6 +3,15 @@ using Athena.Models;
 
 namespace Athena;
 
+public enum EReturnResult : int
+{
+    Error = 0, // >> error: used to display the "try again" question
+    Warning = 1, // >> warning: used to return the user to menu on non-user errors
+    Success = 2, // >> success: the task was completed without any issue
+
+    NoResult = 3 // >> no result: used to show the menu without issues
+}
+
 public enum EModelType : int
 {
     [Description("Profile Athena"), ItemType("Cosmetics")]
@@ -14,8 +23,8 @@ public enum EModelType : int
 
 public enum EGenerationType : int
 {
-    // ItemShopCatalog is disabled because we cannot create a shop too big
-    // as we dont know if the game can actually handle it, idk if has been ever tested
+    // ItemShopCatalog is disabled because we cannot create a shop that big
+    // as we dont know if the game can handle it, idk if has been ever tested
     [Description("All Cosmetics"), DisabledFor(EModelType.ItemShopCatalog)]
     AllCosmetics = 0, // >> add all cosmetics
 
@@ -35,7 +44,16 @@ public enum EGenerationType : int
     SelectedCosmeticsOnly = 5, // >> add only selected cosmetics by ID/DAv2
 
     [Description("Return to Menu")]
-    ReturnToMenu = 6 // >> return to main menù
+    ReturnToMenu = 6 // >> return to main menu
+}
+
+public enum EBackupOption : int
+{
+    [Description("Latest Backup")]
+    Streamed = 0,
+
+    [Description("Local Backup")]
+    Local = 1
 }
 
 public enum EBackupVersion : byte
