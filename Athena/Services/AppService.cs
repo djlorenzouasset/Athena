@@ -3,6 +3,7 @@ using Spectre.Console;
 using System.Runtime.InteropServices;
 using Serilog.Sinks.SystemConsole.Themes;
 using Athena.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Athena.Services;
 
@@ -67,6 +68,33 @@ public class AppService
             AthenaUtils.ClearConsoleLines(linesToClear);
             return textRead;
         }
+    }
+
+    public T SelectionPrompt<T>(string title, List<T> choices, Func<T, string>? converter = null) where T : notnull
+    {
+        var prompt = new SelectionPrompt<T>()
+            .Title(title)
+            .AddChoices(choices);
+
+        if (converter is not null)
+        {
+            prompt.UseConverter(converter);
+        }
+        return AnsiConsole.Prompt(prompt);
+    }
+
+    public List<T> MultiSelectionPrompt<T>(string title, List<T> choices, Func<T, string>? converter = null) where T : notnull
+    {
+        var prompt = new MultiSelectionPrompt<T>()
+            .Title(title)
+            .Required()
+            .AddChoices(choices);
+
+        if (converter is not null)
+        {
+            prompt.UseConverter(converter);
+        }
+        return AnsiConsole.Prompt(prompt);
     }
 
     public void Launch(string location, bool shellExecute = true)
