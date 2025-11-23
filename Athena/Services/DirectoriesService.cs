@@ -28,4 +28,11 @@ public class DirectoriesService
 
         return mapping?.FullName;
     }
+
+    public List<FileInfo> GetSavedBackups()
+    {
+        return [..new DirectoryInfo(Backups)
+            .GetFiles("*.fbkp")
+            .OrderByDescending(f => f.LastWriteTime)];
+    }
 }
