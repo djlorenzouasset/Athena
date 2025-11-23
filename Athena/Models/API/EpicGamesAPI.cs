@@ -12,11 +12,9 @@ public class EpicGamesAPI(RestClient client) : AthenaRestClient(client)
     private const string BASIC_TOKEN = "basic M2Y2OWU1NmM3NjQ5NDkyYzhjYzI5ZjFhZjA4YThhMTI6YjUxZWU5Y2IxMjIzNGY1MGE2OWVmYTY3ZWY1MzgxMmU=";
 
     public async Task<EpicAuth?> CreateAuthAsync()
-    {
-        return await ExecuteAsync<EpicAuth?>(OAUTH_ENDPOINT, Method.Post, true,
+        => await ExecuteAsync<EpicAuth?>(OAUTH_ENDPOINT, Method.Post, true,
             new HeaderParameter("Authorization", BASIC_TOKEN),
             new GetOrPostParameter("grant_type", "client_credentials"));
-    }
 
     public async Task<ManifestInfo?> GetManifestAsync(EpicAuth auth)
     {
