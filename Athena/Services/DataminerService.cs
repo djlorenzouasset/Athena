@@ -3,6 +3,7 @@ using EpicManifestParser.Api;
 using CUE4Parse.Compression;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.FileProvider;
+using CUE4Parse.FileProvider.Objects;
 using CUE4Parse.MappingsProvider;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.VirtualFileSystem;
@@ -15,10 +16,8 @@ public class DataminerService
     public ManifestService Manifest = null!;
     public StreamedFileProvider Provider = null!;
 
-    public AESKeys? AESKeys = null;
-
-    public readonly List<VfsEntry> AllEntries = [];
-    public readonly List<VfsEntry> NewEntries = [];
+    public readonly List<GameFile> AllEntries = [];
+    public readonly List<GameFile> NewEntries = [];
 
     public async Task Initialize()
     {
@@ -43,13 +42,11 @@ public class DataminerService
         await LoadMappings();
         await LoadKeys();
 
-        TestMainKey(); // if this fails, athena is cooked!
-
         Provider.PostMount();
 
         LoadEntries(
-            r => r.EncryptionKeyGuid.Equals(Globals.ZERO_GUID) ||
-            (AESKeys?.GuidsList.Contains(r.EncryptionKeyGuid) ?? false)
+            r => r.EncryptionKeyGuid == Globals.ZERO_GUID ||
+            !Provider.RequiredKeys.Contains(r.EncryptionKeyGuid)
         );
     }
 
@@ -138,13 +135,14 @@ public class DataminerService
             return;
         }
 
-        AESKeys = keysReponse;
         AppSettings.Default.LocalKeys = keysReponse;
         AppSettings.SaveSettings();
 
-        LoadKey(Globals.ZERO_GUID, new(AESKeys.MainKey));
-        LoadKeysList(AESKeys.DynamicKeys);
-        Log.Information("Loaded {total} Dynamic Keys.", AESKeys.DynamicKeys.Count);
+        LoadKey(Globals.ZERO_GUID, new(keysReponse.MainKey));
+        LoadKeysList(keysReponse.DynamicKeys);
+        Log.Information("Loaded {total} Dynamic Keys.", keysReponse.DynamicKeys.Count);
+
+        TestMainKey(keysReponse.MainKey); // if this fails, athena is cooked!
     }
 
     private void LoadLocalKeys()
@@ -160,10 +158,10 @@ public class DataminerService
         Log.Information("Loaded {total} local Dynamic Keys.", AppSettings.Default.LocalKeys.DynamicKeys.Count);
     }
 
-    private void TestMainKey()
+    private void TestMainKey(string key)
     {
         var vf = Provider.MountedVfs.First(r => r.Name.Equals("pakchunk0-WindowsClient.pak"));
-        if (!vf.TestAesKey(new FAesKey(AESKeys?.MainKey ?? string.Empty)))
+        if (!vf.TestAesKey(new FAesKey(key)))
         {
             Log.Warning("Main key is invalid. Athena might not work as expected.");
         }
@@ -195,11 +193,11 @@ public class DataminerService
                     continue;
 
                 // filter only new files (used when customItemsOrOldPaths contains backup files aka old files)
-                if (bNew && (customItemsOrOldPaths?.Contains(path, StringComparer.OrdinalIgnoreCase) ?? false))
+                if (bNew && (customItemsOrOldPaths?.Contains(path) ?? false))
                     continue;
 
                 // this filter is used when the user wants only selected items (by ID)
-                if (bIsCustom && !customItemsOrOldPaths!.Contains(entry.NameWithoutExtension, StringComparer.OrdinalIgnoreCase))
+                if (bIsCustom && !customItemsOrOldPaths!.Contains(entry.NameWithoutExtension))
                     continue;
 
                 (bNew || bIsCustom ? NewEntries : AllEntries).Add(entry);
