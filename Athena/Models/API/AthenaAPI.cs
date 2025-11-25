@@ -6,9 +6,12 @@ namespace Athena.Models.API;
 
 public class AthenaEndpoints(RestClient client) : AthenaRestClient(client)
 {
+#if DEBUG // temp
     protected override string BaseURL => "http://prod.athena.dev:8000";
+#else
+    protected override string BaseURL => "https://athena-service-prod.djlorexzo.dev";
+#endif
 
-    // TODO: make these endpoints available on my localhost (ignore this stupid comment)
     private const string NEWS_ENDPOINT = "api/v1/news";
     private const string RELEASE_ENDPOINT = "api/v1/version";
     private const string BACKUPS_ENDPOINT = "api/v1/backups";
