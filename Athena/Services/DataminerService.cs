@@ -26,6 +26,8 @@ public class DataminerService
         Manifest = new();
         Provider = new("", new(AppSettings.Default.EngineVersion), StringComparer.OrdinalIgnoreCase);
 
+        await DeleteChunksCache(); // now people can stop complain big .data folder sizes
+
         await InitOodle();
         await InitZlib();
 
@@ -50,6 +52,27 @@ public class DataminerService
         );
     }
 
+    private async Task DeleteChunksCache()
+    {
+        var chunkSettings = AppSettings.Default.ChunksSettings;
+
+        if (!chunkSettings.AutoClearEnabled)
+            return;
+
+        Log.Information("Chunks cache auto clear is enabled. Checking for chunks to delete.");
+
+        var lifetime = TimeSpan.FromDays(chunkSettings.ChunkCacheLifetime);
+        var chunks = Directories.GetCachedChunks(lifetime);
+        if (chunks.Count > 0)
+        {
+            Log.Information("{tot} chunks are more than {days} old. Deleting.", chunks.Count, lifetime);
+            foreach (var chunk in chunks)
+            {
+                chunk.Delete();
+            }
+        }
+    }
+    
     private async Task InitOodle()
     {
         var path = Path.Combine(Directories.Data, OodleHelper.OODLE_DLL_NAME);

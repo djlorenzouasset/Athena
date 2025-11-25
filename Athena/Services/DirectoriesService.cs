@@ -35,4 +35,12 @@ public class DirectoriesService
             .GetFiles("*.fbkp")
             .OrderByDescending(f => f.LastWriteTime)];
     }
+
+    public List<FileInfo> GetCachedChunks(TimeSpan maxLifetime)
+    {
+        var lifetime = DateTime.Now - maxLifetime;
+        return [..new DirectoryInfo(Data)
+            .GetFiles("*.*chunk")
+            .Where(f => f.LastWriteTime >= lifetime)];
+    }
 }
