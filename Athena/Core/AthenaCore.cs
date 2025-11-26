@@ -43,6 +43,8 @@ public class AthenaCore
             // TODO: show popup and handle buttons
         }
 
-        await new Generator().ShowMenu();
+        var generator = new Generator();
+        generator.LoadAvailableArchives();
+        await generator.ShowMenu();
     }
 }
