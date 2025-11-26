@@ -59,17 +59,15 @@ public class DataminerService
         if (!chunkSettings.AutoClearEnabled)
             return;
 
-        Log.Information("Chunks cache auto clear is enabled. Checking for chunks to delete.");
+        var chunks = Directories.GetCachedChunks();
+        var maxLifetime = DateTime.Now - TimeSpan.FromDays(chunkSettings.ChunkCacheLifetime);
 
-        var lifetime = TimeSpan.FromDays(chunkSettings.ChunkCacheLifetime);
-        var chunks = Directories.GetCachedChunks(lifetime);
-        if (chunks.Count > 0)
+        foreach (var chunk in chunks)
         {
-            Log.Information("{tot} chunks are more than {days} old. Deleting.", chunks.Count, lifetime);
-            foreach (var chunk in chunks)
-            {
-                chunk.Delete();
-            }
+            if (chunk.LastWriteTime >= maxLifetime)
+                continue;
+
+            chunk.Delete();
         }
     }
     
@@ -145,7 +143,7 @@ public class DataminerService
 
         var path = Path.Combine(Directories.Mappings, mapping.FileName);
         var file = await Api.DownloadFileAsync(mapping.Url, path, false);
-        return file.FullName;
+        return file.Exists ? file.FullName : null;
     }
 
     private async Task LoadKeys()

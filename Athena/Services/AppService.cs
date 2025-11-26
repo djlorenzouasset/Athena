@@ -3,7 +3,6 @@ using Spectre.Console;
 using System.Runtime.InteropServices;
 using Serilog.Sinks.SystemConsole.Themes;
 using Athena.Utils;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Athena.Services;
 

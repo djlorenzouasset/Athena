@@ -56,7 +56,7 @@ public class SettingsService
             MessageService.Show("Invalid Settings",
                 "Custom mapping file is enabled but no valid mapping path is set.\n\n" +
                 "In order to fix this issue, set the property 'bUseCustomMappingFile' to 'false' in the settings file or set a valid mapping path.",
-                Message.MB_OK | Message.MB_ICONWARNING
+                MessageService.MB_OK | MessageService.MB_ICONWARNING
             );
 #endif
         }
