@@ -5,7 +5,7 @@ namespace Athena.Services;
 
 public class UpdaterService
 {
-    private AthenaRelease? _releaseInfos;
+    public AthenaRelease? ReleaseInfo;
 
     private readonly string _currentInstallation = Path.Combine(Directories.Current, "Athena.exe");
     private readonly string _tempInstallationFile = Path.Combine(Directories.Data, "Athena.exe");
@@ -14,22 +14,22 @@ public class UpdaterService
 
     public async Task CheckForUpdates()
     {
-        _releaseInfos = await Api.Athena.GetReleaseInfoAsync();
-        if (_releaseInfos is null)
+        ReleaseInfo = await Api.Athena.GetReleaseInfoAsync();
+        if (ReleaseInfo is null)
         {
             Log.Warning("Failed to fetch release information.");
             return;
         }
 
-        if (_releaseInfos.Version > Globals.Version)
+        if (ReleaseInfo.Version > Globals.Version)
         {
-            uint msgFlag = _releaseInfos.Required ? MessageService.MB_OK : MessageService.MB_YESNO | MessageService.MB_DEFBUTTON1;
-            string msgText = _releaseInfos.Required
-                ? $"Athena {_releaseInfos.Version.DisplayName} is now available. Install it in order to use the program."
-                : $"Athena {_releaseInfos.Version.DisplayName} is now available. Do you want to install it?";
+            uint msgFlag = ReleaseInfo.Required ? MessageService.MB_OK : MessageService.MB_YESNO | MessageService.MB_DEFBUTTON1;
+            string msgText = ReleaseInfo.Required
+                ? $"Athena {ReleaseInfo.Version.DisplayName} is now available. Install it in order to use the program."
+                : $"Athena {ReleaseInfo.Version.DisplayName} is now available. Do you want to install it?";
 
             int bUpdate = MessageService.Show("Update Available", msgText, msgFlag | MessageService.MB_ICONINFORMATION);
-            if ((_releaseInfos.Required || bUpdate == MessageService.BT_YES) && await DownloadUpdate())
+            if ((ReleaseInfo.Required || bUpdate == MessageService.BT_YES) && await DownloadUpdate())
             {
                 RunUpdater();
             }
@@ -39,9 +39,9 @@ public class UpdaterService
     private async Task<bool> DownloadUpdate()
     {
         Log.Information("Downloading Athena {version} (Size: {size}mb, Release Date: {releaseDate})",
-            _releaseInfos!.Version.DisplayName, _releaseInfos!.UpdateSize, _releaseInfos!.ReleaseDate);
+            ReleaseInfo!.Version.DisplayName, ReleaseInfo!.UpdateSize, ReleaseInfo!.ReleaseDate);
 
-        if (await Api.DownloadFileAsync(_releaseInfos!.DownloadUrl, _tempInstallationFile) is not FileInfo { Exists: true })
+        if (await Api.DownloadFileAsync(ReleaseInfo!.DownloadUrl, _tempInstallationFile) is not FileInfo { Exists: true })
         {
             Log.Error("Failed to download the update. Contact the staff or download the update manually from GitHub.");
             return false;
@@ -56,7 +56,7 @@ public class UpdaterService
         {
             $"\"{_currentInstallation}\"",
             $"\"{_tempInstallationFile}\"",
-            $"\"{_releaseInfos!.Version}\""
+            $"\"{ReleaseInfo!.Version}\""
         };
 
         var startInfo = new ProcessStartInfo
