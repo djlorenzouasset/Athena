@@ -6,7 +6,7 @@ namespace Athena.Models.API;
 
 public class DillyAPI(RestClient client) : AthenaRestClient(client)
 {
-    protected override string BaseURL => "https://api.fortniteapi.com/";
+    protected override string BaseURL => "https://api.fortniteapi.com";
 
     private const string AESKEYS_ENDPOINT = "v1/aes";
     private const string MAPPINGS_ENDPOINT = "v1/mappings";
