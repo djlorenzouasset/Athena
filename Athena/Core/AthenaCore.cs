@@ -1,4 +1,6 @@
-﻿namespace Athena.Core;
+﻿using Athena.Services;
+
+namespace Athena.Core;
 
 public class AthenaCore
 {
@@ -37,10 +39,23 @@ public class AthenaCore
 
         if (AppSettings.Default.LastDonationPopup.AddDays(7) < DateTime.UtcNow)
         {
+            _ = Task.Run(() =>
+            {
+                var result = MessageService.Show(
+                    "Enjoying Athena?", 
+                    "Consider donating to support the development of Athena! It would be really appreciated.\n\n" +
+                    "Note: If you donate you will receive the Donator role in the Discord server! Make sure to send a message there to get it.", 
+                    MessageService.MB_ICONINFORMATION | MessageService.MB_YESNO);
+
+                if (result == MessageService.BT_YES)
+                {
+                    Log.ForContext("NoConsole", true).Debug("Launching donation page {URL}", Globals.DONATIONS_URL);
+                    App.Launch(Globals.DONATIONS_URL);
+                }
+            });
+
             AppSettings.Default.LastDonationPopup = DateTime.UtcNow;
             AppSettings.SaveSettings();
-
-            // TODO: show popup and handle buttons
         }
 
         var generator = new Generator();
