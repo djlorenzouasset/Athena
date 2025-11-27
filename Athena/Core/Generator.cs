@@ -81,9 +81,15 @@ public class Generator
             Console.Title = $"Athena {Globals.Version.DisplayName} - FortniteGame v{UEParser.Manifest.GameVersion}";
             Discord.Update($"In Menu - FortniteGame v{UEParser.Manifest.GameVersion}");
 
+            if (AppSettings.Default.ShowChangeLog)
+            {
+                // show changelog
+                AppSettings.Default.ShowChangeLog = false;
+                AppSettings.SaveSettings();
+            }
+
             // TODO:
             // - Add permanent text
-            // - Add changelog
 
             var model = SelectModel();
             var generationType = SelectGenerationType(model);
@@ -233,16 +239,27 @@ public class Generator
             }
         }
 
+        Log.Information("Building {model} with {addedCount} {itemType}", model.DisplayName(), added, itemType);
+        string rawJson = builder.Build();
+
         if (!Directory.Exists(Path.GetDirectoryName(savePath)))
         {
-            savePath = Path.Combine(Directories.Output, Path.GetFileName(savePath));
-            Log.Warning("The output directory you did set does not exist! The default one will be used");
+            Directory.CreateDirectory(Path.GetDirectoryName(savePath)!);
+            Log.Warning("The output directory you did set does not exist! Creating it.");
         }
 
-        Log.Information("Building {model} with {addedCount} {itemType}", model.DisplayName(), added, itemType);
-        await File.WriteAllTextAsync(savePath, builder.Build());
-        Log.Information("Saved {model} in output directory {savePath}", model.DisplayName(), savePath);
+        try
+        {
+            await File.WriteAllTextAsync(savePath, rawJson);
+        }
+        catch (Exception ex)
+        {
+            Log.Warning("There was an error saving {model} ({ex}). Saving in general folder.", model.DisplayName(), ex.Message);
+            savePath = Path.Combine(Directories.Output, Path.GetFileName(savePath));
+            await File.WriteAllTextAsync(savePath, rawJson);
+        }
 
+        Log.Information("Saved {model} in output directory {savePath}", model.DisplayName(), savePath);
         return EReturnResult.Success;
     }
 
