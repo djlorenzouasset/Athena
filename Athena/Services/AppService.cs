@@ -45,6 +45,7 @@ public class AppService
         do { keyInfo = Console.ReadKey(true); }
         while (keyInfo.Key != ConsoleKey.Enter);
 
+        AppSettings.SaveSettings();
         Log.ForContext("NoConsole", true).Information("Log file closed: {date}", DateTime.UtcNow);
         Log.CloseAndFlush();
         Environment.Exit(exitCode);
