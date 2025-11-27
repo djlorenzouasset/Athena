@@ -36,23 +36,23 @@ public class SettingsService
     {
         bool save = false;
 
-        if (string.IsNullOrEmpty(Default.ProfilesSettings.OutputPath) || !Directory.Exists(Default.ProfilesSettings.OutputPath))
+        if (string.IsNullOrEmpty(Default.ProfilesSettings.OutputPath))
         {
             save = true;
             Default.ProfilesSettings.OutputPath = Directories.Output;
-            Log.Warning("Profiles output path is invalid. It has now been set to the default one: {path}.", Default.ProfilesSettings.OutputPath);
+            Log.Warning("Profiles output path is invalid. It has now been set to the default one: {path}.", Directories.Output);
         }
-        if (string.IsNullOrEmpty(Default.CatalogSettings.OutputPath) || !Directory.Exists(Default.CatalogSettings.OutputPath))
+        if (string.IsNullOrEmpty(Default.CatalogSettings.OutputPath))
         {
             save = true;
             Default.CatalogSettings.OutputPath = Directories.Output;
-            Log.Warning("ItemShop Catalog output path is invalid. It has now been set to the default one: {path}.", Default.CatalogSettings.OutputPath);
+            Log.Warning("ItemShop Catalog output path is invalid. It has now been set to the default one: {path}.", Directories.Output);
         }
         if (Default.UseCustomMappingFile && string.IsNullOrEmpty(Default.CustomMappingFile))
         {
             Default.UseCustomMappingFile = false; // temporarily disable custom mapping for the current run
             Log.Warning("Custom mapping file is enabled but the mapping path is invalid. It has been set to 'false' for this run.");
-#if !DEBUG
+#if RELEASE
             MessageService.Show("Invalid Settings",
                 "Custom mapping file is enabled but no valid mapping path is set.\n\n" +
                 "In order to fix this issue, set the property 'bUseCustomMappingFile' to 'false' in the settings file or set a valid mapping path.",
