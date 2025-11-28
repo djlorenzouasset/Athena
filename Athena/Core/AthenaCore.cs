@@ -13,6 +13,7 @@ public class AthenaCore
         App.CreateLogger();
         App.LogDebugInformations();
 
+        await App.InitializeVersionInfo();
 #if RELEASE
         await Updater.CheckForUpdates();
 #endif
@@ -20,6 +21,20 @@ public class AthenaCore
         AppSettings.LoadSettings();
         AppSettings.ValidateSettings();
         Console.Clear(); // clear the console after settings loading and validation
+
+        AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
+        {
+            AppSettings.SaveSettings();
+        };
+        AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+        {
+            var ex = e.ExceptionObject as Exception;
+            MessageService.Show("An error has occurred!", ex!.Message, MessageService.MB_ICONERROR | MessageService.MB_OK);
+            if (e.IsTerminating)
+            {
+                AppSettings.SaveSettings();
+            }
+        };
 
         if (AppSettings.Default.UseDiscordRPC)
         {
@@ -37,6 +52,7 @@ public class AthenaCore
 
         await UEParser.Initialize(); // init the parser
 
+#if RELEASE
         if (AppSettings.Default.LastDonationPopup.AddDays(7) < DateTime.UtcNow)
         {
             _ = Task.Run(() =>
@@ -55,8 +71,8 @@ public class AthenaCore
             });
 
             AppSettings.Default.LastDonationPopup = DateTime.UtcNow;
-            AppSettings.SaveSettings();
         }
+#endif
 
         var generator = new Generator();
         generator.LoadAvailableArchives();
