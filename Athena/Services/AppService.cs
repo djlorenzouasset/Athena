@@ -3,11 +3,23 @@ using Spectre.Console;
 using System.Runtime.InteropServices;
 using Serilog.Sinks.SystemConsole.Themes;
 using Athena.Utils;
+using Athena.Models.API.Responses;
 
 namespace Athena.Services;
 
 public class AppService
 {
+    public AthenaRelease? ReleaseInfo;
+
+    public async Task InitializeVersionInfo()
+    {
+        ReleaseInfo = await Api.Athena.GetReleaseInfoAsync();
+        if (ReleaseInfo is null)
+        {
+            Log.Warning("Failed to fetch release information.");
+        }
+    }
+
     public void CreateLogger()
     {
         Log.Logger = new LoggerConfiguration()
@@ -59,9 +71,9 @@ public class AppService
         {
             AnsiConsole.Markup(prompt + " ");
             var textRead = Console.ReadLine();
-            if (string.IsNullOrEmpty(textRead))
+            if (string.IsNullOrEmpty(textRead) || string.IsNullOrWhiteSpace(textRead))
             {
-                AthenaUtils.ClearConsoleLines(linesToClear);
+                AthenaUtils.ClearConsoleLines(1);
                 goto invalid;
             }
 
