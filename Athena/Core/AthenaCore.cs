@@ -13,11 +13,6 @@ public class AthenaCore
         App.CreateLogger();
         App.LogDebugInformations();
 
-        await App.InitializeVersionInfo();
-#if RELEASE
-        await Updater.CheckForUpdates();
-#endif
-
         AppSettings.LoadSettings();
         AppSettings.ValidateSettings();
         Console.Clear(); // clear the console after settings loading and validation
@@ -35,6 +30,11 @@ public class AthenaCore
                 AppSettings.SaveSettings();
             }
         };
+
+        await App.InitializeVersionInfo();
+#if RELEASE
+        await Updater.CheckForUpdates();
+#endif
 
         if (AppSettings.Default.UseDiscordRPC)
         {
