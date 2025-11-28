@@ -88,6 +88,9 @@ public class AthenaVersion : IComparable<AthenaVersion>
         versionString.Append(Minor);
         versionString.Append('.');
         versionString.Append(Patch);
+#if DEBUG
+        versionString.Append(" (DEBUG)");
+#endif
         return versionString.ToString();
     }
 }
