@@ -24,11 +24,15 @@ public class AthenaCore
         AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
         {
             var ex = e.ExceptionObject as Exception;
-            MessageService.Show("An error has occurred!", ex!.Message, MessageService.MB_ICONERROR | MessageService.MB_OK);
+
+            string msg = ex!.Message;
             if (e.IsTerminating)
             {
+                msg += "\n\nAthena will now close. Please contact the staff if you still see this message.";
                 AppSettings.SaveSettings();
             }
+
+            MessageService.Show("An error has occurred!", msg, MessageService.MB_ICONERROR | MessageService.MB_OK);
         };
 
         await App.InitializeVersionInfo();
