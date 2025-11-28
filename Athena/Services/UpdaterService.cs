@@ -5,6 +5,8 @@ namespace Athena.Services;
 
 public class UpdaterService
 {
+    private const string UPDATER_URL = "";
+
     private readonly string _currentInstallation = Path.Combine(Directories.Current, "Athena.exe");
     private readonly string _tempInstallationFile = Path.Combine(Directories.Data, "Athena.exe");
     private readonly string _updateInstaller = Path.Combine(Environment.GetFolderPath(
@@ -29,6 +31,16 @@ public class UpdaterService
             int bUpdate = MessageService.Show("Update Available", msgText, msgFlag | MessageService.MB_ICONINFORMATION);
             if ((releaseInfo.Required || bUpdate == MessageService.BT_YES) && await DownloadUpdate(releaseInfo))
             {
+                if (!File.Exists(_updateInstaller))
+                {
+                    Log.Warning("Updater is not installed. Installing it..");
+                    if (await Api.DownloadFileAsync(UPDATER_URL, _updateInstaller, true) is not FileInfo { Exists: true })
+                    {
+                        Log.Error("Failed to install updater. Contact the staff in the discord.");
+                        return;
+                    }
+                }
+
                 RunUpdater(releaseInfo.Version.DisplayName);
             }
         }
@@ -36,8 +48,8 @@ public class UpdaterService
 
     private async Task<bool> DownloadUpdate(AthenaRelease releaseInfo)
     {
-        Log.Information("Downloading Athena {version} (Size: {size}mb, Release Date: {releaseDate})",
-            releaseInfo.Version.DisplayName, releaseInfo.UpdateSize, releaseInfo.ReleaseDate);
+        Log.Information("Downloading Athena {version} ({size}mb)..",
+            releaseInfo.Version.DisplayName, releaseInfo.UpdateSize);
 
         if (await Api.DownloadFileAsync(releaseInfo.DownloadUrl, _tempInstallationFile) is not FileInfo { Exists: true })
         {
