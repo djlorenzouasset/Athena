@@ -31,6 +31,11 @@ public class DataminerService
         await InitOodle();
         await InitZlib();
 
+#if RELEASE
+        CUE4Parse.Globals.LogVfsMounts = false; // disable CUE4Parse mounting logs
+#endif
+        CUE4Parse.Globals.WarnMissingImportPackage = false; // disable missing imports warnings
+
         Provider.VfsRegistered += (sender, num) =>
         {
             if (sender is not IAesVfsReader reader)
@@ -157,7 +162,6 @@ public class DataminerService
         }
 
         AppSettings.Default.LocalKeys = keysReponse;
-        AppSettings.SaveSettings();
 
         LoadKey(Globals.ZERO_GUID, new(keysReponse.MainKey));
         LoadKeysList(keysReponse.DynamicKeys);

@@ -28,7 +28,7 @@ public class SettingsService
 
     public void SaveSettings()
     {
-        var json = CustomJsonSerializer.Serialize(Default!);
+        var json = CustomJsonSerializer.Serialize(Default);
         File.WriteAllText(_file, json);
     }
 

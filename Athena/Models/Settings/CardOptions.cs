@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Athena.Models.Settings;
+﻿namespace Athena.Models.Settings;
 
 public class CardOptions
 {

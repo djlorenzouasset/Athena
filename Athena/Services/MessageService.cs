@@ -2,7 +2,7 @@
 
 namespace Athena.Services;
 
-public static class MessageService
+public static partial class MessageService
 {
     // buttons
     public const uint MB_OK = 0x00000000;
@@ -18,14 +18,14 @@ public static class MessageService
     public const uint MB_ICONWARNING = 0x00000030;
     public const uint MB_ICONINFORMATION = 0x00000040;
 
-    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    private static extern int MessageBox(IntPtr hInstance, string lpText, string lpCaption, uint type);
+    [LibraryImport("user32.dll", StringMarshalling = StringMarshalling.Utf16)]
+    private static partial int MessageBox(IntPtr hWnd, string lpText, string lpCaption, uint uType);
 
     [DllImport("kernel32.dll")]
-    private static extern int GetConsoleWindow();
+    private static extern IntPtr GetConsoleWindow();
 
-    public static int Show(string title, string caption, uint flags)
+    public static int Show(string title, string text, uint flags)
     {
-        return MessageBox(GetConsoleWindow(), caption, title, flags);
+        return MessageBox(GetConsoleWindow(), text, title, flags);
     }
 }
