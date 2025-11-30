@@ -17,6 +17,8 @@ class AthenaUpdater
         if (args.Length != 3)
         {
             Log.Error($"Invalid arguments! Needed 3. Received {args.Length}");
+            MessageService.Show("Invalid arguments!", $"Needed 3. Received {args.Length}.",
+                MessageService.MB_ICONERROR | MessageService.MB_OK);
             return;
         }
 
