@@ -17,7 +17,7 @@ public class DiscordService
         Assets = new() 
         { 
             LargeImageKey = "logo",
-            LargeImageText = $"Athena {Globals.Version.DisplayName}" 
+            LargeImageText = $"Athena {Globals.Version.DisplayName}"
         },
         Buttons = 
         [
@@ -35,13 +35,16 @@ public class DiscordService
         _client.SetPresence(_defaultPresence);
     }
 
-    public void Update(string text)
+    public void Update(string text, bool removeSmallAsset = true)
     {
         _client?.UpdateState(text);
+        if (removeSmallAsset)
+            _client?.UpdateSmallAsset();
     }
 
     public void Update(EModelType model)
     {
         _client?.UpdateState($"Generating {model.DisplayName()}");
+        _client?.UpdateSmallAsset(model.ToString().ToLower(), model.DisplayName());
     }
 }

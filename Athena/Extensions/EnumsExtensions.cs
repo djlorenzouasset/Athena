@@ -13,7 +13,7 @@ public static class EnumExtensions
             ? value.ToString() : attribute.Description;
     }
 
-    public static string ItemTypeName(this Enum value)
+    public static string ItemTypeName(this EModelType value)
     {
         return value.GetType().GetField(value.ToString())?
             .GetCustomAttributes(typeof(ItemType), false)
@@ -21,7 +21,7 @@ public static class EnumExtensions
             ? value.ToString() : attribute.ItemsType;
     }
 
-    public static bool DisabledFor(this Enum value, EModelType model)
+    public static bool DisabledFor(this EGenerationType value, EModelType model)
     {
         var attr = value.GetType().GetField(value.ToString())?
             .GetCustomAttributes(typeof(DisabledFor), false)
