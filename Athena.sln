@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36623.8 d17.14
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11222.15 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Athena", "Athena\Athena.csproj", "{4485A066-C3C8-4151-8942-3025B9F6775F}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUE4Parse", "Dependencies\CUE4Parse\CUE4Parse\CUE4Parse.csproj", "{23433E27-2A66-7449-C9D6-051110729E0C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUE4Parse-Conversion", "Dependencies\CUE4Parse\CUE4Parse-Conversion\CUE4Parse-Conversion.csproj", "{CE4AB483-EA9C-0A55-BF0B-2A51D1A85DB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Athena.Updater", "Athena.Updater\Athena.Updater.csproj", "{991BB608-BAAE-4072-BBFE-836558B5BE39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{CE4AB483-EA9C-0A55-BF0B-2A51D1A85DB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE4AB483-EA9C-0A55-BF0B-2A51D1A85DB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE4AB483-EA9C-0A55-BF0B-2A51D1A85DB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{991BB608-BAAE-4072-BBFE-836558B5BE39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{991BB608-BAAE-4072-BBFE-836558B5BE39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{991BB608-BAAE-4072-BBFE-836558B5BE39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{991BB608-BAAE-4072-BBFE-836558B5BE39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
