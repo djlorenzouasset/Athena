@@ -182,7 +182,7 @@ public class Dataminer
 
     private async Task LoadMappings()
     {
-        var mappings = await APIEndpoints.FNCentral.GetMappingsAsync() ?? DirectoryManager.GetSavedMappings();
+        var mappings = await APIEndpoints.Dilly.GetMappingsAsync() ?? DirectoryManager.GetSavedMappings();
         if (mappings is null)
         {
             Log.Warning("Invalid response from mappings API. No saved mappings have been found." +
@@ -196,8 +196,8 @@ public class Dataminer
 
     private async Task LoadAesKeys()
     {
-        var aesKeys = await APIEndpoints.FNCentral.GetAesKeysAsync();
-        if (aesKeys is null || APIEndpoints.FNCentral.AesKey is null)
+        var aesKeys = await APIEndpoints.Dilly.GetAesKeysAsync();
+        if (aesKeys is null || APIEndpoints.Dilly.AesKey is null)
         {
             Log.Warning("AESKeys response is invalid: the program may not work as expected!");
             return;
@@ -207,7 +207,7 @@ public class Dataminer
         LoadKeys();
         LoadAllEntries(
             x => x.EncryptionKeyGuid == _zeroGuid || 
-            APIEndpoints.FNCentral.AesKey.DynamicKeys.Select(
+            APIEndpoints.Dilly.AesKey.DynamicKeys.Select(
             k => new FGuid(k.Guid)).Contains(x.EncryptionKeyGuid), true);
     }
 
@@ -324,7 +324,7 @@ public class Dataminer
         }
         else if (action == Actions.AddArchive)
         {
-            if (APIEndpoints.FNCentral.AesKey.DynamicKeys.Count == 0)
+            if (APIEndpoints.Dilly.AesKey.DynamicKeys.Count == 0)
             {
                 Log.Error("There are no available paks to select.");
                 await ReturnToMenu(true);
@@ -369,7 +369,7 @@ public class Dataminer
             else
             {
                 _itemsFilter.AddRange(assets.Select(x => x.ToLower()));
-                LoadAllEntries(x => APIEndpoints.FNCentral.AesKey.DynamicKeys.Select(
+                LoadAllEntries(x => APIEndpoints.Dilly.AesKey.DynamicKeys.Select(
                     k => new FGuid(k.Guid)).Contains(x.EncryptionKeyGuid) || x.EncryptionKeyGuid == _zeroGuid, isCustom: true);
 
                 if (!await GenerateSelectedModel(_newEntries, model, action))
@@ -491,17 +491,17 @@ public class Dataminer
         new SelectionPrompt<string>()
             .Title("What [1]Pak[/] do you want generate?")
             .AddChoices(
-                APIEndpoints.FNCentral.AesKey.DynamicKeys.Select(x => $"{x.Name} ({x.Size.Formatted})")
+                APIEndpoints.Dilly.AesKey.DynamicKeys.Select(x => $"{x.Name} ({x.Size.Formatted})")
             )
         );
-        return APIEndpoints.FNCentral.AesKey.DynamicKeys.Where(x => x.Name == selected.Split(" ")[0]).First();
+        return APIEndpoints.Dilly.AesKey.DynamicKeys.Where(x => x.Name == selected.Split(" ")[0]).First();
     }
 
     private IEnumerable<DynamicKey> BulkArchives()
     {
         var paks = AnsiConsole.Ask<string>("Insert the [1]numbers[/] of the [1]Paks[/] you want generate separated by [1];[/] (ex: 1000; 1001):");
         var numbers = paks.Split(";").Select(x => x.Trim());
-        return APIEndpoints.FNCentral.AesKey.DynamicKeys.Where(x => numbers.Contains(_pakNameRegex.Match(x.Name).Groups[1].ToString()));
+        return APIEndpoints.Dilly.AesKey.DynamicKeys.Where(x => numbers.Contains(_pakNameRegex.Match(x.Name).Groups[1].ToString()));
     }
 
     private IEnumerable<string> RequestSelectedItems(Model model)
@@ -586,7 +586,7 @@ public class Dataminer
     private async Task LoadBackupAsync(bool includeArchives = false)
     {
         Func<IAesVfsReader, bool> files = includeArchives 
-            ? x => APIEndpoints.FNCentral.AesKey.DynamicKeys.Select(k => new FGuid(k.Guid)).Contains(x.EncryptionKeyGuid) || x.EncryptionKeyGuid == _zeroGuid 
+            ? x => APIEndpoints.Dilly.AesKey.DynamicKeys.Select(k => new FGuid(k.Guid)).Contains(x.EncryptionKeyGuid) || x.EncryptionKeyGuid == _zeroGuid 
             : x => x.EncryptionKeyGuid == _zeroGuid;
 
         var backup = await GetBackup();
@@ -656,13 +656,13 @@ public class Dataminer
 
     private void LoadKey() // this just load the main key
     {
-        var aes = APIEndpoints.FNCentral.AesKey;
+        var aes = APIEndpoints.Dilly.AesKey;
         Provider.SubmitKey(new FGuid(), new FAesKey(aes.MainKey));
     }
 
     private void LoadKeys() // load all dynamic keys
     {
-        foreach (var key in APIEndpoints.FNCentral.AesKey.DynamicKeys)
+        foreach (var key in APIEndpoints.Dilly.AesKey.DynamicKeys)
         {
             LoadDynamicKey(key);
         }
