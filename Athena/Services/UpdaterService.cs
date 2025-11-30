@@ -10,7 +10,7 @@ public class UpdaterService
     private readonly string _currentInstallation = Path.Combine(Directories.Current, "Athena.exe");
     private readonly string _tempInstallationFile = Path.Combine(Directories.Data, "Athena.exe");
     private readonly string _updateInstaller = Path.Combine(Environment.GetFolderPath(
-        Environment.SpecialFolder.ApplicationData), "Updater", "Updater.exe");
+        Environment.SpecialFolder.ApplicationData), "AthenaUpdater", "AthenaUpdater.exe");
 
     public async Task CheckForUpdates()
     {
