@@ -2,15 +2,15 @@
 
 public static class Globals
 {
-    public const string VERSION = "1.8.1.0";
+    public const string VERSION = "1.8.2.0";
     public const string APPID = "1142239120471634042";
     public const string DISCORD = "https://discord.gg/nJBj9NjUS4";
     public const string DOWNLOAD = "https://github.com/djlorenzouasset/Athena/releases/latest";
     public const string RELEASE = "https://djlorexzo.dev/api/v1/athena/release";
 
     // endpoints
-    public const string MAPPINGS = "https://laylaleaks.de/api/mappings";
-    public const string AESKEYS = "https://export-service.dillyapis.com/v1/aes";
+    public const string MAPPINGS = "https://api.fortniteapi.com/v1/mappings";
+    public const string AESKEYS = "https://api.fortniteapi.com/v1/aes";
     public const string BACKUPS = "https://www.laylaleaks.de/api/backups";
     public const string AUTH = "https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token";
     public const string VERIFY = "https://account-public-service-prod.ol.epicgames.com/account/api/oauth/verify";
@@ -18,9 +18,4 @@ public static class Globals
     
     // auth
     public const string BASIC = "basic M2Y2OWU1NmM3NjQ5NDkyYzhjYzI5ZjFhZjA4YThhMTI6YjUxZWU5Y2IxMjIzNGY1MGE2OWVmYTY3ZWY1MzgxMmU=";
-
-    /// <summary>
-    /// DO NOT ENABLE THIS!! ENDPOINTS ARE NOT LIVE!!
-    /// </summary>
-    public static bool bUseV2Endpoints = false; // non-const because we change it at runtime
 }

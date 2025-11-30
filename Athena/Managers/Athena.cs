@@ -57,8 +57,6 @@ public static class Athena
         var latestRelease = await GetLatestRelease();
         var notices = latestRelease?.Notices ?? [];
 
-        Globals.bUseV2Endpoints = latestRelease?.bUseV2Endpoints ?? false;
-
         DiscordRichPresence.Initialize();
         await Dataminer.Instance.Initialize(notices);
         await Dataminer.Instance.ShowMenu();

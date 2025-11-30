@@ -10,7 +10,7 @@ public static class APIEndpoints
         UserAgent = $"Athena/{Globals.VERSION}"
     });
 
-    public static readonly FNCentralEndpoints FNCentral = new(_client);
+    public static readonly DillyEndpoints Dilly = new(_client);
     public static readonly EpicGamesEnpoints Epic = new(_client);
     public static readonly AthenaEndpoints AthenaEndpoints = new(_client);
 }
