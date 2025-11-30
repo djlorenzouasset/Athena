@@ -74,6 +74,8 @@ public class Generator
 
     public async Task ShowMenu()
     {
+        var news = await Api.Athena.GetNewsAsync();
+
         while (true)
         {
             Console.Clear(); // clear console from parser logs
@@ -81,15 +83,27 @@ public class Generator
             Console.Title = $"Athena {Globals.Version.DisplayName} - FortniteGame v{UEParser.Manifest.GameVersion}";
             Discord.Update($"In Menu - FortniteGame v{UEParser.Manifest.GameVersion}");
 
-            if (AppSettings.Default.ShowChangeLog)
+            AnsiConsole.Markup($"Welcome to [12]Athena {Globals.Version.DisplayName}[/]: Made with [124]<3[/] by [12]@djlorenzouasset[/] & [12]@andredotuasset[/] with the help of many others.\n");
+            AnsiConsole.Markup($"Join the [12]Discord Server[/] to stay updated on the development: [12]{Globals.DISCORD_URL}[/]\n");
+            AnsiConsole.Markup($"Want to change [12]app/shop/profiles settings?[/] Go in the [underline 12]%appdata%/Athena[/] folder and edit the [12]settingsV2.json[/] file.\n");
+
+            if (news is not null && news.GetNews() is { Count: > 0} newsToDisplay)
             {
-                // show changelog
-                AppSettings.Default.ShowChangeLog = false;
-                AppSettings.SaveSettings();
+                Console.WriteLine(""); // spacing
+                foreach (var text in newsToDisplay)
+                {
+                    AnsiConsole.Markup($"{text}\n");
+                }
             }
 
-            // TODO:
-            // - Add permanent text
+            if (AppSettings.Default.ShowChangeLog && App.ReleaseInfo?.Changelog is not null)
+            {
+                Console.WriteLine("");
+                AnsiConsole.Markup($"{App.ReleaseInfo.Changelog}\n");
+                AppSettings.Default.ShowChangeLog = false;
+            }
+
+            Console.WriteLine(""); // spacing
 
             var model = SelectModel();
             var generationType = SelectGenerationType(model);
@@ -233,7 +247,7 @@ public class Generator
                 }
                 catch (Exception e)
                 {
-                    Log.Error("Failed add shop item {name}: {msg}", entry.NameWithoutExtension, e.Message);
+                    Log.Error("[IGNORE] Failed add shop item {name}: {msg}", entry.NameWithoutExtension, e.Message);
                     continue;
                 }
             }
@@ -265,7 +279,8 @@ public class Generator
 
     private bool ReturnToMenu(bool bFromError = false)
     {
-        string prompt = bFromError ? "\n\nDo you want to try again?" : "\n\nDo you want to go back to menu?";
+        Console.WriteLine(""); // spacing
+        string prompt = bFromError ? "Do you want to try again?" : "Do you want to go back to menu?";
         if (!AnsiConsole.Confirm(prompt))
             return false;
 
@@ -288,24 +303,24 @@ public class Generator
 
     private EGenerationType SelectGenerationType(EModelType selectedModel)
     {
-        string title = $"What do you want to use to generate this [62]{selectedModel.DisplayName()}[/]?";
+        string title = $"What do you want to use to generate this [12]{selectedModel.DisplayName()}[/]?";
         return App.SelectionPrompt(title, _generationTypes.FindAll(gt => !gt.DisabledFor(selectedModel)), gt => gt.DisplayName());
     }
 
     private List<FGuid> SelectArchives(List<IAesVfsReader> availableEntries)
     {
-        var archives = App.MultiSelectionPrompt("What [62]Paks[/] do you want generate?", availableEntries, vf => $"{vf.Name} ({vf.GetSize()})");
+        var archives = App.MultiSelectionPrompt("What [12]Paks[/] do you want generate?", availableEntries, vf => $"{vf.Name} ({vf.GetSize()})");
         return [.. archives.Select(ar => ar.EncryptionKeyGuid)];
     }
 
     private EBackupOption SelectBackupMode()
     {
-        return App.SelectionPrompt("What type of [62]Backup[/] do you want to use?", _backupOptions, opt => opt.DisplayName());
+        return App.SelectionPrompt("What type of [12]Backup[/] do you want to use?", _backupOptions, opt => opt.DisplayName());
     }
 
     private FileInfo SelectLocalBackup(List<FileInfo> backupsToShow)
     {
-        return App.SelectionPrompt("What [62]Local Backup[/] do you want to use?", backupsToShow, f => f.Name);
+        return App.SelectionPrompt("What [12]Local Backup[/] do you want to use?", backupsToShow, f => f.Name);
     }
 
     private HashSet<string> GetCustomCosmetics(EModelType selectedModel)
@@ -313,7 +328,7 @@ public class Generator
         var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         string input = $"{selectedModel.ItemTypeName()} Ids";
-        var selected = App.Ask($"Insert the [62]{input}[/] you want to add separated by [62];[/]:", 2);
+        var selected = App.Ask($"Insert the [12]{input}[/] you want to add separated by [12];[/]:", 0);
         ids.UnionWith(selected.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
         return ids;
     }
@@ -400,7 +415,6 @@ public class Generator
                     continue;
 
                 AppSettings.Default.LocalKeys = res;
-                AppSettings.SaveSettings();
 
                 UEParser.LoadKeysList(newKeys);
 
