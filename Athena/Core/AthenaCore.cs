@@ -4,7 +4,7 @@ namespace Athena.Core;
 
 public class AthenaCore
 {
-    public async Task Initialize()
+    public static async Task Initialize()
     {
         Console.Title = $"Athena {Globals.Version.DisplayName} - Loading";
 
@@ -63,8 +63,7 @@ public class AthenaCore
             {
                 var result = MessageService.Show(
                     "Enjoying Athena?", 
-                    "Consider donating to support the development of Athena! It would be really appreciated.\n\n" +
-                    "Note: If you donate you will receive the Donator role in the Discord server! Make sure to send a message there to get it.", 
+                    "Consider donating to support the development of Athena! It would be really appreciated. <3\n\n", 
                     MessageService.MB_ICONINFORMATION | MessageService.MB_YESNO);
 
                 if (result == MessageService.BT_YES)

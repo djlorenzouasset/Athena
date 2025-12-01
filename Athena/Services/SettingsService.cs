@@ -10,8 +10,7 @@ public class SettingsService
     public UserSettings Default = null!;
 
     private readonly string _file = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), 
-        "settingsV2.json"
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Athena", "settingsV2.json"
     );
 
     public void LoadSettings()
@@ -72,7 +71,7 @@ public class SettingsService
         var auth = await Api.EpicGames.CreateAuthAsync();
         if (auth is null)
         {
-            Log.Error("Failed to create Epic Games Auth code.");
+            Log.Error("Failed to create Epic Games Auth code. Please report the issue to the staff in {discord}", Globals.DISCORD_URL);
             return false;
         }
 
@@ -98,7 +97,7 @@ public class SettingsService
         AskPath(EModelType.ItemShopCatalog);
         Default.UseDiscordRPC = AnsiConsole.Confirm("Do you want to use the [62]Discord Presence[/]?");
 
-        SaveSettings(); // save settings for prevent unsaving on application exit
+        SaveSettings();
     }
 
     private void AskPath(EModelType forModel)

@@ -2,7 +2,7 @@
 
 public class CosmeticCatalogEntry : ICatalogEntry
 {
-    public string DevName = "[VIRTUAL]1 x Funny Thing for -1 MtxCurrency";
+    public string DevName = "[VIRTUAL]1 x TBD for -1 MtxCurrency";
     public string OfferId = string.Empty;
     public List<object> FulfillmentIds = [];
     public int DailyLimit = -1;

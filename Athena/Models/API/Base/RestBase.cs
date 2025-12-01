@@ -7,7 +7,6 @@ public abstract class AthenaRestClient(RestClient client)
 {
     protected virtual string BaseURL => string.Empty;
 
-    /* client used in every AthenaRestClient inherited class */
     protected readonly RestClient _client = client;
 
     protected async Task<T?> ExecuteAsync<T>(string url, Method method = Method.Get, bool bLog = true, params Parameter[] prms)
@@ -20,8 +19,8 @@ public abstract class AthenaRestClient(RestClient client)
             request.AddParameters(prms);
 
             var response = await _client.ExecuteAsync<T>(request).ConfigureAwait(false);
-            if (bLog) Log.Information("[{Method}] {StatusDescription} ({StatusCode}): {Uri}", request.Method,
-                    response.StatusDescription, (int)response.StatusCode, request.Resource);
+            if (bLog) Log.Information("[{Method}] {StatusDescription} ({StatusCode}): {Uri}", 
+                request.Method, response.StatusDescription, (int)response.StatusCode, request.Resource);
             return response.Data;
         }
         catch (Exception ex)
@@ -39,10 +38,10 @@ public abstract class AthenaRestClient(RestClient client)
         request.AddParameters(prms);
 
         var response = await _client.ExecuteAsync(request).ConfigureAwait(false);
-        if (bLog) Log.Information("[{Method}] {StatusDescription} ({StatusCode}): {Uri}", request.Method, 
-            response.StatusDescription, (int)response.StatusCode, request.Resource);
-        if (response.ErrorException is not null) Log.Error(response.ErrorException.ToString());
+        if (bLog) Log.Information("[{Method}] {StatusDescription} ({StatusCode}): {Uri}",
+            request.Method, response.StatusDescription, (int)response.StatusCode, request.Resource);
 
+        if (response.ErrorException is not null) Log.Error(response.ErrorException.ToString());
         return response;
     }
 }

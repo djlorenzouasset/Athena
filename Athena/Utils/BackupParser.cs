@@ -30,9 +30,10 @@ public class BackupParser
         memoryStream.Position = 0;
         await using var archive = new FStreamArchive(backupStream.Name, memoryStream);
 
-        if (archive.Read<uint>() != _backupMagic)
+        var magic = archive.Read<uint>();
+        if (magic != _backupMagic)
         {
-            Log.Error("Backup has invalid magic.");
+            Log.Error("Backup has invalid magic (Requested: {reqMagic}, Got: {gotMagic})", _backupMagic, magic);
             return [];
         }
 

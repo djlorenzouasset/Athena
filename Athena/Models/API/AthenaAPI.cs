@@ -23,5 +23,5 @@ public class AthenaEndpoints(RestClient client) : AthenaRestClient(client)
         => await ExecuteAsync<Backup[]>(BACKUPS_ENDPOINT);
 
     public async Task<AppNews?> GetNewsAsync()
-        => await ExecuteAsync<AppNews>(NEWS_ENDPOINT);
+        => await ExecuteAsync<AppNews>(NEWS_ENDPOINT, bLog: false);
 }

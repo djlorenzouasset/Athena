@@ -10,7 +10,10 @@ public class AssetsService
         {
             BackendType = "AthenaCharacter",
             ClassNames = ["AthenaCharacterItemDefinition"],
-            Prefixes = ["CID_", "Character_"]
+            Prefixes = [
+                "CID_", 
+                "Character_"
+            ]
         },
         new ItemEntry
         {

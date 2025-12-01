@@ -6,7 +6,7 @@ public class ShopModel
 {
     public int RefreshIntervalHrs = 1;
     public int DailyPurchaseHrs = 24;
-    public DateTime Expiration = new(9999, 12, 31, 23, 59, 59);
+    public DateTime Expiration = new(9999, 12, 31, 23, 59, 59); // the shop WILL never expire lol
     public List<Storefront> Storefronts = [];
 }
 
@@ -65,8 +65,8 @@ public class GiftInfo
 
 public class MetaInfo
 {
-    public string Key { get; set; } = string.Empty;
-    public string Value { get; set; } = string.Empty;
+    public string Key = string.Empty;
+    public string Value = string.Empty;
 }
 
 public class ItemGrant

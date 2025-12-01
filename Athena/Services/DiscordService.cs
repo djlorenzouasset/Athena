@@ -30,21 +30,21 @@ public class DiscordService
     {
         _client = new DiscordRpcClient(APP_ID);
         _client.OnReady += (_, args) => Log.Information("Discord Presence started for {username}", args.User.Username);
-        _client.OnError += (_, args) => throw new Exception($"Error while starting Discord RPC: {args.Message}");
+        _client.OnError += (_, args) => Log.Error($"Error while starting Discord RPC: {args.Message}");
         _client.Initialize();
         _client.SetPresence(_defaultPresence);
     }
 
-    public void Update(string text, bool removeSmallAsset = true)
+    public void Update(string text, string icon = "")
     {
         _client?.UpdateState(text);
-        if (removeSmallAsset)
-            _client?.UpdateSmallAsset();
+        _client?.UpdateSmallAsset(icon);
     }
 
     public void Update(EModelType model)
     {
-        _client?.UpdateState($"Generating {model.DisplayName()}");
-        _client?.UpdateSmallAsset(model.ToString().ToLower(), model.DisplayName());
+        var modelName = model.DisplayName();
+        _client?.UpdateState($"Generating {modelName}");
+        _client?.UpdateSmallAsset(model.ToString().ToLower(), modelName);
     }
 }

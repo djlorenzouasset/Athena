@@ -20,9 +20,9 @@ public class APIService
             UserAgent = $"Athena/{Globals.Version.DisplayName}"
         }, configureSerialization: s => s.UseSerializer<JsonNetSerializer>());
 
+        Dilly = new(_client);
         Athena = new(_client);
         EpicGames = new(_client);
-        Dilly = new(_client);
     }
 
     public async Task<FileInfo> DownloadFileAsync(string url, string path, bool bOverwrite = true)

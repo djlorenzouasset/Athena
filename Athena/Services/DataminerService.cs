@@ -19,6 +19,8 @@ public class DataminerService
     public readonly List<GameFile> AllEntries = [];
     public readonly List<GameFile> NewEntries = [];
 
+    public readonly FGuid ZERO_GUID = new();
+
     public async Task Initialize()
     {
         Log.ForContext("NoConsole", true).Information("UE version: {version}", AppSettings.Default.EngineVersion);
@@ -26,7 +28,7 @@ public class DataminerService
         Manifest = new();
         Provider = new("", new(AppSettings.Default.EngineVersion), StringComparer.OrdinalIgnoreCase);
 
-        await DeleteChunksCache(); // now people can stop complain big .data folder sizes
+        await DeleteChunksCache(); // now people can stop complain about big .data folder sizes
 
         await InitOodle();
         await InitZlib();
@@ -52,7 +54,7 @@ public class DataminerService
         Provider.PostMount();
 
         LoadEntries(
-            r => r.EncryptionKeyGuid == Globals.ZERO_GUID ||
+            r => r.EncryptionKeyGuid == ZERO_GUID ||
             !Provider.RequiredKeys.Contains(r.EncryptionKeyGuid)
         );
     }
@@ -96,7 +98,7 @@ public class DataminerService
         ManifestInfo? manifest = await Api.EpicGames.GetManifestAsync(auth);
         if (manifest is null)
         {
-            Log.Error("The manifest response was invalid.");
+            Log.Error("The manifest response was invalid. Please try again later or contact the staff at {discord}.", Globals.DISCORD_URL);
             App.ExitThread(1);
         }
 
@@ -122,7 +124,7 @@ public class DataminerService
         {
             if (!File.Exists(AppSettings.Default.CustomMappingFile))
             {
-                Log.Error("Custom mapping file is enabled but no mapping has been found for {mapping}.", AppSettings.Default.CustomMappingFile);
+                Log.Error("Custom mapping file is enabled but no mappings have been found for {mapping}.", AppSettings.Default.CustomMappingFile);
                 return;
             }
             mapping = AppSettings.Default.CustomMappingFile;
@@ -138,7 +140,7 @@ public class DataminerService
         }
 
         Provider.MappingsContainer = new FileUsmapTypeMappingsProvider(mapping);
-        Log.Information("Loaded mappings from {mapping}.", mapping);
+        Log.Information("Loaded mapping {mapping}.", Path.GetFileName(mapping));
     }
 
     private async Task<string?> GetMappings()
@@ -156,16 +158,16 @@ public class DataminerService
         var keysReponse = await Api.Dilly.GetAESKeysAsync();
         if (keysReponse is null)
         {
-            Log.Warning("AES Keys response was invalid. Trying to load local keys.");
+            Log.Warning("AES Keys response was invalid: trying to load local keys.");
             LoadLocalKeys();
             return;
         }
 
         AppSettings.Default.LocalKeys = keysReponse;
 
-        LoadKey(Globals.ZERO_GUID, new(keysReponse.MainKey));
+        LoadKey(ZERO_GUID, new(keysReponse.MainKey));
         LoadKeysList(keysReponse.DynamicKeys);
-        Log.Information("Loaded {total} Dynamic Keys.", keysReponse.DynamicKeys.Count);
+        Log.Information("Loaded {total} dynamic keys.", keysReponse.DynamicKeys.Count);
 
         TestMainKey(keysReponse.MainKey); // if this fails, athena is cooked!
     }
@@ -174,13 +176,13 @@ public class DataminerService
     {
         if (AppSettings.Default.LocalKeys is null)
         {
-            Log.Warning("No local keys found. Athena might not work as expected.");
+            Log.Warning("No local dynamic keys found.");
             return;
         }
 
-        LoadKey(Globals.ZERO_GUID, new FAesKey(AppSettings.Default.LocalKeys.MainKey));
+        LoadKey(ZERO_GUID, new FAesKey(AppSettings.Default.LocalKeys.MainKey));
         LoadKeysList(AppSettings.Default.LocalKeys.DynamicKeys);
-        Log.Information("Loaded {total} local Dynamic Keys.", AppSettings.Default.LocalKeys.DynamicKeys.Count);
+        Log.Information("Loaded {total} local dynamic keys.", AppSettings.Default.LocalKeys.DynamicKeys.Count);
     }
 
     private void TestMainKey(string key)
@@ -188,7 +190,7 @@ public class DataminerService
         var vf = Provider.MountedVfs.First(r => r.Name.Equals("pakchunk0-WindowsClient.pak"));
         if (!vf.TestAesKey(new FAesKey(key)))
         {
-            Log.Warning("Main key is invalid. Athena might not work as expected.");
+            Log.Warning("Main key is invalid.");
         }
     }
 

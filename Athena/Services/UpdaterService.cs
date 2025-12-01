@@ -17,7 +17,8 @@ public class UpdaterService
         var releaseInfo = App.ReleaseInfo;
         if (releaseInfo is null)
         {
-            Log.Warning("Failed to check for updates! Release info was null maybe due a failed request.");
+            Log.Warning("Failed to check for updates! Release info was null maybe due a failed request. " +
+                "Please contact the staff in the discord server {url}.", Globals.DISCORD_URL);
             return;
         }
 
@@ -36,7 +37,7 @@ public class UpdaterService
                     Log.Warning("Updater is not installed. Installing it..");
                     if (await Api.DownloadFileAsync(UPDATER_URL, _updateInstaller, true) is not FileInfo { Exists: true })
                     {
-                        Log.Error("Failed to install updater. Contact the staff in the discord.");
+                        Log.Error("Failed to install updater. Please contact the staff in the discord server {url}.", Globals.DISCORD_URL);
                         return;
                     }
                 }
@@ -53,7 +54,7 @@ public class UpdaterService
 
         if (await Api.DownloadFileAsync(releaseInfo.DownloadUrl, _tempInstallationFile) is not FileInfo { Exists: true })
         {
-            Log.Error("Failed to download the update. Contact the staff or download the update manually from GitHub.");
+            Log.Error("Failed to download the update. Please contact the staff in the discord server {url}.", Globals.DISCORD_URL);
             return false;
         }
 

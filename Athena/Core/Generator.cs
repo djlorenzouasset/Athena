@@ -64,7 +64,7 @@ public class Generator
     {
         foreach (var vf in UEParser.Provider.MountedVfs)
         {
-            if (!vf.Name.EndsWith("utoc") || vf.EncryptionKeyGuid == Globals.ZERO_GUID)
+            if (!vf.Name.EndsWith("utoc") || vf.EncryptionKeyGuid == UEParser.ZERO_GUID)
                 continue;
 
             _availableArchives.Add(vf);
@@ -74,18 +74,19 @@ public class Generator
 
     public async Task ShowMenu()
     {
-        var news = await Api.Athena.GetNewsAsync();
-
         while (true)
         {
-            Console.Clear(); // clear console from parser logs
+            // get news every time we go back to menu to show the latest updates
+            var news = await Api.Athena.GetNewsAsync();
+
+            Console.Clear(); // clear console from parser logs & api logs
 
             Console.Title = $"Athena {Globals.Version.DisplayName} - FortniteGame v{UEParser.Manifest.GameVersion}";
             Discord.Update($"In Menu - FortniteGame v{UEParser.Manifest.GameVersion}");
 
             AnsiConsole.Markup($"Welcome to [12]Athena {Globals.Version.DisplayName}[/]: Made with [124]<3[/] by [12]@djlorenzouasset[/] & [12]@andredotuasset[/] with the help of many others.\n");
             AnsiConsole.Markup($"Join the [12]Discord Server[/] to stay updated on the development: [12]{Globals.DISCORD_URL}[/]\n");
-            AnsiConsole.Markup($"Want to change [12]app/shop/profiles settings?[/] Go in the [underline 12]%appdata%/Athena[/] folder and edit the [12]settingsV2.json[/] file.\n");
+            AnsiConsole.Markup($"Want to change [12]app/shop/profiles settings?[/] Go in the [underline 12]AppData/Roaming/Athena[/] folder and edit the [12]settingsV2.json[/] file.\n");
 
             if (news is not null && news.GetNews() is { Count: > 0} newsToDisplay)
             {
@@ -106,6 +107,8 @@ public class Generator
             Console.WriteLine(""); // spacing
 
             var model = SelectModel();
+            Discord.Update(model);
+
             var generationType = SelectGenerationType(model);
 
             if (generationType == EGenerationType.ReturnToMenu)
@@ -122,8 +125,7 @@ public class Generator
 
     private async Task<EReturnResult> HandleRequest(EModelType model, EGenerationType generationType)
     {
-        Log.ForContext("NoConsole", true).Information("User selected {model} - {type}", model, generationType);
-        Discord.Update(model);
+        Log.ForContext("NoConsole", true).Information("User selected {model} -> {type}", model, generationType); 
 
         EReturnResult status = EReturnResult.Success;
         switch (generationType)
@@ -247,7 +249,14 @@ public class Generator
                 }
                 catch (Exception e)
                 {
-                    Log.Error("[IGNORE] Failed add shop item {name}: {msg}", entry.NameWithoutExtension, e.Message);
+                    // skip those exceptions that occour only on some assets like BPs
+                    if (e is InvalidOperationException || e is ArgumentOutOfRangeException)
+                    {
+                        Log.Error("[IGNORE] Failed add shop item {name}", entry.NameWithoutExtension);
+                        continue;
+                    }
+
+                    Log.Error("Failed add shop item {name}: {msg}", entry.NameWithoutExtension, e.Message);
                     continue;
                 }
             }
@@ -257,7 +266,8 @@ public class Generator
         string rawJson = builder.Build();
 
         if (!Directory.Exists(Path.GetDirectoryName(savePath)))
-        {
+        { 
+            // create the directory if doesn't exist
             Directory.CreateDirectory(Path.GetDirectoryName(savePath)!);
             Log.Warning("The output directory you did set does not exist! Creating it.");
         }
@@ -340,7 +350,7 @@ public class Generator
         var oldFiles = await GetBackupEntries();
         if (oldFiles is null) return EReturnResult.Error;
 
-        UEParser.LoadEntries(ar => ar.EncryptionKeyGuid == Globals.ZERO_GUID ||
+        UEParser.LoadEntries(ar => ar.EncryptionKeyGuid == UEParser.ZERO_GUID ||
             (bIncludeArchives && !UEParser.Provider.RequiredKeys.Contains(ar.EncryptionKeyGuid)),
             oldFiles,
             bNew: true
@@ -370,7 +380,7 @@ public class Generator
     private void HandleSelectedCosmetics(EModelType selectedModel)
     {
         var customIds = GetCustomCosmetics(selectedModel);
-        UEParser.LoadEntries(ar => ar.EncryptionKeyGuid == Globals.ZERO_GUID ||
+        UEParser.LoadEntries(ar => ar.EncryptionKeyGuid == UEParser.ZERO_GUID ||
             !UEParser.Provider.RequiredKeys.Contains(ar.EncryptionKeyGuid),
             customIds,
             bIsCustom: true
@@ -415,12 +425,12 @@ public class Generator
                     continue;
 
                 AppSettings.Default.LocalKeys = res;
-
                 UEParser.LoadKeysList(newKeys);
 
+                // load only the new archives that contain files based on the selected model
                 var filter = selectedModel is EModelType.ProfileAthena ? _cosmeticsFilter : _shopAssetsFilter;
                 var vfs = UEParser.Provider.MountedVfs.Where(vf => 
-                    vf.EncryptionKeyGuid != Globals.ZERO_GUID && vf.Files.Values.Any(filter)).ToList();
+                    vf.EncryptionKeyGuid != UEParser.ZERO_GUID && vf.Files.Values.Any(filter)).ToList();
 
                 if (vfs.Count == 0)
                     continue;

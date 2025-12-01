@@ -15,8 +15,10 @@ public class ShopBuilder : BaseBuilder
     private int _dailyRowIndex = 1;
     private int _featuredRowIndex = 1;
 
-    private int _maxNumberOfDailyItems = 4;
-    private int _maxNumberOfFeaturedItems = 2;
+    private const int MAX_DAILY_ITEMS = 4;
+    private const int MAX_FEATURED_ITEMS = 2;
+
+    private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     public override string Build()
     {
@@ -69,7 +71,7 @@ public class ShopBuilder : BaseBuilder
 
         if (bIsBundle)
         {
-            if (_featuredCount % _maxNumberOfFeaturedItems == 0 && _featuredCount != 0)
+            if (_featuredCount % MAX_FEATURED_ITEMS == 0 && _featuredCount != 0)
                 _featuredRowIndex++;
 
             meta.TemplateId = $"DynamicBundle:b_{assetName.SubstringAfter("Featured_")}";
@@ -111,7 +113,7 @@ public class ShopBuilder : BaseBuilder
         }
         else
         {
-            if (_dailyCount % _maxNumberOfDailyItems == 0 && _dailyCount != 0)
+            if (_dailyCount % MAX_DAILY_ITEMS == 0 && _dailyCount != 0)
                 _dailyRowIndex++;
 
             if (assetName.StartsWith("Featured", StringComparison.OrdinalIgnoreCase) ||
@@ -152,7 +154,6 @@ public class ShopBuilder : BaseBuilder
         }
     }
 
-    private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private string GenerateRandomOfferId(int length = 45)
     {
         var chars = new char[length];

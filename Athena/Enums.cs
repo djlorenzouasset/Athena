@@ -8,7 +8,6 @@ public enum EReturnResult : int
     Error = 0, // >> error: used to display the "try again" question
     Warning = 1, // >> warning: used to return the user to menu on non-user errors
     Success = 2, // >> success: the task was completed without any issue
-
     NoResult = 3 // >> no result: used to show the menu without issues
 }
 
@@ -60,9 +59,7 @@ public enum EBackupVersion : byte
 {
     BeforeVersionWasAdded = 0,
     Initial,
-
     PerfectPath,
-
     LatestPlusOne,
     Latest = LatestPlusOne - 1
 }
