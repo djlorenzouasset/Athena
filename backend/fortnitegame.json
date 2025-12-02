@@ -38712,6 +38712,221 @@
     },
     "crewscreendata": {
         "benefits": {
+            "benefitsGroups": [
+                {
+                    "benefits": [
+                        {
+                            "tileType": "Basic",
+                            "tileLabel": "1,000 V-BUCKS",
+                            "nextDetails": {
+                                "_type": "Crew Tile Details Data"
+                            },
+                            "bHasNextCrewPackDetails": false,
+                            "_type": "Crew Tile Data",
+                            "details": {
+                                "tileImageURL": "https://cdn2.unrealengine.com/crewbenefits-vbtile-520x320-f6fc1124ea0c.png",
+                                "_type": "Crew Tile Details Data",
+                                "color3Hex": "C3F7F7",
+                                "description": "Get 1,000 V-Bucks every month on your Fortnite Crew billing date!",
+                                "color4Hex": "000000FF",
+                                "tag": "MonthlyBenefit",
+                                "title": "1,000 V-Bucks",
+                                "color2Hex": "75B8E3FF",
+                                "color1Hex": "263C4AFF",
+                                "backgroundImageURL": "https://cdn2.unrealengine.com/vbucksfullscreen-1920x1080-c3912213e6d8-1920x1080-f542c26953e3.png"
+                            }
+                        },
+                        {
+                            "tileType": "BattlePass",
+                            "tileLabel": "Battle Pass",
+                            "nextDetails": {
+                                "_type": "Crew Tile Details Data"
+                            },
+                            "bHasNextCrewPackDetails": false,
+                            "_type": "Crew Tile Data",
+                            "details": {
+                                "secondaryTileImageURL": "https://cdn2.unrealengine.com/t-ui-bp-3900-crewtilefallback-592x192-49354a295d4e.png",
+                                "tileImageURL": "https://cdn2.unrealengine.com/t-ui-bp-3900-crewbenefitstile-260x160-d993778960c2.png",
+                                "_type": "Crew Tile Details Data",
+                                "color3Hex": "#C3432A",
+                                "description": "While subscribed to Fortnite Crew, claim premium rewards from the Battle Pass as you progress. Looking for the Battle Bundle? Add 10 rewards to your Battle Pass at any time!",
+                                "color4Hex": "#A03A2A",
+                                "tag": "SeasonLaunchBenefit",
+                                "title": "Battle Pass",
+                                "color2Hex": "#FFE378",
+                                "color1Hex": "#5A1500",
+                                "backgroundImageURL": "https://cdn2.unrealengine.com/t-ui-bp-3900-crewbackground-1024x780-62e681c0e764.png"
+                            },
+                            "templateId": "battlepassdata"
+                        },
+                        {
+                            "tileType": "BattlePass",
+                            "tileLabel": "OG Pass",
+                            "nextDetails": {
+                                "_type": "Crew Tile Details Data",
+                                "tag": "None"
+                            },
+                            "bHasNextCrewPackDetails": false,
+                            "_type": "Crew Tile Data",
+                            "comingSoonText": "",
+                            "details": {
+                                "secondaryTileImageURL": "https://cdn2.unrealengine.com/t-ui-pass-tile-figment-3740-fallback-312x192-7d360b086cfd.png",
+                                "tileImageURL": "https://cdn2.unrealengine.com/t-ui-3740-crew-tile-figment-260x160-49a4558b32e1.png",
+                                "_type": "Crew Tile Details Data",
+                                "description": "While subscribed to Fortnite Crew, claim premium rewards from the OG Pass as you progress.",
+                                "color4Hex": "09253D",
+                                "tag": "SeasonLaunchBenefit",
+                                "title": "OG Pass",
+                                "color2Hex": "32AEE4",
+                                "color1Hex": "11395A",
+                                "backgroundImageURL": "https://cdn2.unrealengine.com/t-ui-3740-crewpass-background-figment-1920x1080-8400ab4f8544.png"
+                            },
+                            "templateId": "figmentpassdata"
+                        },
+                        {
+                            "tileType": "BattlePass",
+                            "tileLabel": "Music Pass",
+                            "nextDetails": {
+                                "_type": "Crew Tile Details Data",
+                                "tag": "None"
+                            },
+                            "bHasNextCrewPackDetails": false,
+                            "_type": "Crew Tile Data",
+                            "details": {
+                                "secondaryTileImageURL": "https://cdn2.unrealengine.com/t-ui-mp-3900-passtilefallback-312x192-eb49d0973878-312x192-6732c0a355f4.png",
+                                "tileImageURL": "https://cdn2.unrealengine.com/t-ui-mp-3900-crewbenefitstile-260x160-37256c559a20-260x160-8cab2c121c90.png",
+                                "_type": "Crew Tile Details Data",
+                                "color3Hex": "721269",
+                                "description": "While subscribed to Fortnite Crew, claim premium rewards from the Music Pass as you progress.",
+                                "color4Hex": "290C18",
+                                "tag": "SeasonLaunchBenefit",
+                                "title": "Music Pass",
+                                "color2Hex": "A84143",
+                                "color1Hex": "E27576",
+                                "backgroundImageURL": "https://cdn2.unrealengine.com/t-ui-mp-3900-crewbackground-1920x1080-9cca34ea0975-1920x1080-5bd0b0ffbc81.png"
+                            },
+                            "templateId": "musicpassdata"
+                        },
+                        {
+                            "tileType": "BattlePass",
+                            "tileLabel": "Lego® Pass",
+                            "nextDetails": {
+                                "_type": "Crew Tile Details Data",
+                                "tag": "None"
+                            },
+                            "bHasNextCrewPackDetails": false,
+                            "_type": "Crew Tile Data",
+                            "details": {
+                                "secondaryTileImageURL": "https://cdn2.unrealengine.com/t-ui-juno-crewlanding-palmparadise-primarytile-312x192-65b1c65c559a.png",
+                                "tileImageURL": "https://cdn2.unrealengine.com/t-ui-juno-crewbenefits-passtile-palmparadise-260x160-0af64cd38ef5.png",
+                                "_type": "Crew Tile Details Data",
+                                "description": "While subscribed to Fortnite Crew, claim premium rewards from the LEGO Pass as you progress.",
+                                "tag": "SeasonLaunchBenefit",
+                                "title": "Lego® Pass",
+                                "backgroundImageURL": "https://cdn2.unrealengine.com/t-ui-juno-palmparadise-crewbenefits-passsection-1920x1080-e6cc51d8614b.png"
+                            },
+                            "templateId": "legopassdata"
+                        },
+                        {
+                            "tileType": "CrewPack",
+                            "tileLabel": "Crew Pack",
+                            "crewPackItems": [
+                                "AthenaCharacter:character_silvercanine",
+                                "AthenaBackpack:backpack_silvercanine",
+                                "AthenaPickaxe:pickaxe_silvercanine"
+                            ],
+                            "nextDetails": {
+                                "colorA": "",
+                                "colorB": "",
+                                "secondaryTileImageURL": "https://cdn2.unrealengine.com/2025december-crew-benefits---recurring-benefits-crew-pack-tile-260x160-76fb2b6fce8f.png",
+                                "tileImageURL": "https://cdn2.unrealengine.com/2025december-crew-benefits---recurring-benefits-crew-pack-tile-260x160-76fb2b6fce8f.png",
+                                "_type": "Crew Tile Details Data",
+                                "color3Hex": "",
+                                "description": "Get the Carletta Outfit, Back Bling, and Pickaxe!",
+                                "color4Hex": "0C2E45",
+                                "title": "December Crew Pack",
+                                "color2Hex": "88F8FC",
+                                "color1Hex": "1F4E64",
+                                "tag": "MonthlyBenefit",
+                                "colorC": "",
+                                "backgroundImageURL": "https://cdn2.unrealengine.com/2025december-crew-benefits-screen---crew-pack-background-texture-1920x1080-531633cf366c.png"
+                            },
+                            "nextCrewPackItems": [
+                                "AthenaCharacter:character_silvercanine",
+                                "AthenaBackpack:backpack_silvercanine",
+                                "AthenaPickaxe:pickaxe_silvercanine"
+                            ],
+                            "bHasNextCrewPackDetails": false,
+                            "_type": "Crew Tile Data",
+                            "details": {
+                                "colorA": "",
+                                "colorB": "",
+                                "secondaryTileImageURL": "https://cdn2.unrealengine.com/2025december-crew-benefits---recurring-benefits-crew-pack-tile-260x160-76fb2b6fce8f.png",
+                                "tileImageURL": "https://cdn2.unrealengine.com/2025december-crew-benefits---recurring-benefits-crew-pack-tile-260x160-76fb2b6fce8f.png",
+                                "_type": "Crew Tile Details Data",
+                                "color3Hex": "",
+                                "description": "Get the Carletta Outfit, Back Bling, and Pickaxe!",
+                                "color4Hex": "0C2E45",
+                                "title": "December Crew Pack",
+                                "color2Hex": "88F8FC",
+                                "color1Hex": "1F4E64",
+                                "tag": "MonthlyBenefit",
+                                "colorC": "",
+                                "backgroundImageURL": "https://cdn2.unrealengine.com/2025december-crew-benefits-screen---crew-pack-background-texture-1920x1080-531633cf366c.png"
+                            }
+                        }
+                    ],
+                    "_type": "Crew Benefits Group",
+                    "title": "Recurring Benefits"
+                },
+                {
+                    "benefits": [
+                        {
+                            "tileType": "Basic",
+                            "tileLabel": "Rocket Pass",
+                            "nextDetails": {
+                                "_type": "Crew Tile Details Data",
+                                "tag": "None"
+                            },
+                            "bHasNextCrewPackDetails": false,
+                            "_type": "Crew Tile Data",
+                            "details": {
+                                "tileImageURL": "https://cdn2.unrealengine.com/crewbenefits-rockettile-520x320-1e6ae8846a29.png",
+                                "_type": "Crew Tile Details Data",
+                                "description": "Get Rocket Pass Premium for the current season of Rocket League as part of your Crew subscription (Rocket League not available on Mobile).",
+                                "tag": "CrewMonthBenefit",
+                                "title": "Rocket Pass Premium",
+                                "backgroundImageURL": "https://cdn2.unrealengine.com/rl-s20-upsell-crewoutfit-v2-1920x1080-141f2346867d.jpg"
+                            }
+                        },
+                        {
+                            "tileType": "ProgressiveCosmetic",
+                            "tileLabel": "Crew Styles",
+                            "nextDetails": {
+                                "_type": "Crew Tile Details Data",
+                                "tag": "None",
+                                "title": ""
+                            },
+                            "bHasNextCrewPackDetails": false,
+                            "_type": "Crew Tile Data",
+                            "details": {
+                                "secondaryTileImageURL": "https://cdn2.unrealengine.com/2025december-crew-benefits---recurring-benefits-crew-legacy-tile-260x160-fed40215f75e.png",
+                                "tileImageURL": "https://cdn2.unrealengine.com/2025december-crew-benefits---recurring-benefits-crew-legacy-tile-260x160-fed40215f75e.png",
+                                "_type": "Crew Tile Details Data",
+                                "description": "Crew-exclusive cosmetics that unlock a new stage every month that you are an active subscriber to the Fortnite Crew.",
+                                "color4Hex": "09081A",
+                                "tag": "AvailableUntilBenefit",
+                                "title": "Crew Styles",
+                                "color2Hex": "45D2F5",
+                                "color1Hex": "0744AC",
+                                "backgroundImageURL": "https://cdn2.unrealengine.com/2025december-crew-benefits-screen---crew-legacy-background-texture-1920x1080-6772b29280b5.png"
+                            }
+                        }
+                    ],
+                    "_type": "Crew Benefits Group",
+                    "title": "Limited Time Benefits"
+                }
+            ],
             "recurringBenefits": [
                 {
                     "tileType": "Basic",
