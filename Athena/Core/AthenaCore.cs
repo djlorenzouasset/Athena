@@ -71,7 +71,7 @@ public class AthenaCore
 
                 if (result == MessageService.BT_YES)
                 {
-                    Log.ForContext("NoConsole", true).Debug("Launching donation page {URL}", Globals.DONATIONS_URL);
+                    Log.ForContext("NoConsole", true).Information("Launching donation page {URL}", Globals.DONATIONS_URL);
                     App.Launch(Globals.DONATIONS_URL);
                 }
             });
