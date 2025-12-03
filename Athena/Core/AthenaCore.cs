@@ -28,7 +28,7 @@ public class AthenaCore
             string msg = ex!.Message;
             if (e.IsTerminating)
             {
-                msg += "\n\nAthena will now close. Please contact the staff if you still see this message.";
+                msg += $"\n\nAthena will now close. Please contact the staff in {Globals.DISCORD_URL} if you still see this message.";
                 AppSettings.SaveSettings();
             }
 
