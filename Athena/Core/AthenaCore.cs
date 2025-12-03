@@ -19,7 +19,7 @@ public class AthenaCore
 
         AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
         {
-            AppSettings.SaveSettings();
+            App.ExitThread(0, true);
         };
         AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
         {
@@ -29,10 +29,13 @@ public class AthenaCore
             if (e.IsTerminating)
             {
                 msg += $"\n\nAthena will now close. Please contact the staff in {Globals.DISCORD_URL} if you still see this message.";
-                AppSettings.SaveSettings();
             }
 
             MessageService.Show("An error has occurred!", msg, MessageService.MB_ICONERROR | MessageService.MB_OK);
+            if (e.IsTerminating)
+            {
+                App.ExitThread(-1, true);
+            }
         };
 
         await App.InitializeVersionInfo();

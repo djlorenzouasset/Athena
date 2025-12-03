@@ -21,7 +21,7 @@ public abstract class AthenaRestClient(RestClient client)
             var response = await _client.ExecuteAsync<T>(request).ConfigureAwait(false);
             if (bLog) Log.Information("[{Method}] {StatusDescription} ({StatusCode}): {Uri}", 
                 request.Method, response.StatusDescription, (int)response.StatusCode, request.Resource);
-            return response.Data;
+            return response.IsSuccessful ? response.Data : default;
         }
         catch (Exception ex)
         {
