@@ -5,7 +5,7 @@ namespace Athena.Services;
 
 public class UpdaterService
 {
-    private const string UPDATER_URL = "";
+    private const string UPDATER_URL = "https://github.com/djlorenzouasset/Athena/releases/download/v2.0.0.0/AthenaUpdater.exe";
 
     private readonly string _currentInstallation = Path.Combine(Directories.Current, "Athena.exe");
     private readonly string _tempInstallationFile = Path.Combine(Directories.Data, "Athena.exe");
