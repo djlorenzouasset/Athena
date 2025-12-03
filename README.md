@@ -29,12 +29,12 @@ You can download the application already compiled [here](https://github.com/djlo
 
 ### Download the source code and compile
 1. Clone the source code
-```
+```bash
 git clone https://github.com/djlorenzouasset/Athena --recursive
 ```
 
 2. Build the program
-```
+```bash
 cd Athena
 dotnet publish Athena -c Release --no-self-contained -p:PublishReadyToRun=false -p:PublishSingleFile=true -p:DebugType=None -p:GenerateDocumentationFile=false -p:DebugSymbols=false
 ```
