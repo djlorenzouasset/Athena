@@ -41,4 +41,4 @@ dotnet publish Athena -c Release --no-self-contained -p:PublishReadyToRun=false 
 -----------------
 
 ## Need help?
-If you need help with Athena, join the [support server](https://discord.gg/nJBj9NjUS4)
+If you need help with Athena, join the [discord server](https://discord.gg/nJBj9NjUS4)
