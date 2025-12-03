@@ -1,17 +1,14 @@
 # Athena Roadmap for next major updates
 
-## Athena v2
-- [ ] Function for check new paks: when something gets decrypted Athena generates it instantly
-- [ ] Lot of improvements in the code (performances too)
-- [x] More settings options
-- [ ] Generation times improved by the 40% or more
-- [ ] Custom prices and custom level in game
+## Athena v2.0.0
+- [x] Generation times improved by the ~80%
+- [x] Paks watcher: a brand new option to check when a new pak gets decrypted
+- [x] Ability to change UE version and more in the settings
+- [x] Custom options: game level, shop prices, bundle items, card background colors and materials, violator tags
+- [x] Custom mappings support
+- [x] Local AES keys support
 
-## Athena v2.?
-- [ ] *Interactive interface
-- [ ] Possibility to create a custom shop with custom sizes, positions, colors and sections
-- [ ] Option for load an existing profile/shop and edit it
-- [ ] Better errors handling
-- [ ] Cosmetics in bundles
+## Athena +v2.0.0
+- [ ] RMT (Real Money Transaction) support
 
-and more...
+And more to come...
