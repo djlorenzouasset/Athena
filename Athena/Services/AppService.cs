@@ -33,7 +33,6 @@ public class AppService
                 .WriteTo.Console(
                     outputTemplate: "[{Level:u3}] {Message:lj}{NewLine}{Exception}",
                     theme: AnsiConsoleTheme.Literate))
-            .MinimumLevel.Debug() // use debug for file because we need all infos for support purposes
             .WriteTo.File(Path.Combine(Directories.Logs, $"Athena-Log-{DateTime.Now:dd-MM-yyyy}.log"))
             .CreateLogger();
     }
@@ -50,18 +49,22 @@ public class AppService
 #endif
     }
 
-    public void ExitThread(int exitCode = 0)
+    public void ExitThread(int exitCode = 0, bool auto = false)
     {
-        Log.Information("Press the enter key to close the application");
+        if (!auto)
+        {
+            Log.Information("Press the enter key to close the application");
 
-        ConsoleKeyInfo keyInfo;
-        do { keyInfo = Console.ReadKey(true); }
-        while (keyInfo.Key != ConsoleKey.Enter);
+            ConsoleKeyInfo keyInfo;
+            do { keyInfo = Console.ReadKey(true); }
+            while (keyInfo.Key != ConsoleKey.Enter);
+        }
 
         AppSettings.SaveSettings();
         Log.ForContext("NoConsole", true).Information("Log file closed: {date}", DateTime.UtcNow);
         Log.CloseAndFlush();
-        Environment.Exit(exitCode);
+
+        if (!auto) Environment.Exit(exitCode); // yea idk
     }
 
     // this function is used because AnsiConsole.Ask<T>() doesn't handle
