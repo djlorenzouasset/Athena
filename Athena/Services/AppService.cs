@@ -33,6 +33,7 @@ public class AppService
                 .WriteTo.Console(
                     outputTemplate: "[{Level:u3}] {Message:lj}{NewLine}{Exception}",
                     theme: AnsiConsoleTheme.Literate))
+            .MinimumLevel.Debug() // use debug for file because we need all infos for support purposes
             .WriteTo.File(Path.Combine(Directories.Logs, $"Athena-Log-{DateTime.Now:dd-MM-yyyy}.log"))
             .CreateLogger();
     }
