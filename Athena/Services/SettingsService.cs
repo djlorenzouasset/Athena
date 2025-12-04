@@ -97,6 +97,7 @@ public class SettingsService
         AskPath(EModelType.ItemShopCatalog);
         Default.UseDiscordRPC = AnsiConsole.Confirm("Do you want to use the [62]Discord Presence[/]?");
 
+        Directory.CreateDirectory(Path.GetDirectoryName(_file)!);
         SaveSettings();
     }
 
