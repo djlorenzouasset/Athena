@@ -10,7 +10,8 @@ public class AssetsService
         {
             BackendType = "AthenaCharacter",
             ClassNames = ["AthenaCharacterItemDefinition"],
-            Prefixes = [
+            Prefixes =
+            [
                 "CID_", 
                 "Character_"
             ]
@@ -18,16 +19,19 @@ public class AssetsService
         new ItemEntry
         {
             BackendType = "AthenaBackpack",
-            ClassNames = [
+            ClassNames =
+            [
                 "AthenaBackpackItemDefinition",
                 "AthenaPetCarrierItemDefinition"
             ],
-            Prefixes = [
+            Prefixes =
+            [
                 "BID_",
                 "Backpack_",
                 "PetCarrier_"
             ],
-            IncludeNames = [
+            IncludeNames =
+            [
                 "Gadget_AlienSignalDetector",
                 "Gadget_DetectorGadget",
                 "Gadget_DetectorGadget_Ch4S2",
@@ -41,7 +45,8 @@ public class AssetsService
             BackendType = "AthenaPickaxe",
             ClassNames = ["AthenaPickaxeItemDefinition"],
             Prefixes = ["Pickaxe_"],
-            IncludeNames = [
+            IncludeNames =
+            [
                 "DefaultPickaxe",
                 "BoltonPickaxe",
                 "Dev_Test_Pickaxe",
@@ -55,12 +60,14 @@ public class AssetsService
         new ItemEntry
         {
             BackendType = "AthenaDance",
-            ClassNames = [
+            ClassNames =
+            [
                 "AthenaDanceItemDefinition",
                 "AthenaToyItemDefinition",
                 "AthenaEmojiItemDefinition"
             ],
-            Prefixes = [
+            Prefixes =
+            [
                 "EID_",
                 "Spray_",
                 "Spid_",
@@ -73,11 +80,13 @@ public class AssetsService
         {
             BackendType = "AthenaGlider",
             ClassNames = ["AthenaGliderItemDefinition"],
-            Prefixes  = [
+            Prefixes  =
+            [
                 "Glider_",
                 "Umbrella_"
             ],
-            IncludeNames = [
+            IncludeNames =
+            [
                 "DefaultGlider",
                 "Duo_Umbrella",
                 "FounderGlider",
@@ -100,7 +109,8 @@ public class AssetsService
         {
             BackendType = "AthenaSkyDiveContrail",
             ClassNames = ["AthenaSkyDiveContrailItemDefinition"],
-            Prefixes = [
+            Prefixes =
+            [
                 "Contrail_",
                 "Trails_"
             ],
@@ -116,7 +126,8 @@ public class AssetsService
         {
             BackendType = "AthenaLoadingScreen",
             ClassNames = ["AthenaLoadingScreenItemDefinition"],
-            Prefixes = [
+            Prefixes =
+            [
                 "LoadingScreen_",
                 "LSID_"
             ]
@@ -150,52 +161,79 @@ public class AssetsService
         {
             BackendType = "SparksMicrophone",
             ClassNames = ["SparksMicItemDefinition"],
-            Prefixes = ["Mic_"]
+            Prefixes =
+            [
+                "Mic_", 
+                "Sparks_"
+            ]
         },
         new ItemEntry
         {
             BackendType = "SparksKeyboard",
             ClassNames = ["SparksKeyboardItemDefinition"],
-            Prefixes = ["Keytar_"]
+            Prefixes =
+            [
+                "Keytar_",
+                "Sparks_"
+            ]
         },
         new ItemEntry
         {
             BackendType = "SparksGuitar",
             ClassNames = ["SparksGuitarItemDefinition"],
-            Prefixes = ["Guitar_"]
+            Prefixes =
+            [
+                "Guitar_", 
+                "Sparks_"
+            ]
         },
         new ItemEntry
         {
             BackendType = "SparksDrums",
             ClassNames = ["SparksDrumItemDefinition"],
-            Prefixes = [
+            Prefixes =
+            [
                 "Drum_",
-                "DrumKit_"
+                "DrumKit_",
+                "Sparks_"
             ]
         },
         new ItemEntry
         {
             BackendType = "SparksBass",
             ClassNames = ["SparksBassItemDefinition"],
-            Prefixes = ["Bass_"]
+            Prefixes =
+            [
+                "Bass_", 
+                "Sparks_"
+            ]
         },
         new ItemEntry
         {
             BackendType = "SparksAura",
             ClassNames = ["SparksAuraItemDefinition"],
-            Prefixes = ["Aura_"]
+            Prefixes =
+            [
+                "Aura_",
+                "Sparks_"
+            ]
         },
         new ItemEntry
         {
             BackendType = "SparksSong",
             ClassNames = ["SparksSongItemDefinition"],
-            Prefixes = ["Sid_"]
+            Prefixes =
+            [
+                "Sid_", 
+                "Sparks_"
+            ]
         },
         new ItemEntry
         {
             BackendType = "VehicleCosmetics_Body",
             ClassNames = ["FortVehicleCosmeticsItemDefinition_Body"],
-            Prefixes = [
+            Prefixes =
+            [
                 "Body_",
                 "CarBody_"
             ]
