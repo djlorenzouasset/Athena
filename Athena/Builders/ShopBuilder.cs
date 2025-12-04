@@ -12,8 +12,6 @@ public class ShopBuilder : BaseBuilder
 
     private int _dailyCount = 0;
     private int _featuredCount = 0;
-    private int _dailyRowIndex = 1;
-    private int _featuredRowIndex = 1;
 
     private const int MAX_DAILY_ITEMS = 4;
     private const int MAX_FEATURED_ITEMS = 2;
@@ -46,7 +44,9 @@ public class ShopBuilder : BaseBuilder
 
         string offerId = $"v2:/{GenerateRandomOfferId()}";
         string sectionId = bIsBundle ? "Featured" : "Daily";
-        int rowIndex = bIsBundle ? _featuredRowIndex : _dailyRowIndex;
+        int rowIndex = bIsBundle
+            ? (_featuredCount / MAX_FEATURED_ITEMS) + 1
+            : (_dailyCount / MAX_DAILY_ITEMS) + 1;
 
         string layoutId = $"{sectionId}.{rowIndex}";
         string tileSize = bIsBundle ? "Size_2_x_2" : "Size_1_x_2";
@@ -71,9 +71,6 @@ public class ShopBuilder : BaseBuilder
 
         if (bIsBundle)
         {
-            if (_featuredCount % MAX_FEATURED_ITEMS == 0 && _featuredCount != 0)
-                _featuredRowIndex++;
-
             meta.TemplateId = $"DynamicBundle:b_{assetName.SubstringAfter("Featured_")}";
 
             var bundleEntry = new BundleCatalogEntry
@@ -113,9 +110,6 @@ public class ShopBuilder : BaseBuilder
         }
         else
         {
-            if (_dailyCount % MAX_DAILY_ITEMS == 0 && _dailyCount != 0)
-                _dailyRowIndex++;
-
             if (assetName.StartsWith("Featured", StringComparison.OrdinalIgnoreCase) ||
                 assetName.StartsWith("BuildingProp", StringComparison.OrdinalIgnoreCase))
             {
