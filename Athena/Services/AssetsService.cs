@@ -289,8 +289,8 @@ public class AssetsService
         => Items.FirstOrDefault(item => item.ClassNames.Contains(exportClass))?.BackendType ?? "TBD";
 
     public string GetBackendTypeByPrefix(string prefix)
-        => Items.FirstOrDefault(item => item.Prefixes.Contains(prefix))?.BackendType ?? "TBD";
+        => Items.FirstOrDefault(item => item.Prefixes.Any(p => p.StartsWith(prefix)))?.BackendType ?? "TBD";
 
     public string GetBackendTypeByIncludedName(string prefix)
-        => Items.FirstOrDefault(item => item.Prefixes.Contains(prefix))?.BackendType ?? "TBD";
+        => Items.FirstOrDefault(item => item.IncludeNames.Contains(prefix))?.BackendType ?? "TBD";
 }

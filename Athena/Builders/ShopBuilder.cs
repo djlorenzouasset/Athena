@@ -32,7 +32,7 @@ public class ShopBuilder : BaseBuilder
         string objectName = entry.Split("/").Last();
         string assetName = entry.Split("/").Last().Split("DAv2_").Last();
 
-        if (assetName.StartsWith("RMT"))
+        if (assetName.StartsWith("RMT") || assetName.Contains("BattlePass"))
             return;
 
         _catalogEntries.Add(ConstructCatalogEntry(objectPath, objectName, assetName));
