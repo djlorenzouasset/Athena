@@ -48,6 +48,7 @@ public class AssetsService
             IncludeNames =
             [
                 "DefaultPickaxe",
+                "DefaultPickaxe_Placeholder",
                 "BoltonPickaxe",
                 "Dev_Test_Pickaxe",
                 "HalloweenScythe",
@@ -88,6 +89,7 @@ public class AssetsService
             IncludeNames =
             [
                 "DefaultGlider",
+                "DefaultGlider_Placeholder",
                 "Duo_Umbrella",
                 "FounderGlider",
                 "FounderUmbrella",
@@ -224,7 +226,7 @@ public class AssetsService
             ClassNames = ["SparksSongItemDefinition"],
             Prefixes =
             [
-                "Sid_", 
+                "SID_", 
                 "Sparks_"
             ]
         },
@@ -242,25 +244,41 @@ public class AssetsService
         {
             BackendType = "VehicleCosmetics_Skin",
             ClassNames = ["FortVehicleCosmeticsItemDefinition_Skin"],
-            Prefixes = ["CarSkin_"]
+            Prefixes =
+            [
+                "CarSkin_",
+                "ID_Skin_"
+            ]
         },
         new ItemEntry
         {
             BackendType = "VehicleCosmetics_Booster",
             ClassNames = ["FortVehicleCosmeticsItemDefinition_Booster"],
-            Prefixes = ["Booster_"]
+            Prefixes =
+            [
+                "Booster_",
+                "ID_Booster_"
+            ]
         },
         new ItemEntry
         {
             BackendType = "VehicleCosmetics_Wheel",
             ClassNames = ["FortVehicleCosmeticsItemDefinition_Wheel"],
-            Prefixes = ["Wheel_"]
+            Prefixes =
+            [
+                "Wheel_",
+                "ID_Wheel_"
+            ]
         },
         new ItemEntry
         {
-            BackendType = "FortVehicleCosmeticsItemDefinition_DriftTrail",
-            ClassNames = ["SparksSongItemDefinition"],
-            Prefixes = ["DriftTrail_"]
+            BackendType = "VehicleCosmetics_DriftTrail",
+            ClassNames = ["FortVehicleCosmeticsItemDefinition_DriftTrail"],
+            Prefixes =
+            [
+                "DriftTrail_",
+                "ID_DriftTrail_"
+            ]
         },
         new ItemEntry
         {

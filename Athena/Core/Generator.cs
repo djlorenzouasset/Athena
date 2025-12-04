@@ -15,6 +15,7 @@ public class Generator
     private static readonly HashSet<string> _directoriesToFilter =
     [
         "Athena/Items/Cosmetics/",
+        "GameFeatures/DefaultCosmeticsAthena/",
         "GameFeatures/CosmeticCompanions/",
         "GameFeatures/MeshCosmetics/",
         "GameFeatures/CosmeticShoes/",
