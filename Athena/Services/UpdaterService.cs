@@ -35,6 +35,7 @@ public class UpdaterService
                 if (!File.Exists(_updateInstaller))
                 {
                     Log.Warning("Updater is not installed. Installing it..");
+                    Directory.CreateDirectory(Path.GetDirectoryName(_updateInstaller)!);
                     if (await Api.DownloadFileAsync(UPDATER_URL, _updateInstaller, true) is not FileInfo { Exists: true })
                     {
                         Log.Error("Failed to install updater. Please contact the staff in the discord server {url}.", Globals.DISCORD_URL);
