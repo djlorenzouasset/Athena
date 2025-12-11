@@ -80,7 +80,7 @@ public class DataminerService
     
     private async Task InitOodle()
     {
-        var path = Path.Combine(Directories.Data, OodleHelper.OODLE_DLL_NAME);
+        var path = Path.Combine(Directories.Data, OodleHelper.OODLE_DLL_NAME_OLD);
         if (!File.Exists(path)) await OodleHelper.DownloadOodleDllAsync(path);
         OodleHelper.Initialize(path);
     }
