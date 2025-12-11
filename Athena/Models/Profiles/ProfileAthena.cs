@@ -1,15 +1,8 @@
-﻿namespace Athena.Models.Profiles;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.Text.Json.Serialization;
 
-public class SandboxLoadout : IProfileItem
-{
-    public LockerSlotsData LockerSlotsData = new();
-    public int UseCount = 1;
-    public string BannerIconTemplate = "BRS11_Prestige5";
-    public string LockerName = AppSettings.Default.ProfilesSettings.ProfileId;
-    public string BannerColorTemplate = "DefaultColor40";
-    public bool ItemSeen = false;
-    public bool Favorite = false;
-}
+namespace Athena.Models.Profiles;
 
 public class ProfileAthena
 {
@@ -22,17 +15,28 @@ public class ProfileAthena
     public string ProfileId = "athena";
     public string Version = "";
     public Dictionary<string, IProfileItem> Items = new() {
-        { "sandbox_loadout", new SandboxLoadout() }
+        { "sandbox_loadout", new Loadout() }
     };
     public ProfileStats Stats = new();
     public int CommandRevision = 100;
 }
 
-public class Loadout
+public class Loadout : IProfileItem
 {
     public string TemplateId = "CosmeticLocker:cosmeticlocker_athena";
-    public Attributes Attributes = new();
+    public LockerAtributes Attributes = new();
     public int Quantity = 1;
+}
+
+public class LockerAtributes
+{
+    [JsonProperty("locker_slots_data")] public LockerSlotsData LockerSlotsData = new();
+    [JsonProperty("use_count")] public int UseCount = 1;
+    [JsonProperty("banner_icon_template")] public string BannerIconTemplate = "BRS11_Prestige5";
+    [JsonProperty("locker_name")] public string LockerName = AppSettings.Default.ProfilesSettings.ProfileId;
+    [JsonProperty("banner_color_template")] public string BannerColorTemplate = "DefaultColor40";
+    [JsonProperty("item_seen")] public bool ItemSeen = false;
+    public bool Favorite = false;
 }
 
 public class LockerSlotsData
@@ -42,15 +46,15 @@ public class LockerSlotsData
 
 public class Slots
 {
-    public Pickaxe Pickaxe = new();
-    public Dance Dance = new();
-    public Glider Glider = new();
-    public Character Character = new();
-    public Backpack Backpack = new();
-    public ItemWrap ItemWrap = new();
-    public LoadingScreen LoadingScreen = new();
-    public MusicPack MusicPack = new();
-    public SkydiveContrail SkyDiveContrail = new();
+    [JsonProperty("Pickaxe")] public Pickaxe Pickaxe = new();
+    [JsonProperty("Dance")] public Dance Dance = new();
+    [JsonProperty("Glider")] public Glider Glider = new();
+    [JsonProperty("Character")] public Character Character = new();
+    [JsonProperty("Backpack")] public Backpack Backpack = new();
+    [JsonProperty("ItemWrap")] public ItemWrap ItemWrap = new();
+    [JsonProperty("LoadingScreen")] public LoadingScreen LoadingScreen = new();
+    [JsonProperty("MusicPack")] public MusicPack MusicPack = new();
+    [JsonProperty("SkyDiveContrail")] public SkydiveContrail SkyDiveContrail = new();
 }
 
 public class Pickaxe
