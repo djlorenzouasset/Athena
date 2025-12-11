@@ -83,6 +83,7 @@ public class UpdaterService
         try
         {
             App.Launch(startInfo);
+            AppSettings.Default.ShowChangeLog = true;
             Environment.Exit(0);
         }
         catch (Exception ex)
