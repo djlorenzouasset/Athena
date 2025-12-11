@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using System.Text.Json.Serialization;
 
 namespace Athena.Models.Profiles;
 
