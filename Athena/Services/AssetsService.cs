@@ -64,6 +64,7 @@ public class AssetsService
             ClassNames =
             [
                 "AthenaDanceItemDefinition",
+                "AthenaSprayItemDefinition",
                 "AthenaToyItemDefinition",
                 "AthenaEmojiItemDefinition"
             ],
