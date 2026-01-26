@@ -43,17 +43,18 @@ public class LockerSlotsData
     public Slots Slots = new();
 }
 
+[JsonObject(NamingStrategyType = typeof(DefaultNamingStrategy))]
 public class Slots
 {
-    [JsonProperty("Pickaxe")] public Pickaxe Pickaxe = new();
-    [JsonProperty("Dance")] public Dance Dance = new();
-    [JsonProperty("Glider")] public Glider Glider = new();
-    [JsonProperty("Character")] public Character Character = new();
-    [JsonProperty("Backpack")] public Backpack Backpack = new();
-    [JsonProperty("ItemWrap")] public ItemWrap ItemWrap = new();
-    [JsonProperty("LoadingScreen")] public LoadingScreen LoadingScreen = new();
-    [JsonProperty("MusicPack")] public MusicPack MusicPack = new();
-    [JsonProperty("SkyDiveContrail")] public SkydiveContrail SkyDiveContrail = new();
+    public Pickaxe Pickaxe = new();
+    public Dance Dance = new();
+    public Glider Glider = new();
+    public Character Character = new();
+    public Backpack Backpack = new();
+    public ItemWrap ItemWrap = new();
+    public LoadingScreen LoadingScreen = new();
+    public MusicPack MusicPack = new();
+    public SkydiveContrail SkyDiveContrail = new();
 }
 
 public class Pickaxe
@@ -118,37 +119,37 @@ public class ProfileStats
     public StatAttributes Attributes = new();
 }
 
-[JsonObject(NamingStrategyType = typeof(DefaultNamingStrategy))] //easiest way to do this. makes sure serializer doesn't change property names
+[JsonObject(NamingStrategyType = typeof(SnakeCaseNamingStrategy))]
 public class StatAttributes
 {
-    public int season_match_boost = 999999;
-    public List<string> loadouts = ["sandbox_loadout"];
-    public int rested_xp_overflow = 0;
-    public bool mfa_reward_claimed = true;
-    public QuestManager quest_manager = new();
-    public int book_level = 1;
-    public int season_num = 999999;
-    public int season_update = 1;
-    public int book_xp = 1;
-    public List<object> permissions = [];
-    public bool book_purchased = true;
-    public int lifetime_wins = 1;
-    public string party_assist_quest = string.Empty;
-    public List<object> purchased_battle_pass_tier_offers = [];
-    public float rested_xp_exchange = 1f;
-    public int level = AppSettings.Default.ProfilesSettings.BattlePassLevel;
-    public long xp_overflow = 1;
-    public int rested_xp = 1;
-    public float rested_xp_mult = 1f;
-    public int accountLevel = AppSettings.Default.ProfilesSettings.BattlePassLevel;
-    public CompetitiveIdentity competitive_identity = new();
-    public int inventory_limit_bonus = 0;
-    public string last_applied_loadout = "sandbox_loadout";
-    public DailyRewards daily_rewards = new();
-    public int xp = 10;
-    public int season_friend_match_boost = 1;
-    public int active_loadout_index = 1;
-    public List<PastSeasons> past_seasons = [];
+    public int SeasonMatchBoost = 999999;
+    public List<string> Loadouts = ["sandbox_loadout"];
+    public int RestedXpOverflow = 0;
+    public bool MfaRewardClaimed = true;
+    public QuestManager QuestManager = new();
+    public int BookLevel = 1;
+    public int SeasonNum = 999999;
+    public int SeasonUpdate = 1;
+    public int BookXp = 1;
+    public List<object> Permissions = [];
+    public bool BookPurchased = true;
+    public int LifetimeWins = 1;
+    public string PartyAssistQuest = string.Empty;
+    public List<object> PurchasedBattlePassTierOffers = [];
+    public float RestedXpExchange = 1f;
+    public int Level = AppSettings.Default.ProfilesSettings.BattlePassLevel;
+    public long XpOverflow = 1;
+    public int RestedXp = 1;
+    public float RestedXpMult = 1f;
+    public int AccountLevel = AppSettings.Default.ProfilesSettings.BattlePassLevel;
+    public CompetitiveIdentity CompetitiveIdentity = new();
+    public int InventoryLimitBonus = 0;
+    public string LastAppliedLoadout = "sandbox_loadout";
+    public DailyRewards DailyRewards = new();
+    public int Xp = 10;
+    public int SeasonFriendMatchBoost = 1;
+    public int ActiveLoadoutIndex = 1;
+    public List<PastSeasons> PastSeasons = [];
 }
 
 // unused classes
