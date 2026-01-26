@@ -118,6 +118,7 @@ public class ProfileStats
     public StatAttributes Attributes = new();
 }
 
+[JsonObject(NamingStrategyType = typeof(DefaultNamingStrategy))] //easiest way to do this. makes sure serializer doesn't change property names
 public class StatAttributes
 {
     public int season_match_boost = 999999;
