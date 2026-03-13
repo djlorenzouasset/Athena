@@ -295,21 +295,23 @@ public class AssetsService
         }
     ];
 
+    private readonly StringComparer stringComparer = StringComparer.OrdinalIgnoreCase;
+
     public bool IsValidClass(string exportClass)
-        => Items.Any(item => item.ClassNames.Contains(exportClass));
+        => Items.Any(item => item.ClassNames.Contains(exportClass, stringComparer));
 
     public bool IsValidItemId(string itemId)
-        => Items.Any(item => item.IncludeNames is { } names && names.Contains(itemId));
+        => Items.Any(item => item.IncludeNames is { } names && names.Contains(itemId, stringComparer));
 
     public bool IsValidPrefix(string itemId)
-        => Items.Any(item => item.Prefixes.Any(p => itemId.StartsWith(p)));
+        => Items.Any(item => item.Prefixes.Any(p => itemId.StartsWith(p, StringComparison.OrdinalIgnoreCase)));
 
     public string GetBackendTypeByClass(string exportClass)
-        => Items.FirstOrDefault(item => item.ClassNames.Contains(exportClass))?.BackendType ?? "TBD";
+        => Items.FirstOrDefault(item => item.ClassNames.Contains(exportClass, stringComparer))?.BackendType ?? "TBD";
 
     public string GetBackendTypeByPrefix(string prefix)
-        => Items.FirstOrDefault(item => item.Prefixes.Any(p => p.StartsWith(prefix)))?.BackendType ?? "TBD";
+        => Items.FirstOrDefault(item => item.Prefixes.Any(p => p.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)))?.BackendType ?? "TBD";
 
     public string GetBackendTypeByIncludedName(string prefix)
-        => Items.FirstOrDefault(item => item.IncludeNames.Contains(prefix))?.BackendType ?? "TBD";
+        => Items.FirstOrDefault(item => item.IncludeNames.Contains(prefix, stringComparer))?.BackendType ?? "TBD";
 }
