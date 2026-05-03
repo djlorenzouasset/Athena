@@ -14,13 +14,13 @@
     <PackageReference Include="DiscordRichPresence" Version="1.6.1.70" />
     <PackageReference Include="EpicManifestParser" Version="2.4.1" />
     <PackageReference Include="EpicManifestParser.ZlibngDotNetDecompressor" Version="1.0.1" />
-    <PackageReference Include="RestSharp" Version="112.1.0" />
-    <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="112.1.0" />
+    <PackageReference Include="RestSharp" Version="114.0.0" />
+    <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="114.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
-    <PackageReference Include="Spectre.Console" Version="0.53.0" />
-    <PackageReference Include="System.Text.Json" Version="9.0.10" />
+    <PackageReference Include="Spectre.Console" Version="0.55.2" />
+    <PackageReference Include="System.Text.Json" Version="10.0.7" />
   </ItemGroup>
 
   <ItemGroup>
