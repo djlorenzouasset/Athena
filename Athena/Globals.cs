@@ -4,7 +4,7 @@ namespace Athena;
 
 public static class Globals
 {
-    public static readonly AthenaVersion Version = new(2, 0, 1, 1);
+    public static readonly AthenaVersion Version = new(2, 1, 0, 0);
 
     public const string GITHUB_URL = "https://github.com/djlorenzouasset/Athena/releases/latest";
     public const string DISCORD_URL = "https://athena.djlorexzo.dev/discord";
