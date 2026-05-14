@@ -73,6 +73,9 @@ public class ItemGrant
 {
     public string TemplateId = string.Empty;
     public int Quantity = 1;
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public object? Attributes = null; // this is used only in RMT offers
 }
 
 public class Item

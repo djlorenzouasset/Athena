@@ -34,6 +34,21 @@ public static class CatalogEntryExtensions
                     ];
                     break;
                 }
+            case RMTCatalogEntry rmt:
+                {
+                    rmt.Prices =
+                    [
+                        new Price
+                        {
+                            CurrencyType = "MtxCurrency",
+                            RegularPrice = price,
+                            DynamicRegularPrice = price,
+                            FinalPrice = price,
+                            BasePrice = price
+                        }
+                    ];
+                    break;
+                }
         }
     }
 
@@ -52,9 +67,24 @@ public static class CatalogEntryExtensions
         }
     }
 
+    public static void SetGrants(this RMTCatalogEntry entry, List<string> templateIds, int vbucksToGrant = 0)
+    {
+        foreach (var templateId in templateIds)
+        {
+            if (templateId.StartsWith("Currency:MtxPurchased", StringComparison.OrdinalIgnoreCase) && vbucksToGrant > 0)
+            {
+                entry.ItemGrants.Add(new ItemGrant { TemplateId = templateId, Quantity = vbucksToGrant, Attributes = new() });
+                continue;
+            }
+
+            entry.ItemGrants.Add(new ItemGrant { TemplateId = templateId, Attributes = new()  });
+        }
+    }
+
     public static void SetOptions(this ICatalogEntry entry, IOption options)
     {
-        entry.SetCardOptions(options.CardOptions);
+        if (options.CardOptions != null)
+            entry.SetCardOptions(options.CardOptions);
 
         if (string.IsNullOrEmpty(options.ViolatorTag))
             return;

@@ -9,18 +9,22 @@ public class ShopBuilder : BaseBuilder
 {
     private readonly ShopModel _shop = new();
     private readonly List<ICatalogEntry> _catalogEntries = [];
+    private readonly List<ICatalogEntry> _rmtEntries = [];
 
     private int _dailyCount = 0;
     private int _featuredCount = 0;
+    private int _limitedTimeCount = 0;
 
     private const int MAX_DAILY_ITEMS = 4;
     private const int MAX_FEATURED_ITEMS = 2;
+    private const int MAX_LIMITEDTIME_ITEMS = 2;
 
     private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     public override string Build()
     {
         _shop.Storefronts.Add(new() { Name = "BRWeeklyStorefront", CatalogEntries = _catalogEntries });
+        _shop.Storefronts.Add(new() { Name = "BRStarterKits", CatalogEntries = _rmtEntries });
         return Serialize(_shop);
     }
 
@@ -30,8 +34,14 @@ public class ShopBuilder : BaseBuilder
         string objectName = entry.Split("/").Last();
         string assetName = entry.Split("/").Last().Split("DAv2_").Last();
 
-        if (assetName.StartsWith("RMT") || assetName.Contains("BattlePass"))
+        if (assetName.Contains("BattlePass"))
             return;
+
+        if (assetName.StartsWith("RMT", StringComparison.OrdinalIgnoreCase))
+        {
+            _rmtEntries.Add(ConstructCatalogEntry(objectPath, objectName, assetName));
+            return;
+        }
 
         _catalogEntries.Add(ConstructCatalogEntry(objectPath, objectName, assetName));
     }
@@ -41,17 +51,18 @@ public class ShopBuilder : BaseBuilder
         var catalogSettings = AppSettings.Default.CatalogSettings;
 
         bool bIsBundle = assetName.StartsWith("Bundle", StringComparison.OrdinalIgnoreCase);
+        bool bIsRMT = assetName.StartsWith("RMT", StringComparison.OrdinalIgnoreCase);
 
-        string offerId = $"v2:/{GenerateRandomOfferId()}";
-        string sectionId = bIsBundle ? "Featured" : "Daily";
-        int rowIndex = bIsBundle
-            ? (_featuredCount / MAX_FEATURED_ITEMS) + 1
-            : (_dailyCount / MAX_DAILY_ITEMS) + 1;
+        string offerId = bIsRMT ? GenerateRandomOfferId(32).ToUpper() : $"v2:/{GenerateRandomOfferId()}";
+        string sectionId = bIsRMT ? "LimitedTime" : (bIsBundle ? "Featured" : "Daily");
+        int rowIndex = 
+            bIsRMT ? (_limitedTimeCount / MAX_LIMITEDTIME_ITEMS) + 1 : 
+            (bIsBundle ? (_featuredCount / MAX_FEATURED_ITEMS) + 1 : (_dailyCount / MAX_DAILY_ITEMS) + 1);
 
         string layoutId = $"{sectionId}.{rowIndex}";
-        string tileSize = bIsBundle ? "Size_2_x_2" : "Size_1_x_2";
+        string tileSize = bIsBundle || bIsRMT ? "Size_2_x_2" : "Size_1_x_2";
         string newDisplayAssetPath = $"{objPath}.{objName}";
-        string displayAssetPath = DAv2ToDA(objName, bIsBundle);
+        string displayAssetPath = DAv2ToDA(objName, bIsBundle, bIsRMT);
 
         var meta = new Meta
         {
@@ -69,7 +80,49 @@ public class ShopBuilder : BaseBuilder
             new() { Key = "LayoutId", Value = layoutId },
         };
 
-        if (bIsBundle)
+        if (bIsRMT)
+        {
+            var rmtEntry = new RMTCatalogEntry
+            {
+                OfferId = offerId,
+                DisplayAssetPath = displayAssetPath,
+                MetaInfo = metaInfo,
+                Requirements = [new() { RequiredId = meta.TemplateId }]
+            };
+
+            var settings = catalogSettings.CustomRMTBundlesOptions.FirstOrDefault(
+                option => option.RMTId.Equals(objName, StringComparison.OrdinalIgnoreCase));
+
+            if (settings is not null)
+                rmtEntry.SetOptions(settings); // set all custom settings
+
+            var itemGrants = new List<string>();
+            if (settings?.VBucksGranted > 0)
+            {
+                // add the VBucks as an item grant if specified
+                itemGrants.Add("Currency:MtxPurchased");
+                rmtEntry.MetaInfo.Add(new MetaInfo { Key = "MtxQuantity", Value = settings.VBucksGranted.ToString() });
+            }
+
+            if (settings?.RMTBundleCosmetics is { Count: > 0 } cosmetics)
+            {
+                foreach (var id in cosmetics)
+                {
+                    // construct the item's templateId
+                    string backendType = AthenaUtils.GetBackendTypeByItemId(id);
+                    itemGrants.Add($"{backendType}:{id}");
+                }
+            }
+
+            int priceToApply = (int)(settings?.Price ?? -1.0);
+            rmtEntry.SetPrice(priceToApply);
+            // pass the items and the vbucks if there are
+            rmtEntry.SetGrants(itemGrants, settings?.VBucksGranted ?? -1);
+
+            _limitedTimeCount++;
+            return rmtEntry;
+        }
+        else if (bIsBundle)
         {
             meta.TemplateId = $"DynamicBundle:b_{assetName.SubstringAfter("Featured_")}";
 
@@ -160,7 +213,7 @@ public class ShopBuilder : BaseBuilder
     }
 
     // format the DAv2 to a DA shop asset 
-    private string DAv2ToDA(string DAv2, bool bundle = false)
+    private string DAv2ToDA(string DAv2, bool bundle = false, bool rmt = false)
     {
         string id;
         string assetName;
@@ -169,6 +222,11 @@ public class ShopBuilder : BaseBuilder
         {
             id = DAv2.Split("Featured_").Last();
             assetName = $"DA_Featured_{id}_Bundle";
+        }
+        else if (rmt)
+        {
+            id = DAv2.Split("RMT_").Last().Replace("_", string.Empty);
+            assetName = $"DA_Featured_{id}";
         }
         else
         {

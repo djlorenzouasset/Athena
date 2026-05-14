@@ -14,4 +14,5 @@ public class CatalogSettings
     ];
     public List<ItemOptions> CustomItemsOptions { get; set; } = [];
     public List<BundleOptions> CustomBundlesOptions { get; set; } = [];
+    public List<RMTBundleOptions> CustomRMTBundlesOptions { get; set; } = [];
 }
