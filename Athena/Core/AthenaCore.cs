@@ -60,7 +60,7 @@ public class AthenaCore
         await UEParser.Initialize(); // init the parser
 
 #if RELEASE
-        if (AppSettings.Default.LastDonationPopup.AddDays(7) < DateTime.UtcNow)
+        if (AppSettings.Default.LastDonationPopup.AddDays(14) < DateTime.UtcNow)
         {
             _ = Task.Run(() =>
             {
