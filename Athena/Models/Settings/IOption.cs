@@ -3,5 +3,5 @@
 public interface IOption
 {
     string ViolatorTag { get; }
-    CardOptions CardOptions { get; }
+    CardOptions? CardOptions { get; }
 }

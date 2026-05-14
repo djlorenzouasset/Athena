@@ -69,7 +69,7 @@ public class Generator
                 continue;
 
             _availableArchives.Add(vf);
-            Log.Information("Loaded {utoc} (FGuid: {guid}) into available archives", vf.Name, vf.EncryptionKeyGuid);
+            Log.Information("Set {utoc} (FGuid: {guid}) as available archive", vf.Name, vf.EncryptionKeyGuid);
         }
     }
 
