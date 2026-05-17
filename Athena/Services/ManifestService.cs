@@ -5,6 +5,7 @@ using EpicManifestParser.Api;
 using EpicManifestParser.ZlibngDotNetDecompressor;
 using CUE4Parse.UE4.Readers;
 using CUE4Parse.Compression;
+using Athena.Utils;
 
 namespace Athena.Services;
 
@@ -30,7 +31,8 @@ public partial class ManifestService
         };
 
         (Manifest, _) = await manifest.DownloadAndParseAsync(options,
-            elementManifestPredicate: static x => x.Uri.Host == "download.epicgames.com");
+            elementManifestPredicate: static x => x.Uri.Host == "download.epicgames.com" || 
+                                             x.Uri.Host == "epicgames-download1.akamaized.net");
 
         InitInformations(manifest); // save some informations that we need later
     }
