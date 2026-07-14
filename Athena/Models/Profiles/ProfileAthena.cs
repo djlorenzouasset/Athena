@@ -148,7 +148,7 @@ public class StatAttributes
     public DailyRewards DailyRewards = new();
     public int Xp = 10;
     public int SeasonFriendMatchBoost = 1;
-    public int ActiveLoadoutIndex = 1;
+    public int ActiveLoadoutIndex = 0;
     public List<PastSeasons> PastSeasons = [];
 }
 
