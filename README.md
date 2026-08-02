@@ -20,7 +20,7 @@ Fortnite Profiles and Item Shops generator for Private Servers that use Fortnite
 
 ### Requirements
 
-- [NET 9.0 Runtime or higher](https://dotnet.microsoft.com/en-us/download/dotnet/9.0/runtime)
+- [NET 10.0 Runtime or higher](https://dotnet.microsoft.com/en-us/download/dotnet/10.0/runtime)
 
 -----------------
 
