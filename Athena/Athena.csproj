@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationIcon>Athena.ico</ApplicationIcon>
-    <FileVersion>2.1.0.1</FileVersion>
+    <FileVersion>2.2.0.0</FileVersion>
 	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
@@ -14,13 +14,14 @@
     <PackageReference Include="DiscordRichPresence" Version="1.6.1.70" />
     <PackageReference Include="EpicManifestParser" Version="2.4.1" />
     <PackageReference Include="EpicManifestParser.ZlibngDotNetDecompressor" Version="1.0.1" />
+    <PackageReference Include="Microsoft.Bcl.Memory" Version="10.0.10" />
     <PackageReference Include="RestSharp" Version="114.0.0" />
     <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="114.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
-    <PackageReference Include="Spectre.Console" Version="0.55.2" />
-    <PackageReference Include="System.Text.Json" Version="10.0.7" />
+    <PackageReference Include="Spectre.Console" Version="0.57.2" />
+    <PackageReference Include="System.Text.Json" Version="10.0.10" />
   </ItemGroup>
 
   <ItemGroup>
