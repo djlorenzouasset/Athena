@@ -11,6 +11,31 @@ public class AppService
 {
     public AthenaRelease? ReleaseInfo;
 
+    // this function is used for internal telemetry, it sends a heartbeat to the API every 10 seconds
+    // so that we can track how many people are using the application live
+    // ALL DATA IS ANONYMOUS AND WE DO NOT STORE ANY PERSONAL INFORMATION
+    public async Task SendHeartbeatTask()
+    {
+        string trackingId = Guid.NewGuid().ToString();
+        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(10));
+
+        while (await timer.WaitForNextTickAsync())
+        {
+            try
+            {
+                var result = await Api.Athena.SendHeartbeat(trackingId);
+                if (!result.IsSuccessful)
+                {
+                    Log.ForContext("NoConsole", true).Warning("Failed to send heartbeat: {code} - {message}", result.StatusCode, result.ErrorMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.ForContext("NoConsole", true).Warning("Failed to send heartbeat: {message}", ex.Message);
+            }
+        }
+    }
+
     public async Task InitializeVersionInfo()
     {
         ReleaseInfo = await Api.Athena.GetReleaseInfoAsync();

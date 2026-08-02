@@ -38,6 +38,7 @@ public class AthenaCore
             }
         };
 
+        Task.Run(App.SendHeartbeatTask).GetAwaiter();
         await App.InitializeVersionInfo();
 #if RELEASE
         await Updater.CheckForUpdates();
