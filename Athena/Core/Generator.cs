@@ -263,6 +263,9 @@ public class Generator
             }
         }
 
+        // STOP ASKIN ME IF THIS FUCKING ERROR IS A GENERATION ERROR AND THERE IS SOMETHING WRONG OR NOT WORKING 
+        Log.Warning("NOTICE: If you see errors like 'Could not read ... correctly', those are not generation errors and can be ignored.");
+
         Log.Information("Building {model} with {addedCount} {itemType}", model.DisplayName(), added, itemType);
         string rawJson = builder.Build();
 
