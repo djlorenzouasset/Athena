@@ -60,6 +60,13 @@ public class SettingsService
 #endif
         }
 
+        if (Default.ProfilesSettings.BattlePassLevel == -1)
+        {
+            save = true;
+            Default.ProfilesSettings.BattlePassLevel = 1;
+            Log.Warning("Battle pass level cannot be -1 anymore. It has now been set to the default one.", Default.ProfilesSettings.BattlePassLevel);
+        }
+
         if (save)
         {
             SaveSettings();
