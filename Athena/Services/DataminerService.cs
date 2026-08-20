@@ -4,7 +4,7 @@ using CUE4Parse.Compression;
 using CUE4Parse.Encryption.Aes;
 using CUE4Parse.FileProvider;
 using CUE4Parse.FileProvider.Objects;
-using CUE4Parse.MappingsProvider;
+using CUE4Parse.MappingsProvider.Usmap;
 using CUE4Parse.UE4.Objects.Core.Misc;
 using CUE4Parse.UE4.VirtualFileSystem;
 using Athena.Models.API.Responses;
@@ -187,7 +187,13 @@ public class DataminerService
 
     private void TestMainKey(string key)
     {
-        var vf = Provider.MountedVfs.First(r => r.Name.Equals("pakchunk0-WindowsClient.pak"));
+        var vf = Provider.MountedVfs.FirstOrDefault(r => r.Name.Equals("pakchunk0-WindowsClient.pak"));
+        if (vf is null)
+        {
+            Log.Warning("Could not test Main Key: pakchunk0-WindowsClient.pak is missing.");
+            return;
+        }
+
         if (!vf.TestAesKey(new FAesKey(key)))
         {
             Log.Warning("Main key is invalid.");
