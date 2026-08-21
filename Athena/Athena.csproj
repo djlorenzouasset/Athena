@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationIcon>Athena.ico</ApplicationIcon>
-    <FileVersion>2.2.0.1</FileVersion>
+    <FileVersion>2.2.1.0</FileVersion>
 	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
