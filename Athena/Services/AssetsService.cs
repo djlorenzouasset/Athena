@@ -292,6 +292,12 @@ public class AssetsService
             BackendType = "JunoBuildingSet",
             ClassNames = ["JunoBuildingSetAccountItemDefinition"],
             Prefixes = ["JBSID_"]
+        },
+        new ItemEntry
+        {
+            BackendType = "TBD", // not known yet, needs revisions
+            ClassNames = ["JunoBuildInstructionsItemDefinition"],
+            Prefixes = ["JBID_"]
         }
     ];
 
