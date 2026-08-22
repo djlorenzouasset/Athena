@@ -29,7 +29,7 @@ public class AthenaCore
             string msg = ex!.Message;
             if (e.IsTerminating)
             {
-                msg += $"\n\nAthena will now close. Please contact the staff in {Globals.DISCORD_URL} if you still see this message.";
+                msg += $"\n\nAthena will now close. If this error persist, contact the staff.";
             }
 
             MessageService.Show("An error has occurred!", msg, MessageService.MB_ICONERROR | MessageService.MB_OK);
@@ -40,6 +40,7 @@ public class AthenaCore
         };
 
         Task.Run(App.SendHeartbeatTask).GetAwaiter();
+
         await App.InitializeVersionInfo();
 #if RELEASE
         await Updater.CheckForUpdates();
