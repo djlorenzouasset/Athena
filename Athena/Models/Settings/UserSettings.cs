@@ -14,9 +14,6 @@ public class UserSettings
     public bool UseDiscordRPC { get; set; } = true;
     public bool ShowChangeLog { get; set; } = false;
     public bool UseCustomMappingFile { get; set; } = false;
-    // --- TEMP SETTING ---
-    public bool ShowEnginePopupTemp { get; set; } = true;
-    // --- ************ ---
     public string CustomMappingFile { get; set; } = null!;
 
     // --- chunks settings ---

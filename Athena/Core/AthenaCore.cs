@@ -60,15 +60,6 @@ public class AthenaCore
             }
         }
 
-        // TEMP
-        if (AppSettings.Default.ShowEnginePopupTemp && AppSettings.Default.EngineVersion < EGame.GAME_UE6_0)
-        {
-            MessageService.Show("Important Notice!", "Starting by Fortnite v42.00, the game now uses Unreal Engine 6. Athena will now automatically change it. For more informations, join the Discord Server: " + Globals.DISCORD_URL + ".", MessageService.MB_ICONWARNING | MessageService.MB_OK);
-
-            AppSettings.Default.EngineVersion = EGame.GAME_UE6_0;
-            AppSettings.Default.ShowEnginePopupTemp = false; // reset the flag
-        }
-
         await UEParser.Initialize(); // init the parser
 
 #if RELEASE
