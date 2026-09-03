@@ -5,12 +5,12 @@ namespace Athena.Services;
 
 public class UpdaterService
 {
-    private const string UPDATER_URL = "https://github.com/djlorenzouasset/Athena/releases/download/v2.0.0.0/AthenaUpdater.exe";
+    private const string UPDATER_URL = "https://github.com/djlorenzouasset/Athena/raw/refs/heads/v2/Athena.Updater/binaries/AthenaUpdater.exe";
 
     private readonly string _currentInstallation = Path.Combine(Directories.Current, "Athena.exe");
     private readonly string _tempInstallationFile = Path.Combine(Directories.Data, "Athena.exe");
     private readonly string _updateInstaller = Path.Combine(Environment.GetFolderPath(
-        Environment.SpecialFolder.ApplicationData), "AthenaUpdater", "AthenaUpdater.exe");
+        Environment.SpecialFolder.ApplicationData), "Athena", "Updater.exe");
 
     public async Task CheckForUpdates()
     {
