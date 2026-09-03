@@ -507,7 +507,7 @@ public class Generator
             return null;
         }
 
-        return backups.Last();
+        return backups.First();
     }
     #endregion
 }
