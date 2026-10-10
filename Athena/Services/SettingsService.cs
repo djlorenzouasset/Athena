@@ -1,7 +1,8 @@
-﻿using Spectre.Console;
-using Athena.Utils;
+﻿using CUE4Parse.UE4.Versions;
+using Spectre.Console;
 using Athena.Extensions;
 using Athena.Models.Settings;
+using Athena.Utils;
 
 namespace Athena.Services;
 
@@ -34,6 +35,28 @@ public class SettingsService
     public void ValidateSettings()
     {
         bool save = false;
+
+        /*
+        check if the engine version is outdated to prevent missing cosmetics
+
+        this should fix the issue #81 (https://github.com/djlorenzouasset/Athena/issues/81) opened by me (djlorenzouasset)
+        where some cosmetics were missing in profiles. now Athena checks if the version is outdated and automatically changes it
+
+        thanks to @LaylaTheFox for letting me know about this issue!!
+        */
+        if (Default.EngineVersion < EGame.GAME_UE6_LATEST)
+        {
+            Log.Warning("EngineVersion {current} is outdated: changing it", Default.EngineVersion);
+#if RELEASE
+            MessageService.Show($"Outdated Engine Version",
+                $"Engine Version '{Default.EngineVersion.DisplayName()}' is outdated.\n\nAthena will automatically change it to latest: no action is required.",
+                MessageService.MB_OK | MessageService.MB_ICONWARNING
+            );
+#endif
+
+            save = true;
+            Default.EngineVersion = EGame.GAME_UE6_LATEST;
+        }
 
         if (string.IsNullOrEmpty(Default.ProfilesSettings.OutputPath))
         {

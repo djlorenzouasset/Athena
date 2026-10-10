@@ -1,5 +1,4 @@
-﻿using CUE4Parse.UE4.Versions;
-using Athena.Services;
+﻿using Athena.Services;
 
 namespace Athena.Core;
 
