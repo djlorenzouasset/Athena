@@ -7,6 +7,7 @@ namespace Athena.Services;
 public class APIService
 {
     public readonly DillyAPI Dilly;
+    public readonly UEDBAPI UEDB;
     public readonly EpicGamesAPI EpicGames;
     public readonly AthenaEndpoints Athena;
 
@@ -21,6 +22,7 @@ public class APIService
         }, configureSerialization: s => s.UseSerializer<JsonNetSerializer>());
 
         Dilly = new(_client);
+        UEDB = new(_client);
         Athena = new(_client);
         EpicGames = new(_client);
     }
