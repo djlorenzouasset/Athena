@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Athena.Models.API.Responses;
 
@@ -12,6 +13,6 @@ public class UedbMappingResponse
 {
     public string Version;
 
-    [JsonPropertyName("mappings")]
+    [JsonProperty("mappings")]
     public Dictionary<string, string> MappingsList { get; set; } = new();
 }
