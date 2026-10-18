@@ -135,6 +135,13 @@ public class DataminerService
             if (string.IsNullOrEmpty(mapping))
             {
                 Log.Warning("Mappings response was invalid and no local mappings have been found. Athena might not work as expected.");
+                MessageService.Show(
+                    "Invalid mappings response", 
+                    "An invalid response has been received from the mappings service! " + 
+                    "This might lead to missing cosmetics and possible program related issues.\n\n" + 
+                    "If this issue persist, try again later or contact the support in the discord server.", 
+                    MessageService.MB_ICONWARNING | MessageService.MB_OK
+                );
                 return;
             }
         }
@@ -191,7 +198,6 @@ public class DataminerService
                 LoadLocalKeys();
                 return;
             }
-
         }
 
         AppSettings.Default.LocalKeys = keysReponse;
