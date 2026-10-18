@@ -4,7 +4,7 @@ using Athena.Models.API.Responses;
 
 namespace Athena.Models.API;
 
-public class UEDBApi(RestClient client) : AthenaRestClient(client)
+public class UEDBAPI(RestClient client) : AthenaRestClient(client)
 {
     protected override string BaseURL => "https://uedb.dev/svc/api/v1/fortnite";
 

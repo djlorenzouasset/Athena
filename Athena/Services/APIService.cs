@@ -7,7 +7,7 @@ namespace Athena.Services;
 public class APIService
 {
     public readonly DillyAPI Dilly;
-    public readonly UEDBApi UEDB;
+    public readonly UEDBAPI UEDB;
     public readonly EpicGamesAPI EpicGames;
     public readonly AthenaEndpoints Athena;
 
