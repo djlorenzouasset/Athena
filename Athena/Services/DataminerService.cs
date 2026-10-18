@@ -145,22 +145,53 @@ public class DataminerService
 
     private async Task<string?> GetMappings()
     {
-        var mapping = await Api.Dilly.GetMappingAsync();
-        if (mapping is null) return null;
+        string? url = null;
+        string? fileName = null;
 
-        var path = Path.Combine(Directories.Mappings, mapping.FileName);
-        var file = await Api.DownloadFileAsync(mapping.Url, path, false);
+        var dilly = await Api.Dilly.GetMappingAsync();
+        if (dilly is not null)
+        {
+            url = dilly.Url;
+            fileName = dilly.FileName;
+        }
+        else
+        {
+            Log.Warning("Mappings response from Dilly API was invalid: trying to switch to UEDB.");
+            var uedb = await Api.UEDB.GetMappingAsync();
+            if (uedb is null)
+            {
+                Log.Warning("Mappings response from UEDB API was invalid: trying to switch to local mappings.");
+                return null;
+            }
+
+            if (!uedb.MappingsList.TryGetValue("ZStandard", out url) &&
+                !uedb.MappingsList.TryGetValue("Brotli", out url))
+                return null;
+
+            fileName = Path.GetFileName(new Uri(url).LocalPath);
+        }
+
+        if (url is null || fileName is null)
+            return null;
+
+        var path = Path.Combine(Directories.Mappings, fileName);
+        var file = await Api.DownloadFileAsync(url, path, false);
         return file.Exists ? file.FullName : null;
     }
-
     private async Task LoadKeys()
     {
         var keysReponse = await Api.Dilly.GetAESKeysAsync();
         if (keysReponse is null)
         {
-            Log.Warning("AES Keys response was invalid: trying to load local keys.");
-            LoadLocalKeys();
-            return;
+            Log.Warning("AES Keys response from Dilly API was invalid: trying to switch to UEDB.");
+            keysReponse = await Api.UEDB.GetAESKeysAsync();
+            if (keysReponse is null)
+            {
+                Log.Warning("AES Keys response from UEDB API was invalid: trying to switch to local keys.");
+                LoadLocalKeys();
+                return;
+            }
+
         }
 
         AppSettings.Default.LocalKeys = keysReponse;
